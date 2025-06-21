@@ -1,0 +1,424 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Navbar } from '@/components/navbar';
+import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
+import { Plus, FolderOpen, Calendar, Users, Crown, Bell, CheckSquare, User } from 'lucide-react';
+import Link from 'next/link';
+
+interface Project {
+  id: string;
+  name: string;
+  description: string | null;
+  created_at: string;
+  user_id: string;
+  // For shared projects
+  project_members?: {
+    role: string;
+  }[];
+}
+
+interface Profile {
+  id: string;
+  email: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  subscription_status: 'free' | 'pro' | null;
+}
+
+interface TaskAssignment {
+  id: string;
+  title: string;
+  priority: 'low' | 'medium' | 'high';
+  due_date: string | null;
+  project_name: string;
+  project_id: string;
+  column_name: string;
+}
+
+export default function DashboardPage() {
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [assignedTasks, setAssignedTasks] = useState<TaskAssignment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        router.push('/login');
+        return;
+      }
+
+      setUser(user);
+      
+      // Get user profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      setProfile(profile);
+
+      // Get user projects (both owned and shared)
+      const { data: projects } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          project_members!inner(role)
+        `)
+        .order('created_at', { ascending: false });
+      
+      setProjects(projects || []);
+
+      // Get tasks assigned to the user
+      const { data: tasks } = await supabase
+        .from('tasks')
+        .select(`
+          id,
+          title,
+          priority,
+          due_date,
+          columns!inner(
+            name,
+            projects!inner(
+              id,
+              name
+            )
+          )
+        `)
+        .eq('assigned_to', user.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (tasks) {
+        const formattedTasks = tasks.map(task => ({
+          id: task.id,
+          title: task.title,
+          priority: task.priority,
+          due_date: task.due_date,
+          project_name: task.columns.projects.name,
+          project_id: task.columns.projects.id,
+          column_name: task.columns.name,
+        }));
+        setAssignedTasks(formattedTasks);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to load dashboard');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Sign out error:', error);
+      toast.error('Failed to sign out');
+    }
+  };
+
+  const canCreateProject = () => {
+    if (!profile) return false;
+    const ownedProjects = projects.filter(p => p.user_id === user?.id);
+    return profile.subscription_status === 'pro' || ownedProjects.length < 1;
+  };
+
+  const getProjectRole = (project: Project) => {
+    if (project.user_id === user?.id) return 'owner';
+    return project.project_members?.[0]?.role || 'member';
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300';
+      case 'low':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar user={user} onSignOut={handleSignOut} />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground">
+              Welcome back, {profile?.full_name || user?.email}
+            </p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Badge variant={profile?.subscription_status === 'pro' ? 'default' : 'secondary'}>
+              {profile?.subscription_status === 'pro' ? (
+                <><Crown className="h-3 w-3 mr-1" /> Pro</>
+              ) : (
+                'Free'
+              )}
+            </Badge>
+            {profile?.subscription_status !== 'pro' && (
+              <Button asChild>
+                <Link href="/dashboard/billing">Upgrade to Pro</Link>
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+              <FolderOpen className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{projects.length}</div>
+              <p className="text-xs text-muted-foreground">
+                {projects.filter(p => p.user_id === user?.id).length} owned, {projects.filter(p => p.user_id !== user?.id).length} shared
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Assigned Tasks</CardTitle>
+              <CheckSquare className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{assignedTasks.length}</div>
+              <p className="text-xs text-muted-foreground">
+                Tasks assigned to you
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">This Month</CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {projects.filter(p => new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}
+              </div>
+              <p className="text-xs text-muted-foreground">Projects created</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Subscription</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold capitalize">
+                {profile?.subscription_status || 'Free'}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {profile?.subscription_status === 'pro' ? 'Pro features enabled' : 'Limited features'}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Projects */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold">Your Projects</h2>
+              <Button 
+                onClick={() => router.push('/dashboard/projects/new')}
+                disabled={!canCreateProject()}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Project
+              </Button>
+            </div>
+
+            {!canCreateProject() && (
+              <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/10">
+                <CardContent className="pt-6">
+                  <p className="text-sm text-amber-800 dark:text-amber-200">
+                    You've reached the free plan limit of 1 project. 
+                    <Link href="/dashboard/billing" className="font-medium underline ml-1">
+                      Upgrade to Pro
+                    </Link> for unlimited projects.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {projects.length === 0 ? (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <CardTitle className="mb-2">No projects yet</CardTitle>
+                  <CardDescription className="mb-4">
+                    Create your first project to get started with KanbanPro
+                  </CardDescription>
+                  <Button onClick={() => router.push('/dashboard/projects/new')}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Your First Project
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {projects.map((project) => {
+                  const role = getProjectRole(project);
+                  const isOwner = project.user_id === user?.id;
+                  
+                  return (
+                    <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-lg">{project.name}</CardTitle>
+                            <CardDescription>
+                              {project.description || 'No description'}
+                            </CardDescription>
+                          </div>
+                          <Badge variant={isOwner ? 'default' : 'secondary'} className="ml-2">
+                            {role}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">
+                            {isOwner ? 'Created' : 'Joined'} {new Date(project.created_at).toLocaleDateString()}
+                          </span>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => router.push(`/dashboard/projects/${project.id}`)}
+                          >
+                            Open
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Assigned Tasks Sidebar */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  Tasks Assigned to You
+                </CardTitle>
+                <CardDescription>
+                  Recent tasks you need to work on
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {assignedTasks.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <CheckSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No tasks assigned</p>
+                    <p className="text-sm">Tasks assigned to you will appear here</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {assignedTasks.map((task) => (
+                      <div key={task.id} className="border rounded-lg p-3 hover:bg-muted/50 transition-colors">
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-medium text-sm leading-tight flex-1">
+                            {task.title}
+                          </h4>
+                          <Badge 
+                            variant="secondary" 
+                            className={`text-xs ml-2 ${getPriorityColor(task.priority)}`}
+                          >
+                            {task.priority}
+                          </Badge>
+                        </div>
+                        
+                        <div className="text-xs text-muted-foreground space-y-1">
+                          <p>📁 {task.project_name}</p>
+                          <p>📋 {task.column_name}</p>
+                          {task.due_date && (
+                            <p>📅 Due {new Date(task.due_date).toLocaleDateString()}</p>
+                          )}
+                        </div>
+                        
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full mt-3"
+                          onClick={() => router.push(`/dashboard/projects/${task.project_id}`)}
+                        >
+                          View Project
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link href="/dashboard/projects/new">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create New Project
+                  </Link>
+                </Button>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link href="/dashboard/billing">
+                    <Crown className="h-4 w-4 mr-2" />
+                    Manage Subscription
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
