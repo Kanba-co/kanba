@@ -92,28 +92,44 @@ export default function DashboardPage() {
           title,
           priority,
           due_date,
-          columns!inner(
-            name,
-            projects!inner(
-              id,
-              name
-            )
-          )
+          column_id
         `)
         .eq('assigned_to', user.id)
         .order('created_at', { ascending: false })
         .limit(10);
 
       if (tasks) {
-        const formattedTasks = tasks.map(task => ({
-          id: task.id,
-          title: task.title,
-          priority: task.priority,
-          due_date: task.due_date,
-          project_name: task.columns.projects.name,
-          project_id: task.columns.projects.id,
-          column_name: task.columns.name,
-        }));
+        // Get column and project info for each task
+        const formattedTasks = await Promise.all(
+          tasks.map(async (task) => {
+            // Get column info
+            const { data: column } = await supabase
+              .from('columns')
+              .select(`
+                name,
+                project_id
+              `)
+              .eq('id', task.column_id)
+              .single();
+
+            // Get project info
+            const { data: project } = await supabase
+              .from('projects')
+              .select('id, name')
+              .eq('id', column?.project_id)
+              .single();
+
+            return {
+              id: task.id,
+              title: task.title,
+              priority: task.priority,
+              due_date: task.due_date,
+              project_name: project?.name || 'Unknown Project',
+              project_id: project?.id || '',
+              column_name: column?.name || 'Unknown Column',
+            };
+          })
+        );
         setAssignedTasks(formattedTasks);
       }
     } catch (error) {
@@ -273,7 +289,7 @@ export default function DashboardPage() {
               <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/10">
                 <CardContent className="pt-6">
                   <p className="text-sm text-amber-800 dark:text-amber-200">
-                    You've reached the free plan limit of 1 project. 
+                    You&apos;ve reached the free plan limit of 1 project. 
                     <Link href="/dashboard/billing" className="font-medium underline ml-1">
                       Upgrade to Pro
                     </Link> for unlimited projects.
