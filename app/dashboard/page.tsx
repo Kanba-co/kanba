@@ -171,7 +171,7 @@ export default function DashboardPage() {
     return (
       <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
         <AppSidebar user={user} onSignOut={handleSignOut} />
-        <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-black">
+        <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       </div>
@@ -182,11 +182,11 @@ export default function DashboardPage() {
     <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
       <AppSidebar user={user} onSignOut={handleSignOut} />
       <div className="flex-1 overflow-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8  mx-2 my-2 rounded-2xl bg-white dark:bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <h1 className="text-xl font-semibold">Dashboard</h1>
               <p className="text-muted-foreground">
                 Welcome back, {profile?.full_name || user?.email}
               </p>
@@ -297,7 +297,7 @@ export default function DashboardPage() {
                     <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <CardTitle className="mb-2">No projects yet</CardTitle>
                     <CardDescription className="mb-4">
-                      Create your first project to get started with KanbanPro
+                      Create your first project to get started with Klik
                     </CardDescription>
                     <Button onClick={() => router.push('/dashboard/projects/new')}>
                       <Plus className="h-4 w-4 mr-2" />

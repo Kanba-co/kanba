@@ -70,7 +70,7 @@ export default function PrivacyPage() {
                 <h2 className="text-2xl font-semibold mb-4">6. Contact Us</h2>
                 <p className="text-muted-foreground">
                   If you have any questions about this Privacy Policy, please contact us at 
-                  privacy@kanbanpro.com.
+                  privacy@Klik.com.
                 </p>
               </section>
             </div>

@@ -77,7 +77,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-2xl">Welcome back</CardTitle>
           <CardDescription>
-            Sign in to your KanbanPro account
+            Sign in to your Klik account
           </CardDescription>
         </CardHeader>
         <CardContent>

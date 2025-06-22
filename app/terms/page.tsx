@@ -18,7 +18,7 @@ export default function TermsPage() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4">1. Acceptance of Terms</h2>
                 <p className="text-muted-foreground">
-                  By accessing and using KanbanPro, you accept and agree to be bound by the terms 
+                  By accessing and using Klik, you accept and agree to be bound by the terms 
                   and provision of this agreement.
                 </p>
               </section>
@@ -26,7 +26,7 @@ export default function TermsPage() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4">2. Use License</h2>
                 <p className="text-muted-foreground">
-                  Permission is granted to temporarily access KanbanPro for personal, 
+                  Permission is granted to temporarily access Klik for personal, 
                   non-commercial transitory viewing only.
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground">
@@ -56,7 +56,7 @@ export default function TermsPage() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4">5. Prohibited Uses</h2>
                 <p className="text-muted-foreground">
-                  You may not use KanbanPro for any unlawful purpose or to solicit others 
+                  You may not use Klik for any unlawful purpose or to solicit others 
                   to perform unlawful acts.
                 </p>
               </section>
@@ -64,7 +64,7 @@ export default function TermsPage() {
               <section>
                 <h2 className="text-2xl font-semibold mb-4">6. Limitation of Liability</h2>
                 <p className="text-muted-foreground">
-                  In no event shall KanbanPro or its suppliers be liable for any damages 
+                  In no event shall Klik or its suppliers be liable for any damages 
                   arising out of the use or inability to use the service.
                 </p>
               </section>
@@ -73,7 +73,7 @@ export default function TermsPage() {
                 <h2 className="text-2xl font-semibold mb-4">7. Contact Information</h2>
                 <p className="text-muted-foreground">
                   If you have any questions about these Terms of Service, please contact us at 
-                  legal@kanbanpro.com.
+                  legal@Klik.com.
                 </p>
               </section>
             </div>

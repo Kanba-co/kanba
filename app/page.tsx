@@ -54,7 +54,7 @@ export default function Home() {
             <span className="text-primary block">Beautiful Kanban Boards</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            KanbanPro is a modern project management tool that helps teams visualize work, 
+            Klik is a modern project management tool that helps teams visualize work, 
             limit work-in-progress, and maximize efficiency with elegant Kanban boards.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -86,7 +86,7 @@ export default function Home() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Everything you need to manage projects</h2>
+            <h2 className="text-xl font-semibold mb-4">Everything you need to manage projects</h2>
             <p className="text-xl text-muted-foreground">
               Powerful features to help you stay organized and productive.
             </p>
@@ -164,7 +164,7 @@ export default function Home() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Simple, transparent pricing</h2>
+            <h2 className="text-xl font-semibold mb-4">Simple, transparent pricing</h2>
             <p className="text-xl text-muted-foreground">
               Choose the plan that&apos;s right for you.
             </p>
@@ -174,8 +174,8 @@ export default function Home() {
             <Card className="relative">
               <CardHeader>
                 <CardTitle className="text-2xl">Free</CardTitle>
-                <CardDescription>Perfect for trying out KanbanPro</CardDescription>
-                <div className="text-3xl font-bold">$0<span className="text-sm font-normal text-muted-foreground">/month</span></div>
+                <CardDescription>Perfect for trying out Klik</CardDescription>
+                <div className="text-xl font-semibold">$0<span className="text-sm font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 mb-6">
@@ -211,7 +211,7 @@ export default function Home() {
               <CardHeader>
                 <CardTitle className="text-2xl">Pro</CardTitle>
                 <CardDescription>For teams and power users</CardDescription>
-                <div className="text-3xl font-bold">$9<span className="text-sm font-normal text-muted-foreground">/month</span></div>
+                <div className="text-xl font-semibold">$9<span className="text-sm font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 mb-6">
@@ -250,7 +250,7 @@ export default function Home() {
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <Kanban className="h-6 w-6 text-primary" />
-                <span className="font-bold">KanbanPro</span>
+                <span className="font-bold">Klik</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 The modern way to manage your projects with beautiful Kanban boards.
@@ -286,7 +286,7 @@ export default function Home() {
           </div>
           
           <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 KanbanPro. All rights reserved.</p>
+            <p>&copy; 2024 Klik. All rights reserved.</p>
           </div>
         </div>
       </footer>

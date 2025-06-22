@@ -63,7 +63,7 @@ export default function SuccessPage() {
             </div>
             <CardTitle className="text-2xl">Payment Successful!</CardTitle>
             <CardDescription>
-              Thank you for subscribing to KanbanPro
+              Thank you for subscribing to Klik
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -71,7 +71,7 @@ export default function SuccessPage() {
               <div className="flex items-center justify-center mb-2">
                 <Crown className="h-5 w-5 text-green-600 mr-2" />
                 <span className="font-semibold text-green-800 dark:text-green-200">
-                  Welcome to KanbanPro!
+                  Welcome to Klik!
                 </span>
               </div>
               <p className="text-sm text-green-700 dark:text-green-300">

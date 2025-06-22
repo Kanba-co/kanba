@@ -204,7 +204,7 @@ export default function BillingPage() {
     return (
       <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
         <AppSidebar user={user} onSignOut={handleSignOut} />
-        <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-black">
+        <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       </div>
@@ -218,10 +218,10 @@ export default function BillingPage() {
     <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
       <AppSidebar user={user} onSignOut={handleSignOut} />
       <div className="flex-1 overflow-auto">
-        <div className="max-w-7xl px-4 sm:px-6 lg:px-8 py-8  mx-2 my-2 rounded-2xl bg-white dark:bg-black">
+        <div className="max-w-7xl px-4 sm:px-6 lg:px-8 py-8  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold">Billing & Subscription</h1>
+            <h1 className="text-xl font-semibold">Billing & Subscription</h1>
             <p className="text-muted-foreground">
               Manage your subscription and billing information
             </p>

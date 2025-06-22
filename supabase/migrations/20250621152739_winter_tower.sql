@@ -1,5 +1,5 @@
 /*
-  # Initial Schema Setup for KanbanPro
+  # Initial Schema Setup for Klik
 
   1. New Tables
     - `profiles`

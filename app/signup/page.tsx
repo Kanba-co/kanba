@@ -83,7 +83,7 @@ export default function SignUpPage() {
           </div>
           <CardTitle className="text-2xl">Create your account</CardTitle>
           <CardDescription>
-            Get started with KanbanPro today
+            Get started with Klik today
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -13,8 +13,8 @@ export const stripeProducts: StripeProduct[] = [
   {
     id: 'prod_SXYd2yr1vYNQAB',
     priceId: 'price_1RcTWeR3fs8AWFoCKiv3AUvu',
-    name: 'KanbanPro Monthly',
-    description: 'Monthly subscription to KanbanPro with unlimited projects and advanced features',
+    name: 'Klik Monthly',
+    description: 'Monthly subscription to Klik with unlimited projects and advanced features',
     mode: 'subscription',
     price: 9.00,
     currency: 'usd',

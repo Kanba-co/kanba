@@ -16,6 +16,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   KanbanIcon,
+  Sun,
+  Moon,
 } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "sonner"
@@ -35,6 +37,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 import { Notifications } from "@/components/notifications"
+import { useTheme } from "next-themes"
 
 interface AppSidebarProps {
   user: any;
@@ -45,7 +48,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
-
+  const { theme, setTheme } = useTheme();
   const navItems = [
     {
       title: "Dashboard",
@@ -108,16 +111,16 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
 
   return (
     <div className={`bg-[#fafafa] dark:bg-[#171717]  border-border h-screen flex flex-col transition-all duration-300 ${
-      isCollapsed ? 'w-20' : 'w-64'
+      isCollapsed ? 'w-20' : 'w-60'
     }`}>
       {/* Logo Header */}
       <div className="p-5 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-1">
             <div className="">
-              <KanbanIcon className="h-6 w-6 text-black dark:text-white" />
+              <KanbanIcon className="h-6 w-6 text-[#0A0A0A] dark:text-white" />
             </div>
-            {!isCollapsed && <span className="text-sm font-semibold">KanbanPro</span>}
+            {!isCollapsed && <span className="text-sm font-semibold">Klik</span>}
           </div>
           <Button
             variant="ghost"
@@ -140,7 +143,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
           <div className="flex flex-col space-y-2 items-center">
             <Button 
               onClick={handleQuickCreate}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              className="flex-1 bg-[#0A0A0A] dark:bg-white text-white dark:text-[#0A0A0A] hover:bg-[#0A0A0A]/90 dark:hover:bg-white/90 justify-start px-2"
              
             >
               <PlusCircleIcon className="h-4 w-4" />
@@ -152,7 +155,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
             <Button 
               onClick={handleQuickCreate}
               size="icon"
-              className="flex-1 bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 justify-start px-2"
+              className="flex-1 bg-[#0A0A0A] dark:bg-white text-white dark:text-[#0A0A0A] hover:bg-[#0A0A0A]/90 dark:hover:bg-white/90 justify-start px-2"
             >
               <PlusCircleIcon className="h-4 w-4" />
               New Project
@@ -181,21 +184,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
           ))}
         </nav>
 
-        <nav className="space-y-2 mt-8">
-        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Settings</span>
-          {secondaryItems.map((item) => (
-            <Button
-              key={item.title}
-              variant={pathname === item.url ? "secondary" : "ghost"}
-              className={`w-full justify-start px-2 ${isCollapsed ? 'justify-center' : ''}`}
-              onClick={() => router.push(item.url)}
-              title={isCollapsed ? item.title : undefined}
-            >
-              <item.icon className={`h-4 w-4 ${isCollapsed ? '' : ''}`} />
-              {!isCollapsed && item.title}
-            </Button>
-          ))}
-        </nav>
+       
       </div>
 
       {/* User Menu - Bottom */}
@@ -237,10 +226,22 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
                   <CreditCardIcon className="h-4 w-4 mr-2" />
                   Billing
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push('/dashboard/notifications')}>
-                  <BellIcon className="h-4 w-4 mr-2" />
-                  Notifications
+                <DropdownMenuItem onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  Theme
                 </DropdownMenuItem>
+                
+                {/* <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            >
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button> */}
+              
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut}>
@@ -290,9 +291,10 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
                   <CreditCardIcon className="h-4 w-4 mr-2" />
                   Billing
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push('/dashboard/notifications')}>
-                  <BellIcon className="h-4 w-4 mr-2" />
-                  Notifications
+                <DropdownMenuItem onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  Theme
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />

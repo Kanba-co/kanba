@@ -43,7 +43,7 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center space-x-2">
             <Kanban className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">KanbanPro</span>
+            <span className="text-xl font-bold">Klik</span>
           </Link>
 
           <div className="flex items-center space-x-4">
