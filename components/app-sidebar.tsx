@@ -111,17 +111,17 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
       isCollapsed ? 'w-20' : 'w-64'
     }`}>
       {/* Logo Header */}
-      <div className="p-6 border-b border-border">
+      <div className="p-5 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-1">
             <div className="">
               <KanbanIcon className="h-6 w-6 text-black dark:text-white" />
             </div>
-            {!isCollapsed && <span className="">KanbanPro</span>}
+            {!isCollapsed && <span className="text-sm font-semibold">KanbanPro</span>}
           </div>
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="h-6 w-6 p-0"
           >
@@ -135,13 +135,13 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
       </div>
 
       {/* New Project Button and Notifications */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4">
         {isCollapsed ? (
           <div className="flex flex-col space-y-2 items-center">
             <Button 
               onClick={handleQuickCreate}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              size="xs"
+             
             >
               <PlusCircleIcon className="h-4 w-4" />
             </Button>
@@ -151,9 +151,10 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
           <div className="flex items-center space-x-2">
             <Button 
               onClick={handleQuickCreate}
-              className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+              size="icon"
+              className="flex-1 bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 justify-start px-2"
             >
-              <PlusCircleIcon className="h-4 w-4 mr-2" />
+              <PlusCircleIcon className="h-4 w-4" />
               New Project
             </Button>
             <Notifications userId={user?.id} />
@@ -162,42 +163,35 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
       </div>
 
       {/* Main Navigation */}
-      <div className="flex-1 p-4">
+      <div className="flex-1 px-4">
         <nav className="space-y-2">
-          {!isCollapsed && (
-            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              Main
-            </div>
-          )}
+         
           {navItems.map((item) => (
             <Button
               key={item.title}
               variant={pathname === item.url ? "secondary" : "ghost"}
-              className={`w-full justify-start ${isCollapsed ? 'px-2 justify-center' : ''}`}
+              className={`w-full justify-start px-2 ${isCollapsed ? 'justify-center' : ''}`}
               onClick={() => router.push(item.url)}
+              size="icon"
               title={isCollapsed ? item.title : undefined}
             >
-              <item.icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'}`} />
+              <item.icon className={`h-4 w-4 ${isCollapsed ? '' : ''}`} />
               {!isCollapsed && item.title}
             </Button>
           ))}
         </nav>
 
         <nav className="space-y-2 mt-8">
-          {!isCollapsed && (
-            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              Settings
-            </div>
-          )}
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Settings</span>
           {secondaryItems.map((item) => (
             <Button
               key={item.title}
               variant={pathname === item.url ? "secondary" : "ghost"}
-              className={`w-full justify-start ${isCollapsed ? 'px-2 justify-center' : ''}`}
+              className={`w-full justify-start px-2 ${isCollapsed ? 'justify-center' : ''}`}
               onClick={() => router.push(item.url)}
               title={isCollapsed ? item.title : undefined}
             >
-              <item.icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'}`} />
+              <item.icon className={`h-4 w-4 ${isCollapsed ? '' : ''}`} />
               {!isCollapsed && item.title}
             </Button>
           ))}

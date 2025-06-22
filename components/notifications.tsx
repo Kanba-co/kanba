@@ -180,7 +180,7 @@ export function Notifications({ userId }: NotificationsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" className="relative">
           {unreadCount > 0 ? (
             <BellRing className="h-5 w-5" />
           ) : (
@@ -197,7 +197,7 @@ export function Notifications({ userId }: NotificationsProps) {
           <span className="sr-only">Notifications</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80">
+      <DropdownMenuContent align="end" className="w-80 ml-4">
         <div className="flex items-center justify-between p-2">
           <h4 className="font-semibold">Notifications</h4>
           {unreadCount > 0 && (
