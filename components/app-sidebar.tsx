@@ -18,6 +18,9 @@ import {
   KanbanIcon,
   Sun,
   Moon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  FolderOpenIcon,
 } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "sonner"
@@ -39,6 +42,14 @@ import {
 import { Notifications } from "@/components/notifications"
 import { useTheme } from "next-themes"
 import Link from "next/link"
+import { supabase } from "@/lib/supabase"
+import { Badge } from "@/components/ui/badge"
+
+interface Project {
+  id: string;
+  name: string;
+  user_id: string;
+}
 
 interface AppSidebarProps {
   user: any;
@@ -49,27 +60,49 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [isProjectsOpen, setIsProjectsOpen] = React.useState(false);
+  const [projects, setProjects] = React.useState<Project[]>([]);
+  const [loadingProjects, setLoadingProjects] = React.useState(false);
   const { theme, setTheme } = useTheme();
+
+  // Load projects
+  React.useEffect(() => {
+    if (user) {
+      loadProjects();
+    }
+  }, [user]);
+
+  const loadProjects = async () => {
+    if (!user) return;
+    
+    console.log('Loading projects for user:', user.id);
+    setLoadingProjects(true);
+    try {
+      // Get projects owned by user
+      const { data: projects, error } = await supabase
+        .from('projects')
+        .select('id, name, user_id')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      console.log('Projects query result:', { projects, error });
+
+      if (error) throw error;
+      setProjects(projects || []);
+    } catch (error) {
+      console.error('Error loading projects:', error);
+      setProjects([]);
+    } finally {
+      setLoadingProjects(false);
+    }
+  };
+
   const navItems = [
     {
       title: "Dashboard",
       url: "/dashboard",
       icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Projects",
-      url: "/dashboard/projects",
-      icon: FolderIcon,
-    },
-    {
-      title: "Team",
-      url: "/dashboard/team",
-      icon: UsersIcon,
-    },
-    {
-      title: "Analytics",
-      url: "/dashboard/analytics",
-      icon: BarChartIcon,
     },
   ];
 
@@ -186,9 +219,91 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
               {!isCollapsed && item.title}
             </Button>
           ))}
-        </nav>
 
-       
+          {/* Projects Menu with Submenu */}
+          <div className="space-y-1">
+            <Button
+              variant={pathname.startsWith('/dashboard/projects') ? "secondary" : "ghost"}
+              className={`w-full justify-between px-2 ${isCollapsed ? 'justify-center' : ''}`}
+              onClick={() => !isCollapsed && setIsProjectsOpen(!isProjectsOpen)}
+              size="icon"
+              title={isCollapsed ? "Projects" : undefined}
+            >
+              <div className="flex items-center">
+                <FolderIcon className="h-4 w-4" />
+                {!isCollapsed && <span className="ml-3">Projects</span>}
+              </div>
+              {!isCollapsed && (
+                <div className="flex items-center">
+                  <Badge variant="secondary" className="h-5 w-5 p-1 text-xs items-center justify-center mr-2">
+                    {loadingProjects ? '...' : projects.length}
+                  </Badge>
+                  {isProjectsOpen ? (
+                    <ChevronUpIcon className="h-4 w-4" />
+                  ) : (
+                    <ChevronDownIcon className="h-4 w-4" />
+                  )}
+                </div>
+              )}
+            </Button>
+
+            {/* Projects Submenu */}
+            {!isCollapsed && isProjectsOpen && (
+              <div className="ml-4 space-y-1">
+                {loadingProjects ? (
+                  <div className="px-2 py-1 text-xs text-muted-foreground">Loading...</div>
+                ) : projects.length === 0 ? (
+                  <div className="px-2 py-1 text-xs text-muted-foreground">
+                    No projects yet. Create your first project!
+                  </div>
+                ) : (
+                  projects.map((project) => (
+                    <Button
+                      key={project.id}
+                      variant={pathname === `/dashboard/projects/${project.id}` ? "secondary" : "ghost"}
+                      className="w-full justify-start px-2 h-8 text-xs"
+                      onClick={() => router.push(`/dashboard/projects/${project.id}`)}
+                    >
+                      <FolderOpenIcon className="h-4 w-4 mr-2" />
+                      {project.name}
+                    </Button>
+                  ))
+                )}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start px-2 h-8 text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => router.push('/dashboard/projects/new')}
+                >
+                  <PlusCircleIcon className="h-3 w-3 mr-2" />
+                  New Project
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Other Menu Items */}
+          <Button
+            variant={pathname === '/dashboard/team' ? "secondary" : "ghost"}
+            className={`w-full justify-start px-2 ${isCollapsed ? 'justify-center' : ''}`}
+            onClick={() => router.push('/dashboard/team')}
+            size="icon"
+            title={isCollapsed ? "Team" : undefined}
+          >
+            <UsersIcon className="h-4 w-4" />
+            {!isCollapsed && "Team"}
+          </Button>
+
+          <Button
+            variant={pathname === '/dashboard/analytics' ? "secondary" : "ghost"}
+            className={`w-full justify-start px-2 ${isCollapsed ? 'justify-center' : ''}`}
+            onClick={() => router.push('/dashboard/analytics')}
+            size="icon"
+            title={isCollapsed ? "Analytics" : undefined}
+          >
+            <BarChartIcon className="h-4 w-4" />
+            {!isCollapsed && "Analytics"}
+          </Button>
+        </nav>
       </div>
 
       {/* User Menu - Bottom */}

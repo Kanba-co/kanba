@@ -312,7 +312,7 @@ export default function DashboardPage() {
                     const isOwner = project.user_id === user?.id;
                     
                     return (
-                      <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                      <Card key={project.id} onClick={() => router.push(`/dashboard/projects/${project.id}`)} className="hover:shadow-md transition-shadow cursor-pointer">
                         <CardHeader>
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
@@ -331,13 +331,7 @@ export default function DashboardPage() {
                             <span className="text-sm text-muted-foreground">
                               {isOwner ? 'Created' : 'Joined'} {new Date(project.created_at).toLocaleDateString()}
                             </span>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => router.push(`/dashboard/projects/${project.id}`)}
-                            >
-                              Open
-                            </Button>
+                          
                           </div>
                         </CardContent>
                       </Card>
