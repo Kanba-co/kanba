@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navbar } from '@/components/navbar';
+import { AppSidebar } from '@/components/app-sidebar';
 import { supabase } from '@/lib/supabase';
+import { useUser } from '@/components/user-provider';
 import { toast } from 'sonner';
 import { ArrowLeft, Loader2, Plus } from 'lucide-react';
 import Link from 'next/link';
@@ -21,7 +22,7 @@ interface Profile {
 }
 
 export default function NewProjectPage() {
-  const [user, setUser] = useState<any>(null);
+  const { user, signOut } = useUser();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [projectCount, setProjectCount] = useState(0);
   const [name, setName] = useState('');
@@ -31,20 +32,17 @@ export default function NewProjectPage() {
   const router = useRouter();
 
   useEffect(() => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
     checkUser();
-  }, []);
+  }, [user, router]);
 
   const checkUser = async () => {
+    if (!user) return;
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-
-      setUser(user);
-      
       // Get user profile
       const { data: profile } = await supabase
         .from('profiles')
@@ -70,7 +68,7 @@ export default function NewProjectPage() {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await signOut();
     router.push('/');
   };
 
@@ -96,7 +94,7 @@ export default function NewProjectPage() {
         .insert({
           name,
           description: description || null,
-          user_id: user.id,
+          user_id: user!.id,
         })
         .select()
         .single();
@@ -133,9 +131,9 @@ export default function NewProjectPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="flex items-center justify-center h-64">
+      <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
+        <AppSidebar user={user} onSignOut={handleSignOut} />
+        <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-black">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       </div>
@@ -143,105 +141,87 @@ export default function NewProjectPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar user={user} onSignOut={handleSignOut} />
-      
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Button variant="ghost" asChild className="mb-4">
-            <Link href="/dashboard">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Link>
-          </Button>
-          <h1 className="text-3xl font-bold">Create New Project</h1>
-          <p className="text-muted-foreground">
-            Set up a new Kanban project to organize your work
-          </p>
-        </div>
+      <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
+      <AppSidebar user={user} onSignOut={handleSignOut} />
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-7xl h-screen  px-4 sm:px-6 lg:px-8 py-8  mx-2 my-2 rounded-2xl bg-white dark:bg-black">
+          {/* Header */}
+          <div className="mb-8">
+            <Button variant="ghost" asChild className="mb-4">
+              <Link href="/dashboard">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold">Create New Project</h1>
+            <p className="text-muted-foreground">
+              Set up a new Kanban project to organize your work
+            </p>
+          </div>
 
-        {/* Limit Warning */}
-        {!canCreateProject() && (
-          <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/10 mb-6">
-            <CardContent className="pt-6">
-              <p className="text-sm text-amber-800 dark:text-amber-200">
-                You've reached the free plan limit of 1 project. 
-                <Link href="/dashboard/billing" className="font-medium underline ml-1">
-                  Upgrade to Pro
-                </Link> for unlimited projects.
-              </p>
+          {/* Limit Warning */}
+          {!canCreateProject() && (
+            <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/10 mb-6">
+              <CardContent className="pt-6">
+                <p className="text-sm text-amber-800 dark:text-amber-200">
+                  You&apos;ve reached the free plan limit of 1 project. 
+                  <Link href="/dashboard/billing" className="font-medium underline ml-1">
+                    Upgrade to Pro
+                  </Link> for unlimited projects.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Form */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Plus className="h-5 w-5 mr-2" />
+                Project Details
+              </CardTitle>
+              <CardDescription>
+                Enter the basic information for your new project
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Project Name *</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Enter project name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Enter project description (optional)"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={4}
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button type="submit" disabled={creating || !canCreateProject()} className="flex-1">
+                    {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Create Project
+                  </Button>
+                  <Button type="button" variant="outline" asChild>
+                    <Link href="/dashboard">Cancel</Link>
+                  </Button>
+                </div>
+              </form>
             </CardContent>
           </Card>
-        )}
-
-        {/* Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Plus className="h-5 w-5 mr-2" />
-              Project Details
-            </CardTitle>
-            <CardDescription>
-              Enter the basic information for your new project
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Project Name *</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Enter project name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Enter project description (optional)"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              <div className="bg-muted/50 p-4 rounded-lg">
-                <h4 className="font-medium mb-2">Default Columns</h4>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Your project will be created with these default columns:
-                </p>
-                <div className="flex gap-2">
-                  <div className="bg-background border rounded px-3 py-1 text-sm">To Do</div>
-                  <div className="bg-background border rounded px-3 py-1 text-sm">In Progress</div>
-                  <div className="bg-background border rounded px-3 py-1 text-sm">Done</div>
-                </div>
-                <p className="text-xs text-muted-foreground mt-2">
-                  You can customize these columns after creating the project.
-                </p>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <Button 
-                  type="submit" 
-                  disabled={creating || !canCreateProject()}
-                  className="flex-1"
-                >
-                  {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create Project
-                </Button>
-                <Button type="button" variant="outline" asChild>
-                  <Link href="/dashboard">Cancel</Link>
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        </div>
       </div>
     </div>
   );

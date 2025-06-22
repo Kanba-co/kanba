@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Navbar } from '@/components/navbar';
+import { AppSidebar } from '@/components/app-sidebar';
 import { supabase } from '@/lib/supabase';
 import { useUser } from '@/components/user-provider';
 import { toast } from 'sonner';
@@ -169,9 +169,9 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar user={user} onSignOut={handleSignOut} />
-        <div className="flex items-center justify-center h-64">
+      <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
+        <AppSidebar user={user} onSignOut={handleSignOut} />
+        <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-black">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       </div>
@@ -179,252 +179,253 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar user={user} onSignOut={handleSignOut} />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground">
-              Welcome back, {profile?.full_name || user?.email}
-            </p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Badge variant={profile?.subscription_status === 'pro' ? 'default' : 'secondary'}>
-              {profile?.subscription_status === 'pro' ? (
-                <><Crown className="h-3 w-3 mr-1" /> Pro</>
-              ) : (
-                'Free'
+    <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
+      <AppSidebar user={user} onSignOut={handleSignOut} />
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8  mx-2 my-2 rounded-2xl bg-white dark:bg-black">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <p className="text-muted-foreground">
+                Welcome back, {profile?.full_name || user?.email}
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Badge variant={profile?.subscription_status === 'pro' ? 'default' : 'secondary'}>
+                {profile?.subscription_status === 'pro' ? (
+                  <><Crown className="h-3 w-3 mr-1" /> Pro</>
+                ) : (
+                  'Free'
+                )}
+              </Badge>
+              {profile?.subscription_status !== 'pro' && (
+                <Button asChild>
+                  <Link href="/dashboard/billing">Upgrade to Pro</Link>
+                </Button>
               )}
-            </Badge>
-            {profile?.subscription_status !== 'pro' && (
-              <Button asChild>
-                <Link href="/dashboard/billing">Upgrade to Pro</Link>
-              </Button>
-            )}
+            </div>
           </div>
-        </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-              <FolderOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{projects.length}</div>
-              <p className="text-xs text-muted-foreground">
-                {projects.filter(p => p.user_id === user?.id).length} owned, {projects.filter(p => p.user_id !== user?.id).length} shared
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Assigned Tasks</CardTitle>
-              <CheckSquare className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{assignedTasks.length}</div>
-              <p className="text-xs text-muted-foreground">
-                Tasks assigned to you
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">This Month</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {projects.filter(p => new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}
-              </div>
-              <p className="text-xs text-muted-foreground">Projects created</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Subscription</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold capitalize">
-                {profile?.subscription_status || 'Free'}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {profile?.subscription_status === 'pro' ? 'Pro features enabled' : 'Limited features'}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+                <FolderOpen className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{projects.length}</div>
+                <p className="text-xs text-muted-foreground">
+                  {projects.filter(p => p.user_id === user?.id).length} owned, {projects.filter(p => p.user_id !== user?.id).length} shared
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Assigned Tasks</CardTitle>
+                <CheckSquare className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{assignedTasks.length}</div>
+                <p className="text-xs text-muted-foreground">
+                  Tasks assigned to you
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">This Month</CardTitle>
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {projects.filter(p => new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}
+                </div>
+                <p className="text-xs text-muted-foreground">Projects created</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Subscription</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold capitalize">
+                  {profile?.subscription_status || 'Free'}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {profile?.subscription_status === 'pro' ? 'Pro features enabled' : 'Limited features'}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Projects */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Your Projects</h2>
-              <Button 
-                onClick={() => router.push('/dashboard/projects/new')}
-                disabled={!canCreateProject()}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Project
-              </Button>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Projects */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold">Your Projects</h2>
+                <Button 
+                  onClick={() => router.push('/dashboard/projects/new')}
+                  disabled={!canCreateProject()}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Project
+                </Button>
+              </div>
+
+              {!canCreateProject() && (
+                <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/10">
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                      You&apos;ve reached the free plan limit of 1 project. 
+                      <Link href="/dashboard/billing" className="font-medium underline ml-1">
+                        Upgrade to Pro
+                      </Link> for unlimited projects.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {projects.length === 0 ? (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <CardTitle className="mb-2">No projects yet</CardTitle>
+                    <CardDescription className="mb-4">
+                      Create your first project to get started with KanbanPro
+                    </CardDescription>
+                    <Button onClick={() => router.push('/dashboard/projects/new')}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Your First Project
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {projects.map((project) => {
+                    const role = getProjectRole(project);
+                    const isOwner = project.user_id === user?.id;
+                    
+                    return (
+                      <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <CardTitle className="text-lg">{project.name}</CardTitle>
+                              <CardDescription>
+                                {project.description || 'No description'}
+                              </CardDescription>
+                            </div>
+                            <Badge variant={isOwner ? 'default' : 'secondary'} className="ml-2">
+                              {role}
+                            </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-muted-foreground">
+                              {isOwner ? 'Created' : 'Joined'} {new Date(project.created_at).toLocaleDateString()}
+                            </span>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => router.push(`/dashboard/projects/${project.id}`)}
+                            >
+                              Open
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
-            {!canCreateProject() && (
-              <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/10">
-                <CardContent className="pt-6">
-                  <p className="text-sm text-amber-800 dark:text-amber-200">
-                    You&apos;ve reached the free plan limit of 1 project. 
-                    <Link href="/dashboard/billing" className="font-medium underline ml-1">
-                      Upgrade to Pro
-                    </Link> for unlimited projects.
-                  </p>
+            {/* Assigned Tasks Sidebar */}
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <User className="h-5 w-5 mr-2" />
+                    Tasks Assigned to You
+                  </CardTitle>
+                  <CardDescription>
+                    Recent tasks you need to work on
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {assignedTasks.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <CheckSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No tasks assigned</p>
+                      <p className="text-sm">Tasks assigned to you will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {assignedTasks.map((task) => (
+                        <div key={task.id} className="border rounded-lg p-3 hover:bg-muted/50 transition-colors">
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-medium text-sm leading-tight flex-1">
+                              {task.title}
+                            </h4>
+                            <Badge 
+                              variant="secondary" 
+                              className={`text-xs ml-2 ${getPriorityColor(task.priority)}`}
+                            >
+                              {task.priority}
+                            </Badge>
+                          </div>
+                          
+                          <div className="text-xs text-muted-foreground space-y-1">
+                            <p>📁 {task.project_name}</p>
+                            <p>📋 {task.column_name}</p>
+                            {task.due_date && (
+                              <p>📅 Due {new Date(task.due_date).toLocaleDateString()}</p>
+                            )}
+                          </div>
+                          
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full mt-3"
+                            onClick={() => router.push(`/dashboard/projects/${task.project_id}`)}
+                          >
+                            View Project
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
-            )}
 
-            {projects.length === 0 ? (
-              <Card className="text-center py-12">
-                <CardContent>
-                  <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <CardTitle className="mb-2">No projects yet</CardTitle>
-                  <CardDescription className="mb-4">
-                    Create your first project to get started with KanbanPro
-                  </CardDescription>
-                  <Button onClick={() => router.push('/dashboard/projects/new')}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Your First Project
+              {/* Quick Actions */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link href="/dashboard/projects/new">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create New Project
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link href="/dashboard/billing">
+                      <Crown className="h-4 w-4 mr-2" />
+                      Manage Subscription
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {projects.map((project) => {
-                  const role = getProjectRole(project);
-                  const isOwner = project.user_id === user?.id;
-                  
-                  return (
-                    <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <CardTitle className="text-lg">{project.name}</CardTitle>
-                            <CardDescription>
-                              {project.description || 'No description'}
-                            </CardDescription>
-                          </div>
-                          <Badge variant={isOwner ? 'default' : 'secondary'} className="ml-2">
-                            {role}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground">
-                            {isOwner ? 'Created' : 'Joined'} {new Date(project.created_at).toLocaleDateString()}
-                          </span>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => router.push(`/dashboard/projects/${project.id}`)}
-                          >
-                            Open
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Assigned Tasks Sidebar */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <User className="h-5 w-5 mr-2" />
-                  Tasks Assigned to You
-                </CardTitle>
-                <CardDescription>
-                  Recent tasks you need to work on
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {assignedTasks.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <CheckSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No tasks assigned</p>
-                    <p className="text-sm">Tasks assigned to you will appear here</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {assignedTasks.map((task) => (
-                      <div key={task.id} className="border rounded-lg p-3 hover:bg-muted/50 transition-colors">
-                        <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-medium text-sm leading-tight flex-1">
-                            {task.title}
-                          </h4>
-                          <Badge 
-                            variant="secondary" 
-                            className={`text-xs ml-2 ${getPriorityColor(task.priority)}`}
-                          >
-                            {task.priority}
-                          </Badge>
-                        </div>
-                        
-                        <div className="text-xs text-muted-foreground space-y-1">
-                          <p>📁 {task.project_name}</p>
-                          <p>📋 {task.column_name}</p>
-                          {task.due_date && (
-                            <p>📅 Due {new Date(task.due_date).toLocaleDateString()}</p>
-                          )}
-                        </div>
-                        
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full mt-3"
-                          onClick={() => router.push(`/dashboard/projects/${task.project_id}`)}
-                        >
-                          View Project
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Button variant="outline" className="w-full justify-start" asChild>
-                  <Link href="/dashboard/projects/new">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create New Project
-                  </Link>
-                </Button>
-                <Button variant="outline" className="w-full justify-start" asChild>
-                  <Link href="/dashboard/billing">
-                    <Crown className="h-4 w-4 mr-2" />
-                    Manage Subscription
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+            </div>
           </div>
         </div>
       </div>

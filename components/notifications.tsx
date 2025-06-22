@@ -217,7 +217,7 @@ export function Notifications({ userId }: NotificationsProps) {
           <div className="p-4 text-center text-sm text-muted-foreground">
             <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p>No notifications yet</p>
-            <p className="text-xs">You'll see updates about your tasks and projects here</p>
+            <p className="text-xs">You&apos;ll see updates about your tasks and projects here</p>
           </div>
         ) : (
           <div className="max-h-96 overflow-y-auto">
