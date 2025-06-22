@@ -20,7 +20,8 @@ import {
   User, 
   Settings, 
   LogOut,
-  CreditCard
+  CreditCard,
+  KanbanIcon
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -42,8 +43,10 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <Kanban className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">Klik</span>
+          <div className=" p-1 border rounded-lg  mr-1">
+              <KanbanIcon className="h-5 w-5 text-[#0A0A0A] dark:text-white" />
+            </div>
+            <span className="text-lg font-semibold">Klik</span>
           </Link>
 
           <div className="flex items-center space-x-4">

@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/avatar"
 import { Notifications } from "@/components/notifications"
 import { useTheme } from "next-themes"
+import Link from "next/link"
 
 interface AppSidebarProps {
   user: any;
@@ -116,12 +117,15 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
       {/* Logo Header */}
       <div className="p-5 border-b border-border">
         <div className="flex items-center justify-between">
+        <Link href="/">
           <div className="flex items-center space-x-1">
-            <div className="">
-              <KanbanIcon className="h-6 w-6 text-[#0A0A0A] dark:text-white" />
+            
+            <div className=" p-1 border rounded-lg  mr-1">
+              <KanbanIcon className="h-5 w-5 text-[#0A0A0A] dark:text-white" />
             </div>
-            {!isCollapsed && <span className="text-sm font-semibold">Klik</span>}
+            {!isCollapsed && <span className="text-lg font-semibold">Klik</span>}
           </div>
+          </Link>
           <Button
             variant="ghost"
             size="icon"
