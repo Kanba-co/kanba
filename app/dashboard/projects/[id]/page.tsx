@@ -21,6 +21,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -359,11 +360,14 @@ export default function ProjectPage() {
   const [columnDialogOpen, setColumnDialogOpen] = useState(false);
   const [editColumnDialogOpen, setEditColumnDialogOpen] = useState(false);
   const [commentsDialogOpen, setCommentsDialogOpen] = useState(false);
+  const [projectRenameDialogOpen, setProjectRenameDialogOpen] = useState(false);
+  const [projectDeleteDialogOpen, setProjectDeleteDialogOpen] = useState(false);
   const [selectedColumnId, setSelectedColumnId] = useState<string>('');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [editingColumn, setEditingColumn] = useState<Column | null>(null);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [creating, setCreating] = useState(false);
+  const [deletingProject, setDeletingProject] = useState(false);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   
   // Task form state - FIXED: Use undefined instead of empty string for assigned_to
@@ -375,6 +379,10 @@ export default function ProjectPage() {
   
   // Column form state
   const [columnName, setColumnName] = useState('');
+  
+  // Project form state
+  const [projectName, setProjectName] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
   
   const router = useRouter();
   const params = useParams();
@@ -395,6 +403,13 @@ export default function ProjectPage() {
     }
     checkUser();
   }, [user, router]);
+
+  // Prevent page reload after project deletion
+  useEffect(() => {
+    if (project === null && !loading) {
+      router.push('/dashboard');
+    }
+  }, [project, loading, router]);
 
   const checkUser = async () => {
     if (!user) return;
@@ -698,18 +713,6 @@ export default function ProjectPage() {
   };
 
   const handleDeleteColumn = async (columnId: string) => {
-    const column = columns.find(c => c.id === columnId);
-    if (!column) return;
-
-    if (column.tasks.length > 0) {
-      toast.error('Cannot delete column with tasks. Please move or delete all tasks first.');
-      return;
-    }
-
-    if (!confirm('Are you sure you want to delete this column?')) {
-      return;
-    }
-
     try {
       const { error } = await supabase
         .from('columns')
@@ -723,6 +726,100 @@ export default function ProjectPage() {
     } catch (error: any) {
       console.error('Error deleting column:', error);
       toast.error(error.message || 'Failed to delete column');
+    }
+  };
+
+  const handleRenameProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!project || !projectName.trim()) {
+      toast.error('Please enter a project name');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .update({
+          name: projectName.trim(),
+          description: projectDescription.trim() || null,
+        })
+        .eq('id', project.id);
+
+      if (error) throw error;
+
+      toast.success('Project updated successfully!');
+      setProjectRenameDialogOpen(false);
+      await loadProject();
+    } catch (error: any) {
+      console.error('Error updating project:', error);
+      toast.error(error.message || 'Failed to update project');
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    if (!project) return;
+
+    setDeletingProject(true);
+    try {
+      // First, delete all tasks in the project (using .in() for multiple column IDs)
+      if (columns.length > 0) {
+        const columnIds = columns.map(col => col.id);
+        const { error: tasksError } = await supabase
+          .from('tasks')
+          .delete()
+          .in('column_id', columnIds);
+
+        if (tasksError) throw tasksError;
+      }
+
+      // Then, delete all columns in the project
+      const { error: columnsError } = await supabase
+        .from('columns')
+        .delete()
+        .eq('project_id', project.id);
+
+      if (columnsError) throw columnsError;
+
+      // Delete project members
+      const { error: membersError } = await supabase
+        .from('project_members')
+        .delete()
+        .eq('project_id', project.id);
+
+      if (membersError) throw membersError;
+
+      // Finally, delete the project
+      const { error: projectError } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', project.id);
+
+      if (projectError) throw projectError;
+
+      toast.success('Project deleted successfully!');
+      
+      // Clear all states
+      setProject(null);
+      setColumns([]);
+      setProjectMembers([]);
+      setProjectDeleteDialogOpen(false);
+      
+      // Navigate to dashboard
+      router.push('/dashboard');
+    } catch (error: any) {
+      console.error('Error deleting project:', error);
+      toast.error(error.message || 'Failed to delete project');
+    } finally {
+      setDeletingProject(false);
+    }
+  };
+
+  const openRenameProjectDialog = () => {
+    if (project) {
+      setProjectName(project.name);
+      setProjectDescription(project.description || '');
+      setProjectRenameDialogOpen(true);
     }
   };
 
@@ -984,9 +1081,27 @@ export default function ProjectPage() {
               </div>
               
               <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={openRenameProjectDialog}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Rename Project
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={() => setProjectDeleteDialogOpen(true)}
+                      className="text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Project
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Dialog open={taskDialogOpen} onOpenChange={setTaskDialogOpen}>
                   <DialogTrigger asChild>
                     <Button size="sm" disabled={columns.length === 0}>
@@ -1378,6 +1493,82 @@ export default function ProjectPage() {
                   currentUserId={user!.id}
                 />
               )}
+            </DialogContent>
+          </Dialog>
+
+          {/* Rename Project Dialog */}
+          <Dialog open={projectRenameDialogOpen} onOpenChange={setProjectRenameDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Rename Project</DialogTitle>
+                <DialogDescription>
+                  Update the project name and description.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleRenameProject} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="projectName">Project Name *</Label>
+                  <Input
+                    id="projectName"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    placeholder="Enter project name"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="projectDescription">Description</Label>
+                  <Textarea
+                    id="projectDescription"
+                    value={projectDescription}
+                    onChange={(e) => setProjectDescription(e.target.value)}
+                    placeholder="Enter project description (optional)"
+                    rows={3}
+                  />
+                </div>
+                
+                <div className="flex gap-3 pt-4">
+                  <Button type="submit" disabled={creating} className="flex-1">
+                    {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Update Project
+                  </Button>
+                  <Button type="button" variant="outline" onClick={() => setProjectRenameDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          {/* Delete Project Dialog */}
+          <Dialog open={projectDeleteDialogOpen} onOpenChange={setProjectDeleteDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete Project</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this project? This action cannot be undone and will permanently remove all tasks, columns, and team members.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDeleteProject}
+                  disabled={deletingProject}
+                  className="flex-1"
+                >
+                  {deletingProject && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Delete Project
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setProjectDeleteDialogOpen(false)}
+                  disabled={deletingProject}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
             </DialogContent>
           </Dialog>
         </div>

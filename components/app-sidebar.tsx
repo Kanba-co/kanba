@@ -60,7 +60,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
-  const [isProjectsOpen, setIsProjectsOpen] = React.useState(false);
+  const [isProjectsOpen, setIsProjectsOpen] = React.useState(true);
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = React.useState(false);
   const { theme, setTheme } = useTheme();
