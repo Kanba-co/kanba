@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -782,68 +783,6 @@ export default function ProjectPage() {
     setActiveId(event.active.id);
   };
 
-  const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    // Find the containers
-    const activeContainer = findContainer(activeId);
-    const overContainer = findContainer(overId);
-
-    if (!activeContainer || !overContainer) return;
-
-    // If we're moving to a different container
-    if (activeContainer !== overContainer) {
-      setColumns((prev) => {
-        const activeItems = prev.find(col => col.id === activeContainer)?.tasks || [];
-        const overItems = prev.find(col => col.id === overContainer)?.tasks || [];
-
-        // Find the indexes
-        const activeIndex = activeItems.findIndex(task => task.id === activeId);
-        const overIndex = overItems.findIndex(task => task.id === overId);
-
-        let newIndex: number;
-        if (overId in columns.reduce((acc, col) => ({ ...acc, [col.id]: col }), {})) {
-          // We're at the root droppable of a container
-          newIndex = overItems.length + 1;
-        } else {
-          const isBelowOverItem = over &&
-            activeIndex < overIndex &&
-            overIndex === overItems.length - 1;
-
-          const modifier = isBelowOverItem ? 1 : 0;
-          newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
-        }
-
-        return prev.map(col => {
-          if (col.id === activeContainer) {
-            // Remove from active container
-            return {
-              ...col,
-              tasks: col.tasks.filter(task => task.id !== activeId)
-            };
-          } else if (col.id === overContainer) {
-            // Add to over container
-            const activeTask = activeItems[activeIndex];
-            if (activeTask) {
-              const newTasks = [...col.tasks];
-              newTasks.splice(newIndex, 0, { ...activeTask, column_id: overContainer });
-              return {
-                ...col,
-                tasks: newTasks
-              };
-            }
-          }
-          return col;
-        });
-      });
-    }
-  };
-
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
@@ -911,7 +850,7 @@ export default function ProjectPage() {
           toast.success('Task moved successfully!');
         }
       } else {
-        // Moving between containers
+        // Moving between containers - don't update UI immediately, wait for database update
         const sourceColumn = columns.find(col => col.id === activeContainer);
         const targetColumn = columns.find(col => col.id === overContainer);
         
@@ -942,7 +881,7 @@ export default function ProjectPage() {
           throw moveError;
         }
 
-        // Update positions of other tasks in target column
+        // Update positions of other tasks in target column (shift them down)
         const targetTasks = targetColumn.tasks.slice();
         const positionUpdatePromises = targetTasks
           .filter((_, index) => index >= newPosition)
@@ -1185,7 +1124,6 @@ export default function ProjectPage() {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
               onDragEnd={handleDragEnd}
             >
               <div className="flex gap-6 overflow-x-auto pb-4">
