@@ -31,9 +31,10 @@ interface NavbarProps {
     avatar_url?: string;
   } | null;
   onSignOut?: () => void;
+  loading?: boolean;
 }
 
-export function Navbar({ user, onSignOut }: NavbarProps) {
+export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -56,7 +57,9 @@ export function Navbar({ user, onSignOut }: NavbarProps) {
               <span className="sr-only">Toggle theme</span>
             </Button>
 
-            {user ? (
+            {loading ? (
+              <div className="animate-pulse bg-muted rounded-full h-8 w-8"></div>
+            ) : user ? (
               <>
                 {/* Notifications */}
                 <Notifications userId={user.id} />

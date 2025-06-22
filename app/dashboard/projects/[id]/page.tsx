@@ -41,6 +41,7 @@ import { TeamManagement } from '@/components/team-management';
 import { TaskComments } from '@/components/task-comments';
 import { ActivityFeed } from '@/components/activity-feed';
 import { supabase } from '@/lib/supabase';
+import { useUser } from '@/components/user-provider';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, 
@@ -347,7 +348,7 @@ function SortableTask({ task, onEdit, onDelete, onViewComments, projectMembers }
 }
 
 export default function ProjectPage() {
-  const [user, setUser] = useState<any>(null);
+  const { user, signOut } = useUser();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [columns, setColumns] = useState<Column[]>([]);
@@ -388,20 +389,17 @@ export default function ProjectPage() {
   );
 
   useEffect(() => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
     checkUser();
-  }, []);
+  }, [user, router]);
 
   const checkUser = async () => {
+    if (!user) return;
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-
-      setUser(user);
-      
       // Get user profile
       const { data: profile } = await supabase
         .from('profiles')
@@ -501,19 +499,14 @@ export default function ProjectPage() {
   };
 
   const handleSignOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      router.push('/');
-    } catch (error) {
-      console.error('Sign out error:', error);
-      toast.error('Failed to sign out');
-    }
+    await signOut();
+    router.push('/');
   };
 
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedColumnId || !taskTitle.trim()) {
+    if (!user || !selectedColumnId || !taskTitle.trim()) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -535,8 +528,8 @@ export default function ProjectPage() {
           priority: taskPriority,
           due_date: taskDueDate || null,
           assigned_to: taskAssignedTo || null, // FIXED: Use null instead of empty string
-          created_by: user.id,
-          updated_by: user.id,
+          created_by: user!.id,
+          updated_by: user!.id,
         })
         .select()
         .single();
@@ -562,7 +555,7 @@ export default function ProjectPage() {
   const handleEditTask = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!editingTask || !taskTitle.trim()) {
+    if (!user || !editingTask || !taskTitle.trim()) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -579,7 +572,7 @@ export default function ProjectPage() {
           priority: taskPriority,
           due_date: taskDueDate || null,
           assigned_to: taskAssignedTo || null, // FIXED: Use null instead of empty string
-          updated_by: user.id,
+          updated_by: user!.id,
         })
         .eq('id', editingTask.id);
 
@@ -642,8 +635,8 @@ export default function ProjectPage() {
           name: columnName.trim(),
           project_id: projectId,
           position: nextPosition,
-          created_by: user.id,
-          updated_by: user.id,
+          created_by: user!.id,
+          updated_by: user!.id,
         })
         .select()
         .single();
@@ -681,7 +674,7 @@ export default function ProjectPage() {
         .from('columns')
         .update({
           name: columnName.trim(),
-          updated_by: user.id,
+          updated_by: user!.id,
         })
         .eq('id', editingColumn.id);
 
@@ -841,7 +834,7 @@ export default function ProjectPage() {
               .from('tasks')
               .update({ 
                 position: index,
-                updated_by: user.id
+                updated_by: user!.id
               })
               .eq('id', task.id)
           );
@@ -872,7 +865,7 @@ export default function ProjectPage() {
           .update({ 
             column_id: overContainer,
             position: newPosition,
-            updated_by: user.id
+            updated_by: user!.id
           })
           .eq('id', activeId);
 
@@ -891,7 +884,7 @@ export default function ProjectPage() {
               .from('tasks')
               .update({ 
                 position: newPos,
-                updated_by: user.id
+                updated_by: user!.id
               })
               .eq('id', task.id);
           });
@@ -905,7 +898,7 @@ export default function ProjectPage() {
             .from('tasks')
             .update({ 
               position: index,
-              updated_by: user.id
+              updated_by: user!.id
             })
             .eq('id', task.id);
         });
@@ -936,7 +929,7 @@ export default function ProjectPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar />
+        <Navbar user={user} onSignOut={handleSignOut} />
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
@@ -1380,7 +1373,7 @@ export default function ProjectPage() {
             {selectedTask && (
               <TaskComments 
                 taskId={selectedTask.id} 
-                currentUserId={user.id}
+                currentUserId={user!.id}
               />
             )}
           </DialogContent>

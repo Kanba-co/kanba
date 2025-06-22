@@ -1,9 +1,13 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/navbar';
+import { useUser } from '@/components/user-provider';
 import { 
   Kanban, 
   Zap, 
@@ -15,9 +19,28 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
+  const { user, loading, signOut } = useUser();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+        <Navbar />
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <Navbar />
+      <Navbar user={user} onSignOut={handleSignOut} loading={loading} />
       
       {/* Hero Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
@@ -35,15 +58,26 @@ export default function Home() {
             limit work-in-progress, and maximize efficiency with elegant Kanban boards.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild>
-              <Link href="/signup">
-                Get Started Free
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/login">Sign In</Link>
-            </Button>
+            {user ? (
+              <Button size="lg" asChild>
+                <Link href="/dashboard">
+                  Go to Dashboard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button size="lg" asChild>
+                  <Link href="/signup">
+                    Get Started Free
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="/login">Sign In</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -132,7 +166,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Simple, transparent pricing</h2>
             <p className="text-xl text-muted-foreground">
-              Choose the plan that's right for you.
+              Choose the plan that&apos;s right for you.
             </p>
           </div>
           
@@ -163,7 +197,9 @@ export default function Home() {
                   </li>
                 </ul>
                 <Button className="w-full" variant="outline" asChild>
-                  <Link href="/signup">Get Started</Link>
+                  <Link href={user ? "/dashboard" : "/signup"}>
+                    {user ? "Go to Dashboard" : "Get Started"}
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -197,7 +233,9 @@ export default function Home() {
                   </li>
                 </ul>
                 <Button className="w-full" asChild>
-                  <Link href="/signup">Upgrade to Pro</Link>
+                  <Link href={user ? "/dashboard/billing" : "/signup"}>
+                    {user ? "Upgrade to Pro" : "Upgrade to Pro"}
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

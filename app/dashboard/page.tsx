@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/navbar';
 import { supabase } from '@/lib/supabase';
+import { useUser } from '@/components/user-provider';
 import { toast } from 'sonner';
 import { Plus, FolderOpen, Calendar, Users, Crown, Bell, CheckSquare, User } from 'lucide-react';
 import Link from 'next/link';
@@ -42,7 +43,7 @@ interface TaskAssignment {
 }
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
+  const { user, signOut } = useUser();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [assignedTasks, setAssignedTasks] = useState<TaskAssignment[]>([]);
@@ -50,20 +51,17 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
     checkUser();
-  }, []);
+  }, [user, router]);
 
   const checkUser = async () => {
+    if (!user) return;
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-
-      setUser(user);
-      
       // Get user profile
       const { data: profile } = await supabase
         .from('profiles')
@@ -141,13 +139,8 @@ export default function DashboardPage() {
   };
 
   const handleSignOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      router.push('/');
-    } catch (error) {
-      console.error('Sign out error:', error);
-      toast.error('Failed to sign out');
-    }
+    await signOut();
+    router.push('/');
   };
 
   const canCreateProject = () => {
@@ -177,7 +170,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar />
+        <Navbar user={user} onSignOut={handleSignOut} />
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
