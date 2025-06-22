@@ -113,11 +113,11 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
       {/* Logo Header */}
       <div className="p-6 border-b border-border">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <div className="">
-              <KanbanIcon className="h-8 w-8 text-primary" />
+              <KanbanIcon className="h-6 w-6 text-black dark:text-white" />
             </div>
-            {!isCollapsed && <span className="text-base font-semibold">KanbanPro</span>}
+            {!isCollapsed && <span className="">KanbanPro</span>}
           </div>
           <Button
             variant="ghost"
@@ -141,7 +141,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
             <Button 
               onClick={handleQuickCreate}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              size="sm"
+              size="xs"
             >
               <PlusCircleIcon className="h-4 w-4" />
             </Button>
