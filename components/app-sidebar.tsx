@@ -59,6 +59,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { Home } from "lucide-react"
+import { useUser } from '@/components/user-provider'
 
 interface Project {
   id: string;
@@ -67,7 +68,6 @@ interface Project {
 }
 
 interface AppSidebarProps {
-  user: any;
   onSignOut: () => void;
 }
 
@@ -80,7 +80,8 @@ const menuItems = [
   { title: "Ayarlar", url: "/dashboard/settings", icon: SettingsIcon },
 ]
 
-export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
+export function AppSidebar({ onSignOut }: AppSidebarProps) {
+  const { user } = useUser();
   const router = useRouter();
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
@@ -88,6 +89,13 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = React.useState(false);
   const { theme, setTheme } = useTheme();
+
+  // Kullanıcı bilgisi
+  const userData = {
+    name: user?.full_name || user?.email || 'User',
+    email: user?.email || '',
+    avatar: user?.avatar_url || '',
+  };
 
   // Load projects
   React.useEffect(() => {
@@ -135,12 +143,6 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
     }
   };
 
-  const userData = {
-    name: user?.full_name || user?.email || 'User',
-    email: user?.email || '',
-    avatar: user?.avatar_url || '',
-  };
-
   return (
     <Sidebar>
       {/* Üst kısım (Logo veya başlık) */}
@@ -169,16 +171,53 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
       </SidebarContent>
       {/* Alt kısım (Kullanıcı veya çıkış) */}
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <button className="flex items-center w-full text-left">
-                <LogOutIcon className="w-4 h-4 mr-2" />
-                <span>Çıkış Yap</span>
-              </button>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="w-full flex items-center gap-3 p-2">
+              <Avatar className="h-9 w-9">
+                {userData.avatar ? (
+                  <AvatarImage src={userData.avatar} alt={userData.name} />
+                ) : (
+                  <AvatarFallback>{userData.name?.[0]?.toUpperCase() || userData.email?.[0]?.toUpperCase() || '?'}</AvatarFallback>
+                )}
+              </Avatar>
+              <div className="flex flex-col min-w-0 text-left">
+                <span className="font-medium truncate text-sm">{userData.name}</span>
+                <span className="text-xs text-muted-foreground truncate">{userData.email}</span>
+              </div>
+              <ChevronDownIcon className="ml-auto h-4 w-4 text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="flex items-center gap-3 px-3 py-2">
+              <Avatar className="h-9 w-9">
+                {userData.avatar ? (
+                  <AvatarImage src={userData.avatar} alt={userData.name} />
+                ) : (
+                  <AvatarFallback>{userData.name?.[0]?.toUpperCase() || userData.email?.[0]?.toUpperCase() || '?'}</AvatarFallback>
+                )}
+              </Avatar>
+              <div className="flex flex-col min-w-0 text-left">
+                <span className="font-medium truncate text-sm">{userData.name}</span>
+                <span className="text-xs text-muted-foreground truncate">{userData.email}</span>
+              </div>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+              {theme === 'dark' ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
+              Temayı Değiştir
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/billing">
+                <CreditCardIcon className="h-4 w-4 mr-2" /> Abonelik
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+              <LogOutIcon className="h-4 w-4 mr-2" /> Çıkış Yap
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
     </Sidebar>
   )
