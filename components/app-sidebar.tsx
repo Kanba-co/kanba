@@ -55,6 +55,10 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
+  SidebarMenuSkeleton,
   SidebarTrigger,
   SidebarProvider,
 } from "@/components/ui/sidebar"
@@ -74,10 +78,10 @@ interface AppSidebarProps {
 // Menü öğeleri
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Projeler", url: "/dashboard/projects", icon: FolderIcon },
-  { title: "Takım", url: "/dashboard/team", icon: UsersIcon },
-  { title: "Analitik", url: "/dashboard/analytics", icon: BarChartIcon },
-  { title: "Ayarlar", url: "/dashboard/settings", icon: SettingsIcon },
+  { title: "Projects", url: "/dashboard/projects", icon: FolderIcon },
+  { title: "Team", url: "/dashboard/team", icon: UsersIcon },
+  { title: "Analytics", url: "/dashboard/analytics", icon: BarChartIcon },
+  { title: "Settings", url: "/dashboard/settings", icon: SettingsIcon },
 ]
 
 export function AppSidebar({ onSignOut }: AppSidebarProps) {
@@ -85,7 +89,6 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
-  const [isProjectsOpen, setIsProjectsOpen] = React.useState(true);
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = React.useState(false);
   const { theme, setTheme } = useTheme();
@@ -155,22 +158,64 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
           <div className="flex flex-row items-center justify-between py-2 gap-x-2">
             <Button size="xs" variant="secondary" className="flex w-full gap-2 justify-start bg-primary text-secondary hover:bg-primary/80" onClick={handleQuickCreate}>
               <PlusCircleIcon className="h-4 w-4" />
-              <span className="text-xs">Yeni Proje</span>
+              <span className="text-xs">New Project</span>
             </Button>
             {user?.id && <Notifications userId={user.id} />}
           </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon className="w-4 h-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {menuItems.map((item) => {
+                if (item.title === "Projects") {
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        isActive={pathname?.startsWith("/dashboard/projects") || false}
+                        className="font-semibold"
+                      >
+                        <FolderIcon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+
+                      <SidebarMenuSub>
+                        {loadingProjects ? (
+                          <>
+                            <SidebarMenuSkeleton className="h-6" />
+                            <SidebarMenuSkeleton className="h-6" />
+                          </>
+                        ) : (
+                          projects.map((project) => (
+                            <SidebarMenuSubItem key={project.id}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={pathname === `/dashboard/projects/${project.id}`}
+                              >
+                                <Link href={`/dashboard/projects/${project.id}`} title={project.name}>
+                                <FolderOpenIcon className="w-4 h-4" />
+                                  <span className="truncate">{project.name}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))
+                        )}
+                      </SidebarMenuSub>
+                    </SidebarMenuItem>
+                  );
+                }
+                
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={item.url === '/dashboard' ? pathname === item.url : pathname?.startsWith(item.url) || false}
+                    >
+                      <Link href={item.url}>
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -211,16 +256,16 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
               <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
               {theme === 'dark' ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
-              Temayı Değiştir
+              Toggle Theme
                 </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/dashboard/billing">
-                <CreditCardIcon className="h-4 w-4 mr-2" /> Abonelik
+                <CreditCardIcon className="h-4 w-4 mr-2" /> Billing
               </Link>
                 </DropdownMenuItem>
               <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
-              <LogOutIcon className="h-4 w-4 mr-2" /> Çıkış Yap
+              <LogOutIcon className="h-4 w-4 mr-2" /> Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
