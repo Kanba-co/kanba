@@ -144,8 +144,8 @@ export default function NewProjectPage() {
       <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
       <AppSidebar user={user} onSignOut={handleSignOut} />
       <div className="flex-1 overflow-auto">
-        <div className="max-w-7xl h-screen  px-4 sm:px-6 lg:px-8 py-8  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
-          {/* Header */}
+      <div className="max-w-7xl h-screen px-4 border border-border sm:px-6 lg:px-8 py-8  mx-4 my-4 rounded-xl shadow-sm bg-white dark:bg-[#0A0A0A]">
+      {/* Header */}
           <div className="mb-8">
             <Button variant="ghost" asChild className="mb-4">
               <Link href="/dashboard">

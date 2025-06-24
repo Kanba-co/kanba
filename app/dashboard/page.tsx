@@ -182,13 +182,13 @@ export default function DashboardPage() {
     <div className="flex h-screen bg-[#fafafa]  dark:bg-[#171717]">
       <AppSidebar user={user} onSignOut={handleSignOut} />
       <div className="flex-1 overflow-auto">
-        <div className="max-w-7xl px-4 border border-border sm:px-6 lg:px-8 py-8  mx-4 my-4 rounded-xl shadow-sm bg-white dark:bg-[#0A0A0A]">
+        <div className="max-w-7xl h-screen px-4 border border-border sm:px-6 lg:px-8 py-8  mx-4 my-4 rounded-xl shadow-sm bg-white dark:bg-[#0A0A0A]">
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-xl font-semibold">Dashboard</h1>
               <p className="text-muted-foreground">
-                Welcome back, {profile?.full_name || user?.email}
+                Welcome back, {profile?.full_name || user?.email} 👋
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -210,57 +210,39 @@ export default function DashboardPage() {
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between  ">
                 <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-                <FolderOpen className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{projects.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  {projects.filter(p => p.user_id === user?.id).length} owned, {projects.filter(p => p.user_id !== user?.id).length} shared
-                </p>
-              </CardContent>
+                <div className="text-sm font-bold">{projects.length}</div>            
+                  </CardHeader>
+             
             </Card>
             
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between  ">
                 <CardTitle className="text-sm font-medium">Assigned Tasks</CardTitle>
-                <CheckSquare className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{assignedTasks.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  Tasks assigned to you
-                </p>
-              </CardContent>
+                <div className="text-sm font-bold">{assignedTasks.length}</div>
+                </CardHeader>
+             
             </Card>
             
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between ">
                 <CardTitle className="text-sm font-medium">This Month</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-sm font-bold">
                   {projects.filter(p => new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}
-                </div>
-                <p className="text-xs text-muted-foreground">Projects created</p>
-              </CardContent>
+                </div>            
+                  </CardHeader>
+             
             </Card>
             
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="flex flex-row items-center justify-between ">
                 <CardTitle className="text-sm font-medium">Subscription</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold capitalize">
+                <div className="text-sm font-bold capitalize">
                   {profile?.subscription_status || 'Free'}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {profile?.subscription_status === 'pro' ? 'Pro features enabled' : 'Limited features'}
-                </p>
-              </CardContent>
+                </div>            
+                  </CardHeader>
+              
             </Card>
           </div>
 
@@ -268,7 +250,7 @@ export default function DashboardPage() {
             {/* Projects */}
             <div className="lg:col-span-2 space-y-6">
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold">Your Projects</h2>
+                <h2 className="text-xl font-semibold">Your Projects</h2>
                 <Button 
                   onClick={() => router.push('/dashboard/projects/new')}
                   disabled={!canCreateProject()}
@@ -313,8 +295,10 @@ export default function DashboardPage() {
                     const isOwner = project.user_id === user?.id;
                     
                     return (
-                      <Card key={project.id} onClick={() => router.push(`/dashboard/projects/${project.id}`)} className="hover:shadow-md transition-shadow cursor-pointer">
+                      <Card key={project.id} onClick={() => router.push(`/dashboard/projects/${project.id}`)} className="hover:shadow-md transition-shadow cursor-pointer border-gradient">
+
                         <CardHeader>
+
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <CardTitle className="text-lg">{project.name}</CardTitle>
@@ -335,7 +319,7 @@ export default function DashboardPage() {
                           
                           </div>
                         </CardContent>
-                      </Card>
+                        </Card>
                     );
                   })}
                 </div>
@@ -348,7 +332,7 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <User className="h-5 w-5 mr-2" />
-                    Tasks Assigned to You
+                    <span className="text-lg font-normal">Tasks Assigned to You</span>
                   </CardTitle>
                   <CardDescription>
                     Recent tasks you need to work on
@@ -403,7 +387,9 @@ export default function DashboardPage() {
               {/* Quick Actions */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
+                  <CardTitle>
+                  <span className="text-lg font-normal">
+                  Quick Actions</span></CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <Button variant="outline" className="w-full justify-start" asChild>
