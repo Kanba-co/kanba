@@ -192,8 +192,8 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
                 <span className="text-xs text-muted-foreground truncate">{userData.email}</span>
               </div>
               <ChevronDownIcon className="ml-auto h-4 w-4 text-muted-foreground" />
-            </Button>
-          </DropdownMenuTrigger>
+              </Button>
+            </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <div className="flex items-center gap-3 px-3 py-2">
               <Avatar className="h-9 w-9">
@@ -202,28 +202,28 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
                 ) : (
                   <AvatarFallback>{userData.name?.[0]?.toUpperCase() || userData.email?.[0]?.toUpperCase() || '?'}</AvatarFallback>
                 )}
-              </Avatar>
+                </Avatar>
               <div className="flex flex-col min-w-0 text-left">
                 <span className="font-medium truncate text-sm">{userData.name}</span>
                 <span className="text-xs text-muted-foreground truncate">{userData.email}</span>
-              </div>
-            </div>
-            <DropdownMenuSeparator />
+                  </div>
+                </div>
+              <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
               {theme === 'dark' ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
               Temayı Değiştir
-            </DropdownMenuItem>
+                </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href="/dashboard/billing">
                 <CreditCardIcon className="h-4 w-4 mr-2" /> Abonelik
               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+                </DropdownMenuItem>
+              <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
               <LogOutIcon className="h-4 w-4 mr-2" /> Çıkış Yap
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
       </SidebarFooter>
     </Sidebar>
   )
