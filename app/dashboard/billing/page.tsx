@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AppSidebar } from '@/components/app-sidebar';
-import { supabase } from '@/lib/supabase';
 import { useUser } from '@/components/user-provider';
 import { stripeProducts } from '@/src/stripe-config';
 import { toast } from 'sonner';
@@ -19,6 +17,7 @@ import {
   ExternalLink,
   AlertCircle
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface Profile {
   id: string;
@@ -202,11 +201,8 @@ export default function BillingPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
-        <AppSidebar user={user} onSignOut={handleSignOut} />
-        <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
+      <div className="flex-1 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -215,186 +211,172 @@ export default function BillingPage() {
   const isActive = subscription?.subscription_status === 'active';
 
   return (
-    <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
-      <AppSidebar user={user} onSignOut={handleSignOut} />
-      <div className="flex-1 overflow-auto">
-      <div className="max-w-7xl h-screen px-4 border border-border sm:px-6 lg:px-8 py-8  mx-4 my-4 rounded-xl shadow-sm bg-white dark:bg-[#0A0A0A]">
+    <>
       {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-xl font-semibold">Billing & Subscription</h1>
-            <p className="text-muted-foreground">
-              Manage your subscription and billing information
-            </p>
-          </div>
-
-          {/* Environment Check Warning */}
-          {!hasRequiredEnvVars && (
-            <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/10 mb-6">
-              <CardContent className="pt-6">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 text-amber-600 mr-2" />
-                  <p className="text-sm text-amber-800 dark:text-amber-200">
-                    Payment configuration missing. Please ensure environment variables are set up correctly.
+      <div className="mb-8">
+        <h1 className="text-xl font-semibold">Billing & Subscription</h1>
+        <p className="text-muted-foreground">
+          Manage your subscription and billing information
+        </p>
+      </div>
+      {/* Environment Check Warning */}
+      {!hasRequiredEnvVars && (
+        <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/10 mb-6">
+          <CardContent className="pt-6">
+            <div className="flex items-center">
+              <AlertCircle className="h-5 w-5 text-amber-600 mr-2" />
+              <p className="text-sm text-amber-800 dark:text-amber-200">
+                Payment configuration missing. Please ensure environment variables are set up correctly.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      {/* Current Subscription */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Crown className="h-5 w-5 mr-2" />
+            Current Plan
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isActive && currentProduct ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold">{currentProduct.name}</h3>
+                  <p className="text-muted-foreground">{currentProduct.description}</p>
+                </div>
+                <Badge variant="default">
+                  <Crown className="h-3 w-3 mr-1" />
+                  Active
+                </Badge>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                <div>
+                  <p className="text-sm text-muted-foreground">Next billing date</p>
+                  <p className="font-medium">
+                    {subscription.current_period_end 
+                      ? formatDate(subscription.current_period_end)
+                      : 'N/A'
+                    }
                   </p>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Current Subscription */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Crown className="h-5 w-5 mr-2" />
-                Current Plan
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isActive && currentProduct ? (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold">{currentProduct.name}</h3>
-                      <p className="text-muted-foreground">{currentProduct.description}</p>
-                    </div>
-                    <Badge variant="default">
-                      <Crown className="h-3 w-3 mr-1" />
-                      Active
-                    </Badge>
+                {subscription.payment_method_brand && subscription.payment_method_last4 && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Payment method</p>
+                    <p className="font-medium capitalize">
+                      {subscription.payment_method_brand} •••• {subscription.payment_method_last4}
+                    </p>
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Next billing date</p>
-                      <p className="font-medium">
-                        {subscription.current_period_end 
-                          ? formatDate(subscription.current_period_end)
-                          : 'N/A'
-                        }
-                      </p>
-                    </div>
-                    
-                    {subscription.payment_method_brand && subscription.payment_method_last4 && (
-                      <div>
-                        <p className="text-sm text-muted-foreground">Payment method</p>
-                        <p className="font-medium capitalize">
-                          {subscription.payment_method_brand} •••• {subscription.payment_method_last4}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {subscription.cancel_at_period_end && (
-                    <div className="p-4 bg-amber-50 dark:bg-amber-950/10 border border-amber-200 dark:border-amber-800 rounded-lg">
-                      <p className="text-sm text-amber-800 dark:text-amber-200">
-                        Your subscription will be canceled at the end of the current billing period.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="mb-4">
-                    <Badge variant="secondary">Free Plan</Badge>
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">You&apos;re on the free plan</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Upgrade to Pro to unlock unlimited projects and advanced features
+                )}
+              </div>
+              {subscription.cancel_at_period_end && (
+                <div className="p-4 bg-amber-50 dark:bg-amber-950/10 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <p className="text-sm text-amber-800 dark:text-amber-200">
+                    Your subscription will be canceled at the end of the current billing period.
                   </p>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {/* Available Plans */}
-          {!isActive && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <CreditCard className="h-5 w-5 mr-2" />
-                  Available Plans
-                </CardTitle>
-                <CardDescription>
-                  Choose the plan that&apos;s right for you
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-6">
-                  {stripeProducts.map((product) => (
-                    <div key={product.id} className="border rounded-lg p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="text-xl font-semibold">{product.name}</h3>
-                          <p className="text-muted-foreground">{product.description}</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold">
-                            ${product.price}
-                            {product.interval && (
-                              <span className="text-sm font-normal text-muted-foreground">
-                                /{product.interval}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <ul className="space-y-2 mb-6">
-                        <li className="flex items-center">
-                          <Check className="h-4 w-4 text-green-500 mr-2" />
-                          Unlimited Projects
-                        </li>
-                        <li className="flex items-center">
-                          <Check className="h-4 w-4 text-green-500 mr-2" />
-                          Advanced Features
-                        </li>
-                        <li className="flex items-center">
-                          <Check className="h-4 w-4 text-green-500 mr-2" />
-                          Priority Support
-                        </li>
-                        <li className="flex items-center">
-                          <Check className="h-4 w-4 text-green-500 mr-2" />
-                          Custom Integrations
-                        </li>
-                      </ul>
-                      
-                      <Button 
-                        className="w-full" 
-                        onClick={() => handleCheckout(product.priceId, product.mode)}
-                        disabled={checkoutLoading || !hasRequiredEnvVars}
-                      >
-                        {checkoutLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Subscribe to {product.name}
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Billing History */}
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Calendar className="h-5 w-5 mr-2" />
-                Billing History
-              </CardTitle>
-              <CardDescription>
-                View your past invoices and payments
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>No billing history available</p>
-                <p className="text-sm">Your invoices will appear here after your first payment</p>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="mb-4">
+                <Badge variant="secondary">Free Plan</Badge>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+              <h3 className="text-lg font-semibold mb-2">You&apos;re on the free plan</h3>
+              <p className="text-muted-foreground mb-4">
+                Upgrade to Pro to unlock unlimited projects and advanced features
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      {/* Available Plans */}
+      {!isActive && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <CreditCard className="h-5 w-5 mr-2" />
+              Available Plans
+            </CardTitle>
+            <CardDescription>
+              Choose the plan that&apos;s right for you
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-6">
+              {stripeProducts.map((product) => (
+                <div key={product.id} className="border rounded-lg p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold">{product.name}</h3>
+                      <p className="text-muted-foreground">{product.description}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold">
+                        ${product.price}
+                        {product.interval && (
+                          <span className="text-sm font-normal text-muted-foreground">
+                            /{product.interval}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 mb-6">
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-2" />
+                      Unlimited Projects
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-2" />
+                      Advanced Features
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-2" />
+                      Priority Support
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-2" />
+                      Custom Integrations
+                    </li>
+                  </ul>
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handleCheckout(product.priceId, product.mode)}
+                    disabled={checkoutLoading || !hasRequiredEnvVars}
+                  >
+                    {checkoutLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Subscribe to {product.name}
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      {/* Billing History */}
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Calendar className="h-5 w-5 mr-2" />
+            Billing History
+          </CardTitle>
+          <CardDescription>
+            View your past invoices and payments
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-muted-foreground">
+            <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>No billing history available</p>
+            <p className="text-sm">Your invoices will appear here after your first payment</p>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }

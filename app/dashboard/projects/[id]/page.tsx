@@ -37,7 +37,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { AppSidebar } from '@/components/app-sidebar';
 import { TeamManagement } from '@/components/team-management';
 import { TaskComments } from '@/components/task-comments';
 import { ActivityFeed } from '@/components/activity-feed';
@@ -386,7 +385,7 @@ export default function ProjectPage() {
   
   const router = useRouter();
   const params = useParams();
-  const projectId = params.id as string;
+  const projectId = params?.id as string;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -1025,30 +1024,24 @@ export default function ProjectPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
-        <AppSidebar user={user} onSignOut={handleSignOut} />
-        <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
+      <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="flex h-screen">
-        <AppSidebar user={user} onSignOut={handleSignOut} />
-        <div className="flex-1 overflow-auto ">
+      <div className="flex-1 overflow-auto ">
         <div className="max-w-7xl h-screen px-4 border border-border sm:px-6 lg:px-8 py-8  mx-4 my-4 rounded-xl shadow-sm bg-white dark:bg-[#0A0A0A]">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold">Project not found</h1>
-              <p className="text-muted-foreground mb-4">
-                The project you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.
-              </p>
-              <Button asChild>
-                <Link href="/dashboard">Back to Dashboard</Link>
-              </Button>
-            </div>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Project not found</h1>
+            <p className="text-muted-foreground mb-4">
+              The project you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.
+            </p>
+            <Button asChild>
+              <Link href="/dashboard">Back to Dashboard</Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -1056,154 +1049,243 @@ export default function ProjectPage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
-      <AppSidebar user={user} onSignOut={handleSignOut} />
-      <div className="flex-1 overflow-auto">
-      <div className="max-w-7xl h-screen px-4 border border-border sm:px-6 lg:px-8 py-8  mx-4 my-4 rounded-xl shadow-sm bg-white dark:bg-[#0A0A0A]">
+    <div className="">
       {/* Header */}
-          <div className="mb-8">
-            <Button variant="ghost" asChild className="mb-4">
-              <Link href="/dashboard">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Link>
-            </Button>
-            
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-xl font-semibold">{project.name}</h1>
-                {project.description && (
-                  <p className="text-muted-foreground mt-1">{project.description}</p>
-                )}
-                <p className="text-sm text-muted-foreground mt-2">
-                  Created {new Date(project.created_at).toLocaleDateString()}
-                </p>
-              </div>
+      <div className="mb-8">
+        <Button variant="ghost" asChild className="mb-4">
+          <Link href="/dashboard">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Dashboard
+          </Link>
+        </Button>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-xl font-semibold">{project.name}</h1>
+            {project.description && (
+              <p className="text-muted-foreground mt-1">{project.description}</p>
+            )}
+            <p className="text-sm text-muted-foreground mt-2">
+              Created {new Date(project.created_at).toLocaleDateString()}
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={openRenameProjectDialog}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Rename Project
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={() => setProjectDeleteDialogOpen(true)}
+                  className="text-destructive"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Project
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Dialog open={taskDialogOpen} onOpenChange={setTaskDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" disabled={columns.length === 0}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Task
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New Task</DialogTitle>
+                  <DialogDescription>
+                    Add a new task to your project board.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleCreateTask} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="column">Column *</Label>
+                    <Select value={selectedColumnId} onValueChange={setSelectedColumnId} required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a column" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {columns.map((column) => (
+                          <SelectItem key={column.id} value={column.id}>
+                            {column.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Task Title *</Label>
+                    <Input
+                      id="title"
+                      value={taskTitle}
+                      onChange={(e) => setTaskTitle(e.target.value)}
+                      placeholder="Enter task title"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={taskDescription}
+                      onChange={(e) => setTaskDescription(e.target.value)}
+                      placeholder="Enter task description (optional)"
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="priority">Priority</Label>
+                      <Select value={taskPriority} onValueChange={(value: 'low' | 'medium' | 'high') => setTaskPriority(value)}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="dueDate">Due Date</Label>
+                      <Input
+                        id="dueDate"
+                        type="date"
+                        value={taskDueDate}
+                        onChange={(e) => setTaskDueDate(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="assignedTo">Assign To</Label>
+                    <Select value={taskAssignedTo || ''} onValueChange={(value) => setTaskAssignedTo(value || undefined)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select team member (optional)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unassigned">Unassigned</SelectItem>
+                        {projectMembers.map((member) => (
+                          <SelectItem key={member.user_id} value={member.user_id}>
+                            {member.profiles.full_name || member.profiles.email}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="flex gap-3 pt-4">
+                    <Button type="submit" disabled={creating} className="flex-1">
+                      {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Create Task
+                    </Button>
+                    <Button type="button" variant="outline" onClick={() => setTaskDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content with Tabs */}
+      <Tabs defaultValue="board" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="board">Board</TabsTrigger>
+          <TabsTrigger value="team">
+            <Users className="h-4 w-4 mr-2" />
+            Team
+          </TabsTrigger>
+          <TabsTrigger value="activity">
+            <Activity className="h-4 w-4 mr-2" />
+            Activity
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="board" className="space-y-6">
+          {/* Kanban Board with Drag and Drop */}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="flex gap-6 overflow-x-auto pb-4">
+              <SortableContext items={columns.map(col => col.id)}>
+                {columns.map((column) => (
+                  <DroppableColumn
+                    key={column.id}
+                    column={column}
+                    onEdit={openEditColumnDialog}
+                    onDelete={handleDeleteColumn}
+                    onAddTask={openTaskDialog}
+                  >
+                    {column.tasks.map((task) => (
+                      <SortableTask
+                        key={task.id}
+                        task={task}
+                        onEdit={openEditTaskDialog}
+                        onDelete={handleDeleteTask}
+                        onViewComments={openCommentsDialog}
+                        projectMembers={projectMembers}
+                      />
+                    ))}
+                  </DroppableColumn>
+                ))}
+              </SortableContext>
               
-              <div className="flex items-center space-x-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={openRenameProjectDialog}>
-                      <Edit className="h-4 w-4 mr-2" />
-                      Rename Project
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={() => setProjectDeleteDialogOpen(true)}
-                      className="text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete Project
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <Dialog open={taskDialogOpen} onOpenChange={setTaskDialogOpen}>
+              {/* Add Column */}
+              <div className="flex-shrink-0 w-80">
+                <Dialog open={columnDialogOpen} onOpenChange={setColumnDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button size="sm" disabled={columns.length === 0}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Task
-                    </Button>
+                    <Card className="border-dashed cursor-pointer hover:border-primary/50 transition-colors">
+                      <CardContent className="flex items-center justify-center h-32">
+                        <Button variant="ghost" className="text-muted-foreground">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Column
+                        </Button>
+                      </CardContent>
+                    </Card>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Create New Task</DialogTitle>
+                      <DialogTitle>Create New Column</DialogTitle>
                       <DialogDescription>
-                        Add a new task to your project board.
+                        Add a new column to organize your tasks.
                       </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={handleCreateTask} className="space-y-4">
+                    <form onSubmit={handleCreateColumn} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="column">Column *</Label>
-                        <Select value={selectedColumnId} onValueChange={setSelectedColumnId} required>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a column" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {columns.map((column) => (
-                              <SelectItem key={column.id} value={column.id}>
-                                {column.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="title">Task Title *</Label>
+                        <Label htmlFor="columnName">Column Name *</Label>
                         <Input
-                          id="title"
-                          value={taskTitle}
-                          onChange={(e) => setTaskTitle(e.target.value)}
-                          placeholder="Enter task title"
+                          id="columnName"
+                          value={columnName}
+                          onChange={(e) => setColumnName(e.target.value)}
+                          placeholder="Enter column name"
                           required
                         />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
-                        <Textarea
-                          id="description"
-                          value={taskDescription}
-                          onChange={(e) => setTaskDescription(e.target.value)}
-                          placeholder="Enter task description (optional)"
-                          rows={3}
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="priority">Priority</Label>
-                          <Select value={taskPriority} onValueChange={(value: 'low' | 'medium' | 'high') => setTaskPriority(value)}>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="low">Low</SelectItem>
-                              <SelectItem value="medium">Medium</SelectItem>
-                              <SelectItem value="high">High</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="dueDate">Due Date</Label>
-                          <Input
-                            id="dueDate"
-                            type="date"
-                            value={taskDueDate}
-                            onChange={(e) => setTaskDueDate(e.target.value)}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="assignedTo">Assign To</Label>
-                        <Select value={taskAssignedTo || ''} onValueChange={(value) => setTaskAssignedTo(value || undefined)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select team member (optional)" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="unassigned">Unassigned</SelectItem>
-                            {projectMembers.map((member) => (
-                              <SelectItem key={member.user_id} value={member.user_id}>
-                                {member.profiles.full_name || member.profiles.email}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
                       </div>
                       
                       <div className="flex gap-3 pt-4">
                         <Button type="submit" disabled={creating} className="flex-1">
                           {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                          Create Task
+                          Create Column
                         </Button>
-                        <Button type="button" variant="outline" onClick={() => setTaskDialogOpen(false)}>
+                        <Button type="button" variant="outline" onClick={() => setColumnDialogOpen(false)}>
                           Cancel
                         </Button>
                       </div>
@@ -1212,367 +1294,271 @@ export default function ProjectPage() {
                 </Dialog>
               </div>
             </div>
-          </div>
 
-          {/* Main Content with Tabs */}
-          <Tabs defaultValue="board" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="board">Board</TabsTrigger>
-              <TabsTrigger value="team">
-                <Users className="h-4 w-4 mr-2" />
-                Team
-              </TabsTrigger>
-              <TabsTrigger value="activity">
-                <Activity className="h-4 w-4 mr-2" />
-                Activity
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="board" className="space-y-6">
-              {/* Kanban Board with Drag and Drop */}
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              >
-                <div className="flex gap-6 overflow-x-auto pb-4">
-                  <SortableContext items={columns.map(col => col.id)}>
-                    {columns.map((column) => (
-                      <DroppableColumn
-                        key={column.id}
-                        column={column}
-                        onEdit={openEditColumnDialog}
-                        onDelete={handleDeleteColumn}
-                        onAddTask={openTaskDialog}
-                      >
-                        {column.tasks.map((task) => (
-                          <SortableTask
-                            key={task.id}
-                            task={task}
-                            onEdit={openEditTaskDialog}
-                            onDelete={handleDeleteTask}
-                            onViewComments={openCommentsDialog}
-                            projectMembers={projectMembers}
-                          />
-                        ))}
-                      </DroppableColumn>
-                    ))}
-                  </SortableContext>
-                  
-                  {/* Add Column */}
-                  <div className="flex-shrink-0 w-80">
-                    <Dialog open={columnDialogOpen} onOpenChange={setColumnDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Card className="border-dashed cursor-pointer hover:border-primary/50 transition-colors">
-                          <CardContent className="flex items-center justify-center h-32">
-                            <Button variant="ghost" className="text-muted-foreground">
-                              <Plus className="h-4 w-4 mr-2" />
-                              Add Column
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Create New Column</DialogTitle>
-                          <DialogDescription>
-                            Add a new column to organize your tasks.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleCreateColumn} className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="columnName">Column Name *</Label>
-                            <Input
-                              id="columnName"
-                              value={columnName}
-                              onChange={(e) => setColumnName(e.target.value)}
-                              placeholder="Enter column name"
-                              required
-                            />
-                          </div>
-                          
-                          <div className="flex gap-3 pt-4">
-                            <Button type="submit" disabled={creating} className="flex-1">
-                              {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                              Create Column
-                            </Button>
-                            <Button type="button" variant="outline" onClick={() => setColumnDialogOpen(false)}>
-                              Cancel
-                            </Button>
-                          </div>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
+            {/* Drag Overlay */}
+            <DragOverlay>
+              {activeId ? (
+                <div className="opacity-90 rotate-3 scale-105">
+                  <SortableTask
+                    task={getActiveTask()!}
+                    onEdit={() => {}}
+                    onDelete={() => {}}
+                    onViewComments={() => {}}
+                    projectMembers={projectMembers}
+                  />
                 </div>
+              ) : null}
+            </DragOverlay>
+          </DndContext>
+        </TabsContent>
 
-                {/* Drag Overlay */}
-                <DragOverlay>
-                  {activeId ? (
-                    <div className="opacity-90 rotate-3 scale-105">
-                      <SortableTask
-                        task={getActiveTask()!}
-                        onEdit={() => {}}
-                        onDelete={() => {}}
-                        onViewComments={() => {}}
-                        projectMembers={projectMembers}
-                      />
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            </TabsContent>
+        <TabsContent value="team">
+          <TeamManagement 
+            projectId={projectId}
+            userSubscriptionStatus={profile?.subscription_status || 'free'}
+            isProjectOwner={isProjectOwner}
+          />
+        </TabsContent>
 
-            <TabsContent value="team">
-              <TeamManagement 
-                projectId={projectId}
-                userSubscriptionStatus={profile?.subscription_status || 'free'}
-                isProjectOwner={isProjectOwner}
+        <TabsContent value="activity">
+          <ActivityFeed projectId={projectId} />
+        </TabsContent>
+      </Tabs>
+
+      {/* Edit Task Dialog */}
+      <Dialog open={editTaskDialogOpen} onOpenChange={setEditTaskDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Task</DialogTitle>
+            <DialogDescription>
+              Update the task details.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEditTask} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="editColumn">Column *</Label>
+              <Select value={selectedColumnId} onValueChange={setSelectedColumnId} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a column" />
+                </SelectTrigger>
+                <SelectContent>
+                  {columns.map((column) => (
+                    <SelectItem key={column.id} value={column.id}>
+                      {column.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="editTitle">Task Title *</Label>
+              <Input
+                id="editTitle"
+                value={taskTitle}
+                onChange={(e) => setTaskTitle(e.target.value)}
+                placeholder="Enter task title"
+                required
               />
-            </TabsContent>
-
-            <TabsContent value="activity">
-              <ActivityFeed projectId={projectId} />
-            </TabsContent>
-          </Tabs>
-
-          {/* Edit Task Dialog */}
-          <Dialog open={editTaskDialogOpen} onOpenChange={setEditTaskDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Edit Task</DialogTitle>
-                <DialogDescription>
-                  Update the task details.
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleEditTask} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="editColumn">Column *</Label>
-                  <Select value={selectedColumnId} onValueChange={setSelectedColumnId} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a column" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {columns.map((column) => (
-                        <SelectItem key={column.id} value={column.id}>
-                          {column.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="editTitle">Task Title *</Label>
-                  <Input
-                    id="editTitle"
-                    value={taskTitle}
-                    onChange={(e) => setTaskTitle(e.target.value)}
-                    placeholder="Enter task title"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="editDescription">Description</Label>
-                  <Textarea
-                    id="editDescription"
-                    value={taskDescription}
-                    onChange={(e) => setTaskDescription(e.target.value)}
-                    placeholder="Enter task description (optional)"
-                    rows={3}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="editPriority">Priority</Label>
-                    <Select value={taskPriority} onValueChange={(value: 'low' | 'medium' | 'high') => setTaskPriority(value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="editDueDate">Due Date</Label>
-                    <Input
-                      id="editDueDate"
-                      type="date"
-                      value={taskDueDate}
-                      onChange={(e) => setTaskDueDate(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="editAssignedTo">Assign To</Label>
-                  <Select value={taskAssignedTo || ''} onValueChange={(value) => setTaskAssignedTo(value || undefined)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select team member (optional)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unassigned">Unassigned</SelectItem>
-                      {projectMembers.map((member) => (
-                        <SelectItem key={member.user_id} value={member.user_id}>
-                          {member.profiles.full_name || member.profiles.email}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="flex gap-3 pt-4">
-                  <Button type="submit" disabled={creating} className="flex-1">
-                    {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Update Task
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setEditTaskDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          {/* Edit Column Dialog */}
-          <Dialog open={editColumnDialogOpen} onOpenChange={setEditColumnDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Rename Column</DialogTitle>
-                <DialogDescription>
-                  Change the name of this column.
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleEditColumn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="editColumnName">Column Name *</Label>
-                  <Input
-                    id="editColumnName"
-                    value={columnName}
-                    onChange={(e) => setColumnName(e.target.value)}
-                    placeholder="Enter column name"
-                    required
-                  />
-                </div>
-                
-                <div className="flex gap-3 pt-4">
-                  <Button type="submit" disabled={creating} className="flex-1">
-                    {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Rename Column
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setEditColumnDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          {/* Task Comments Dialog */}
-          <Dialog open={commentsDialogOpen} onOpenChange={setCommentsDialogOpen}>
-            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="flex items-center">
-                  <MessageSquare className="h-5 w-5 mr-2" />
-                  {selectedTask?.title}
-                </DialogTitle>
-                <DialogDescription>
-                  Task comments and discussion
-                </DialogDescription>
-              </DialogHeader>
-              {selectedTask && (
-                <TaskComments 
-                  taskId={selectedTask.id} 
-                  currentUserId={user!.id}
-                />
-              )}
-            </DialogContent>
-          </Dialog>
-
-          {/* Rename Project Dialog */}
-          <Dialog open={projectRenameDialogOpen} onOpenChange={setProjectRenameDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Rename Project</DialogTitle>
-                <DialogDescription>
-                  Update the project name and description.
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleRenameProject} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="projectName">Project Name *</Label>
-                  <Input
-                    id="projectName"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    placeholder="Enter project name"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="projectDescription">Description</Label>
-                  <Textarea
-                    id="projectDescription"
-                    value={projectDescription}
-                    onChange={(e) => setProjectDescription(e.target.value)}
-                    placeholder="Enter project description (optional)"
-                    rows={3}
-                  />
-                </div>
-                
-                <div className="flex gap-3 pt-4">
-                  <Button type="submit" disabled={creating} className="flex-1">
-                    {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Update Project
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setProjectRenameDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          {/* Delete Project Dialog */}
-          <Dialog open={projectDeleteDialogOpen} onOpenChange={setProjectDeleteDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Delete Project</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this project? This action cannot be undone and will permanently remove all tasks, columns, and team members.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex gap-3 pt-4">
-                <Button 
-                  variant="destructive" 
-                  onClick={handleDeleteProject}
-                  disabled={deletingProject}
-                  className="flex-1"
-                >
-                  {deletingProject && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Delete Project
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setProjectDeleteDialogOpen(false)}
-                  disabled={deletingProject}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="editDescription">Description</Label>
+              <Textarea
+                id="editDescription"
+                value={taskDescription}
+                onChange={(e) => setTaskDescription(e.target.value)}
+                placeholder="Enter task description (optional)"
+                rows={3}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="editPriority">Priority</Label>
+                <Select value={taskPriority} onValueChange={(value: 'low' | 'medium' | 'high') => setTaskPriority(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="editDueDate">Due Date</Label>
+                <Input
+                  id="editDueDate"
+                  type="date"
+                  value={taskDueDate}
+                  onChange={(e) => setTaskDueDate(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="editAssignedTo">Assign To</Label>
+              <Select value={taskAssignedTo || ''} onValueChange={(value) => setTaskAssignedTo(value || undefined)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select team member (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unassigned">Unassigned</SelectItem>
+                  {projectMembers.map((member) => (
+                    <SelectItem key={member.user_id} value={member.user_id}>
+                      {member.profiles.full_name || member.profiles.email}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <Button type="submit" disabled={creating} className="flex-1">
+                {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Update Task
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setEditTaskDialogOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Column Dialog */}
+      <Dialog open={editColumnDialogOpen} onOpenChange={setEditColumnDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename Column</DialogTitle>
+            <DialogDescription>
+              Change the name of this column.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEditColumn} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="editColumnName">Column Name *</Label>
+              <Input
+                id="editColumnName"
+                value={columnName}
+                onChange={(e) => setColumnName(e.target.value)}
+                placeholder="Enter column name"
+                required
+              />
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <Button type="submit" disabled={creating} className="flex-1">
+                {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Rename Column
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setEditColumnDialogOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Task Comments Dialog */}
+      <Dialog open={commentsDialogOpen} onOpenChange={setCommentsDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <MessageSquare className="h-5 w-5 mr-2" />
+              {selectedTask?.title}
+            </DialogTitle>
+            <DialogDescription>
+              Task comments and discussion
+            </DialogDescription>
+          </DialogHeader>
+          {selectedTask && (
+            <TaskComments 
+              taskId={selectedTask.id} 
+              currentUserId={user!.id}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Rename Project Dialog */}
+      <Dialog open={projectRenameDialogOpen} onOpenChange={setProjectRenameDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename Project</DialogTitle>
+            <DialogDescription>
+              Update the project name and description.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleRenameProject} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="projectName">Project Name *</Label>
+              <Input
+                id="projectName"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="Enter project name"
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="projectDescription">Description</Label>
+              <Textarea
+                id="projectDescription"
+                value={projectDescription}
+                onChange={(e) => setProjectDescription(e.target.value)}
+                placeholder="Enter project description (optional)"
+                rows={3}
+              />
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <Button type="submit" disabled={creating} className="flex-1">
+                {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Update Project
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setProjectRenameDialogOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Project Dialog */}
+      <Dialog open={projectDeleteDialogOpen} onOpenChange={setProjectDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Project</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this project? This action cannot be undone and will permanently remove all tasks, columns, and team members.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 pt-4">
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteProject}
+              disabled={deletingProject}
+              className="flex-1"
+            >
+              {deletingProject && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Delete Project
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setProjectDeleteDialogOpen(false)}
+              disabled={deletingProject}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
