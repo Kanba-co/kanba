@@ -179,10 +179,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#fafafa] dark:bg-[#171717]">
+    <div className="flex h-screen bg-[#fafafa]  dark:bg-[#171717]">
       <AppSidebar user={user} onSignOut={handleSignOut} />
       <div className="flex-1 overflow-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
+        <div className="max-w-7xl px-4 border border-border sm:px-6 lg:px-8 py-8  mx-4 my-4 rounded-xl shadow-sm bg-white dark:bg-[#0A0A0A]">
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div>
@@ -272,6 +272,7 @@ export default function DashboardPage() {
                 <Button 
                   onClick={() => router.push('/dashboard/projects/new')}
                   disabled={!canCreateProject()}
+                  size="sm"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   New Project
@@ -297,7 +298,7 @@ export default function DashboardPage() {
                     <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <CardTitle className="mb-2">No projects yet</CardTitle>
                     <CardDescription className="mb-4">
-                      Create your first project to get started with Klik
+                      Create your first project to get started with Kanba
                     </CardDescription>
                     <Button onClick={() => router.push('/dashboard/projects/new')}>
                       <Plus className="h-4 w-4 mr-2" />

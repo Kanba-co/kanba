@@ -156,7 +156,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
             <div className=" p-1 border rounded-lg  mr-1">
               <KanbanIcon className="h-5 w-5 text-[#0A0A0A] dark:text-white" />
             </div>
-            {!isCollapsed && <span className="text-lg font-semibold">Klik</span>}
+            {!isCollapsed && <span className="text-lg">Kanba</span>}
           </div>
           </Link>
           <Button
@@ -235,7 +235,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
               </div>
               {!isCollapsed && (
                 <div className="flex items-center">
-                  <Badge variant="secondary" className="h-5 w-5 p-1 text-xs items-center justify-center mr-2">
+                  <Badge variant="secondary" className="h-5 w-5 p-1 text-sm items-center justify-center mr-2">
                     {loadingProjects ? '...' : projects.length}
                   </Badge>
                   {isProjectsOpen ? (
@@ -251,9 +251,9 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
             {!isCollapsed && isProjectsOpen && (
               <div className="ml-4 space-y-1">
                 {loadingProjects ? (
-                  <div className="px-2 py-1 text-xs text-muted-foreground">Loading...</div>
+                  <div className="px-2 py-1 text-sm text-muted-foreground">Loading...</div>
                 ) : projects.length === 0 ? (
-                  <div className="px-2 py-1 text-xs text-muted-foreground">
+                  <div className="px-2 py-1 text-sm text-muted-foreground">
                     No projects yet. Create your first project!
                   </div>
                 ) : (
@@ -261,7 +261,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
                     <Button
                       key={project.id}
                       variant={pathname === `/dashboard/projects/${project.id}` ? "secondary" : "ghost"}
-                      className="w-full justify-start px-2 h-8 text-xs"
+                      className="w-full justify-start px-2 h-8 text-sm"
                       onClick={() => router.push(`/dashboard/projects/${project.id}`)}
                     >
                       <FolderOpenIcon className="h-4 w-4 mr-2" />
@@ -271,7 +271,7 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
                 )}
                 <Button
                   variant="ghost"
-                  className="w-full justify-start px-2 h-8 text-xs text-muted-foreground hover:text-foreground"
+                  className="w-full justify-start px-2 h-8 text-sm text-muted-foreground hover:text-foreground"
                   onClick={() => router.push('/dashboard/projects/new')}
                 >
                   <PlusCircleIcon className="h-3 w-3 mr-2" />
@@ -330,8 +330,8 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-medium">{userData.name}</div>
-                    <div className="text-xs text-muted-foreground">{userData.email}</div>
+                    <div className="">{userData.name}</div>
+                    <div className="text-sm text-muted-foreground">{userData.email}</div>
                   </div>
                 </div>
               </DropdownMenuLabel>
@@ -380,8 +380,8 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 text-left">
-                  <div className="font-medium text-sm">{userData.name}</div>
-                  <div className="text-xs text-muted-foreground">{userData.email}</div>
+                  <div className=" text-sm">{userData.name}</div>
+                  <div className="text-sm text-muted-foreground">{userData.email}</div>
                 </div>
               </Button>
             </DropdownMenuTrigger>
@@ -395,8 +395,8 @@ export function AppSidebar({ user, onSignOut }: AppSidebarProps) {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-medium">{userData.name}</div>
-                    <div className="text-xs text-muted-foreground">{userData.email}</div>
+                    <div className="">{userData.name}</div>
+                    <div className="text-sm text-muted-foreground">{userData.email}</div>
                   </div>
                 </div>
               </DropdownMenuLabel>

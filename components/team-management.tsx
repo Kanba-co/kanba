@@ -239,7 +239,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
         if (userError.code === 'PGRST116') {
           // No user found
           toast.error(
-            `No user found with email "${inviteEmail}". They need to create a Klik account first.`,
+            `No user found with email "${inviteEmail}". They need to create a Kanba account first.`,
             {
               description: 'Ask them to sign up at your app URL, then try adding them again.',
               duration: 6000,
@@ -415,7 +415,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
                   <DialogHeader>
                     <DialogTitle>Invite Team Member</DialogTitle>
                     <DialogDescription>
-                      Search for existing Klik users by email to add them to your project.
+                      Search for existing Kanba users by email to add them to your project.
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleInviteMember} className="space-y-4">
@@ -488,7 +488,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
                             <div>
                               <p className="text-sm font-medium">No users found</p>
                               <p className="text-xs">
-                                The person needs to create a Klik account first.
+                                The person needs to create a Kanba account first.
                               </p>
                             </div>
                           </div>
@@ -496,7 +496,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
                       )}
 
                       <p className="text-xs text-muted-foreground">
-                        Only users who already have Klik accounts can be added to projects.
+                        Only users who already have Kanba accounts can be added to projects.
                       </p>
                     </div>
                     

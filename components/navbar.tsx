@@ -46,7 +46,7 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
           <div className=" p-1 border rounded-lg  mr-1">
               <KanbanIcon className="h-5 w-5 text-[#0A0A0A] dark:text-white" />
             </div>
-            <span className="text-lg font-semibold">Klik</span>
+            <span className="text-lg">Kanba</span>
           </Link>
 
           <div className="flex items-center space-x-4">

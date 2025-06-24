@@ -1,5 +1,5 @@
 /*
-  # Initial Schema Setup for Klik
+  # Initial Schema Setup for Kanba
 
   1. New Tables
     - `profiles`

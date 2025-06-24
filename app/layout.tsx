@@ -8,7 +8,7 @@ import { UserProvider } from '@/components/user-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Klik - Project Management Tool',
+  title: 'Kanba - Project Management Tool',
   description: 'A beautiful Kanban-style project management tool with Supabase and Stripe integration',
 };
 

@@ -54,7 +54,7 @@ export default function Home() {
             <span className="text-primary block">Beautiful Kanban Boards</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Klik is a modern project management tool that helps teams visualize work, 
+            Kanba is a modern project management tool that helps teams visualize work, 
             limit work-in-progress, and maximize efficiency with elegant Kanban boards.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -174,7 +174,7 @@ export default function Home() {
             <Card className="relative">
               <CardHeader>
                 <CardTitle className="text-2xl">Free</CardTitle>
-                <CardDescription>Perfect for trying out Klik</CardDescription>
+                <CardDescription>Perfect for trying out Kanba</CardDescription>
                 <div className="text-xl font-semibold">$0<span className="text-sm font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
               <CardContent>
@@ -250,7 +250,7 @@ export default function Home() {
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <Kanban className="h-6 w-6 text-primary" />
-                <span className="font-bold">Klik</span>
+                <span className="font-bold">Kanba</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 The modern way to manage your projects with beautiful Kanban boards.
@@ -286,7 +286,7 @@ export default function Home() {
           </div>
           
           <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 Klik. All rights reserved.</p>
+            <p>&copy; 2024 Kanba. All rights reserved.</p>
           </div>
         </div>
       </footer>
