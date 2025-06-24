@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -42,11 +43,10 @@ export default function SuccessPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
+     
+        <div className="flex items-center justify-center min-h-screen w-full">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      
       </div>
     );
   }

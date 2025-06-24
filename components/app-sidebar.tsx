@@ -152,14 +152,20 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
       {/* Menü */}
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Menü</SidebarGroupLabel>
+          <div className="flex flex-row items-center justify-between py-2 gap-x-2">
+            <Button size="xs" variant="secondary" className="flex w-full gap-2 justify-start bg-primary text-secondary hover:bg-primary/80" onClick={handleQuickCreate}>
+              <PlusCircleIcon className="h-4 w-4" />
+              <span className="text-xs">Yeni Proje</span>
+            </Button>
+            {user?.id && <Notifications userId={user.id} />}
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link href={item.url}>
-                      <item.icon className="w-4 h-4 mr-2" />
+                      <item.icon className="w-4 h-4" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -173,7 +179,7 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
       <SidebarFooter>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full flex items-center gap-3 p-2">
+            <Button variant="ghost" className="w-full flex items-center gap-3 px-2 py-6">
               <Avatar className="h-9 w-9">
                 {userData.avatar ? (
                   <AvatarImage src={userData.avatar} alt={userData.name} />

@@ -1024,7 +1024,7 @@ export default function ProjectPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center  mx-2 my-2 rounded-2xl bg-white dark:bg-[#0A0A0A]">
+      <div className="flex items-center justify-center min-h-screen w-full">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
