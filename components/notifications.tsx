@@ -180,7 +180,7 @@ export function Notifications({ userId }: NotificationsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-          <Button  size="xs" className="relative border-1 border-border bg-primary text-secondary hover:bg-primary/80">
+          <Button  size="xs" className="relative border-1 border-border bg-muted-foreground text-secondary hover:bg-primary/80">
           {unreadCount > 0 ? (
             <BellRing className="h-4 w-4" />
           ) : (

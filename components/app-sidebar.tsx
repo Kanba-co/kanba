@@ -156,7 +156,7 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
       <SidebarContent>
         <SidebarGroup>
           <div className="flex flex-row items-center justify-between py-2 gap-x-2">
-            <Button size="xs" variant="secondary" className="flex w-full gap-2 justify-start bg-primary text-secondary hover:bg-primary/80" onClick={handleQuickCreate}>
+            <Button size="xs" variant="secondary" className="flex w-full gap-2 justify-start bg-muted-foreground text-secondary hover:bg-primary/80" onClick={handleQuickCreate}>
               <PlusCircleIcon className="h-4 w-4" />
               <span className="text-xs">New Project</span>
             </Button>
@@ -170,7 +170,7 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         isActive={pathname?.startsWith("/dashboard/projects") || false}
-                        className="font-semibold"
+                        
                       >
                         <FolderIcon className="h-4 w-4" />
                         <span>{item.title}</span>
