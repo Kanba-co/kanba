@@ -212,6 +212,7 @@ export default function BillingPage() {
 
   return (
     <>
+    <div className="">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-xl font-semibold">Billing & Subscription</h1>
@@ -377,6 +378,7 @@ export default function BillingPage() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </>
   );
 }

@@ -138,14 +138,10 @@ export default function NewProjectPage() {
 
   return (
     <>
+    <div className="sm:mx-60">
       {/* Header */}
-      <div className="mb-8">
-        <Button variant="ghost" asChild className="mb-4">
-          <Link href="/dashboard">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Link>
-        </Button>
+      <div className="mb-8 ">
+        
         <h1 className="text-xl font-semibold">Create New Project</h1>
         <p className="text-muted-foreground">
           Set up a new Kanban project to organize your work
@@ -210,6 +206,7 @@ export default function NewProjectPage() {
           </form>
         </CardContent>
       </Card>
+      </div>
     </>
   );
 }

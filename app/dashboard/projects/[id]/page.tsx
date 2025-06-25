@@ -1052,12 +1052,7 @@ export default function ProjectPage() {
     <div className="">
       {/* Header */}
       <div className="mb-8">
-        <Button variant="ghost" asChild className="mb-4">
-          <Link href="/dashboard">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Link>
-        </Button>
+       
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-xl font-semibold">{project.name}</h1>

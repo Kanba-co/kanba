@@ -2,6 +2,7 @@
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { useUser } from '@/components/user-provider';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardLayout({
   children,
@@ -9,6 +10,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { user, signOut } = useUser();
+  const router = useRouter();
+  const handleSignOut = () => {
+    router.push('/');
+    signOut();
+  };
 
   if (!user) {
     return (
@@ -21,7 +27,7 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <div className="flex w-full min-h-screen">
-        <AppSidebar onSignOut={signOut} />
+        <AppSidebar onSignOut={handleSignOut} />
         <main className="flex-1 p-2 flex justify-center items-start  overflow-auto">
           <div className="w-full  border border-border shadow-sm dark:shadow:sm rounded-xl h-full px-4 py-4 bg-white dark:bg-[#0A0A0A]">
             <SidebarTrigger />
@@ -31,4 +37,4 @@ export default function DashboardLayout({
       </div>
     </SidebarProvider>
   );
-} 
+}
