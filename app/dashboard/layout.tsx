@@ -23,7 +23,7 @@ export default function DashboardLayout({
       <div className="flex w-full min-h-screen">
         <AppSidebar onSignOut={signOut} />
         <main className="flex-1 p-2 flex justify-center items-start  overflow-auto">
-          <div className="w-full min-h-screen border border-border shadow-sm dark:shadow:sm rounded-xl h-full px-4 py-4 bg-white dark:bg-[#0A0A0A]">
+          <div className="w-full  border border-border shadow-sm dark:shadow:sm rounded-xl h-full px-4 py-4 bg-white dark:bg-red-500">
             <SidebarTrigger />
             {children}
           </div>
