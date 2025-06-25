@@ -398,10 +398,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
           </div>
           <div className="flex items-center gap-2">
             {/* Debug button - remove in production */}
-            <Button variant="outline" size="sm" onClick={debugUserSearch}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Debug Search
-            </Button>
+            
             
             {isProjectOwner && userSubscriptionStatus === 'pro' && (
               <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
