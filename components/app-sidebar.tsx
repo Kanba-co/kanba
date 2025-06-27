@@ -34,6 +34,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import Image from "next/image"
 import {
   Avatar,
   AvatarFallback,
@@ -150,7 +151,17 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
     <Sidebar>
       {/* Üst kısım (Logo veya başlık) */}
       <SidebarHeader>
-        <div className="font-bold text-lg">Kanba</div>
+        <div className="flex items-center gap-x-2">
+          <Link href="/" className="flex items-center">
+      <Image 
+                  src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+                  width={40} 
+                  height={40} 
+                  alt="Kanba Logo" 
+                />
+                <span className="text-lg">Kanba</span>
+                </Link>
+                </div>
       </SidebarHeader>
       {/* Menü */}
       <SidebarContent>

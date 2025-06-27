@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import React from 'react';
@@ -8,6 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/navbar';
 import { GitStarButton } from '@/src/components/eldoraui/gitstarbutton';
+import { useTheme } from 'next-themes';
+
+import Image from 'next/image';
 import { useUser } from '@/components/user-provider';
 import { 
   Kanban, 
@@ -16,12 +20,17 @@ import {
   Shield, 
   ArrowRight,
   Check,
-  Star
+  Star,
+  Crown,
+  TabletSmartphone
 } from 'lucide-react';
+import { ShineBorder } from '@/src/components/magicui/shine-border';
+import { TextReveal } from '@/src/components/magicui/text-reveal';
 
 export default function Home() {
   const { user, loading, signOut } = useUser();
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
 
   const handleSignOut = async () => {
     await signOut(); 
@@ -54,9 +63,9 @@ export default function Home() {
             <span className="bg-gradient-to-r from-pink-600 via-blue-500 to-yellow-400 text-transparent bg-clip-text block p-2">Reimagined for Builders.</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-          Cut the noise, focus on what matters: your projects. The project management tool indie hackers deserve. Simple, powerful, and proudly open-source.
+          The project management tool indie hackers deserve. Simple, powerful, and proudly open-source.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex sm:flex-row gap-4 justify-center">
             {user ? (
               <Button size="lg" asChild>
                 <Link href="/dashboard">
@@ -79,91 +88,131 @@ export default function Home() {
         </div>
       </section>
 
+      <div className="py-10 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+      <div className="">
+
+           <Image src={theme === 'dark' ? '/dark-hero.png' : '/light-hero.png'} alt="hero" width={1000} height={500} 
+           className='rounded-xl border-2 border-secondary p-2'
+           />
+           </div>
+      </div>
+
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-xl font-semibold mb-4">Everything you need to manage projects</h2>
-            <p className="text-xl text-muted-foreground">
-              Powerful features to help you stay organized and productive.
+            <h2 className="text-5xl text-primary">Everything You Need to</h2>
+            <p className="text-5xl text-gray-500">
+            Stay Organized and Productive
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <Card className="relative overflow-hidden">
+            <ShineBorder shineColor={theme === "dark" ? "white" : "black"}  />
+
               <CardHeader>
-                <Kanban className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Kanban Boards</CardTitle>
-                <CardDescription>
+                <div className="flex items-center justify-start mb-2">
+                <Kanban className="h-6 w-6 text-primary mr-2" />
+                <span className="text-primary text-sm font-semibold">Kanban Boards</span>
+                </div>
+                <span className="text-xs text-primary">
                   Visualize your workflow with customizable Kanban boards. Drag and drop tasks between columns.
-                </CardDescription>
+                </span>
               </CardHeader>
             </Card>
-            
+
             <Card className="relative overflow-hidden">
+            <ShineBorder shineColor={theme === "dark" ? "white" : "black"}  />
+
               <CardHeader>
-                <Zap className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Lightning Fast</CardTitle>
-                <CardDescription>
-                  Built with modern technologies for blazing fast performance and real-time updates.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            
-            <Card className="relative overflow-hidden">
-              <CardHeader>
-                <Users className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Team Collaboration</CardTitle>
-                <CardDescription>
-                  Invite team members, assign tasks, and collaborate seamlessly in real-time.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            
-            <Card className="relative overflow-hidden">
-              <CardHeader>
-                <Shield className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Secure & Reliable</CardTitle>
-                <CardDescription>
-                  Your data is protected with enterprise-grade security and backed up automatically.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            
-            <Card className="relative overflow-hidden">
-              <CardHeader>
-                <div className="h-12 w-12 bg-primary rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-primary-foreground font-bold">∞</span>
+                <div className="flex items-center justify-start mb-2">
+                <Zap className="h-6 w-6 text-primary mr-2" />
+                <span className="text-primary text-sm font-semibold">Lightning Fast</span>
                 </div>
-                <CardTitle>Unlimited Projects</CardTitle>
-                <CardDescription>
-                  Pro plan includes unlimited projects, advanced features, and priority support.
-                </CardDescription>
+                <span className="text-xs text-primary">
+                Built with modern technologies for blazing fast performance and real-time updates.
+                </span>
+              </CardHeader>
+            </Card>
+
+            <Card className="relative overflow-hidden">
+            <ShineBorder shineColor={theme === "dark" ? "white" : "black"}  />
+
+              <CardHeader>
+                <div className="flex items-center justify-start mb-2">
+                <Users className="h-6 w-6 text-primary mr-2" />
+                <span className="text-primary text-sm font-semibold">Team Collaboration</span>
+                </div>
+                <span className="text-xs text-primary">
+                Invite team members, assign tasks, and collaborate seamlessly in real-time.
+                </span>
+              </CardHeader>
+            </Card>
+            
+            
+            <Card className="relative overflow-hidden">
+            <ShineBorder shineColor={theme === "dark" ? "white" : "black"}  />
+
+              <CardHeader>
+                <div className="flex items-center justify-start mb-2">
+                <Shield className="h-6 w-6 text-primary mr-2" />
+                <span className="text-primary text-sm font-semibold">Secure & Reliable</span>
+                </div>
+                <span className="text-xs text-primary">
+                Your data is protected with enterprise-grade security and backed up automatically.
+                </span>
+              </CardHeader>
+            </Card>
+            
+            
+            <Card className="relative overflow-hidden">
+            <ShineBorder shineColor={theme === "dark" ? "white" : "black"}  />
+
+              <CardHeader>
+                <div className="flex items-center justify-start mb-2">
+                <Crown className="h-6 w-6 text-primary mr-2" />
+                <span className="text-primary text-sm font-semibold">Unlimited Projects</span>
+                </div>
+                <span className="text-xs text-primary">
+                Pro plan includes unlimited projects, advanced features, and priority support.
+                </span>
               </CardHeader>
             </Card>
             
             <Card className="relative overflow-hidden">
+            <ShineBorder shineColor={theme === "dark" ? "white" : "black"}  />
+
               <CardHeader>
-                <div className="h-12 w-12 bg-primary rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-primary-foreground font-bold">📱</span>
+                <div className="flex items-center justify-start mb-2">
+                <TabletSmartphone className="h-6 w-6 text-primary mr-2" />
+                <span className="text-primary text-sm font-semibold">Mobile Responsive</span>
                 </div>
-                <CardTitle>Mobile Responsive</CardTitle>
-                <CardDescription>
-                  Access your projects from anywhere with our fully responsive design.
-                </CardDescription>
+                <span className="text-xs text-primary">
+                Access your projects from anywhere with our fully responsive design.
+                </span>
               </CardHeader>
             </Card>
+         
+           
           </div>
         </div>
       </section>
 
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+       <TextReveal>
+       Kanba is an open-source Trello alternative for makers and teams. Cut the noise, focus on what matters. Not trying to replace Trello, just doing kanban simple and right.
+         </TextReveal>
+      </section>
+
+
       {/* Pricing Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-xl font-semibold mb-4">Simple, transparent pricing</h2>
-            <p className="text-xl text-muted-foreground">
-              Choose the plan that&apos;s right for you.
+        <div className="text-center mb-16">
+            <h2 className="text-5xl text-primary">Simple, transparent pricing</h2>
+            <p className="text-5xl text-gray-500">
+            Choose the plan that's right for you
             </p>
           </div>
           
