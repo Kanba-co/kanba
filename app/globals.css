@@ -88,6 +88,8 @@
   }
   .theme {
     --animate-shine: shine var(--duration) infinite linear;
+    --animate-shiny-text: shiny-text 8s infinite;
+    --animate-gradient: gradient 8s linear infinite;
   }
 }
 
@@ -129,6 +131,19 @@
     }
   to {
     background-position: 0% 0%;
+    }
+  }
+  @keyframes shiny-text {
+  0%, 90%, 100% {
+    background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+  30%, 60% {
+    background-position: calc(100% + var(--shiny-width)) 0;
+    }
+  }
+  @keyframes gradient {
+  to {
+    background-position: var(--bg-size, 300%) 0;
     }
   }
 }

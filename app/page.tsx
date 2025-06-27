@@ -50,12 +50,11 @@ export default function Home() {
         <GitStarButton />
         </div>
           <h1 className="text-4xl sm:text-6xl tracking-tight mb-6">
-          Project management
-            <span className="text-primary block">Reimagined for builders.</span>
+          Project Management
+            <span className="bg-gradient-to-r from-pink-600 via-blue-500 to-yellow-400 text-transparent bg-clip-text block p-2">Reimagined for Builders.</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Kanba is a modern project management tool that helps teams visualize work, 
-            limit work-in-progress, and maximize efficiency with elegant Kanban boards.
+          Cut the noise, focus on what matters: your projects. The project management tool indie hackers deserve. Simple, powerful, and proudly open-source.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {user ? (

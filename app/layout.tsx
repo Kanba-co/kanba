@@ -11,6 +11,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Kanba - Project Management Tool',
   description: 'A beautiful Kanban-style project management tool with Supabase and Stripe integration',
+  viewport: 'width=device-width, initial-scale=1',
 };
 
 export default function RootLayout({

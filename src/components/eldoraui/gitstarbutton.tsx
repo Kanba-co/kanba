@@ -4,7 +4,7 @@ export function GitStarButton() {
   return (
     <a
       className="group relative flex h-9 max-w-52 items-center justify-center gap-2 overflow-hidden whitespace-pre rounded-xl bg-zinc-800 px-4 py-2 text-sm font-medium text-white shadow transition-all duration-300 ease-out hover:bg-black/90 hover:ring-2 hover:ring-black hover:ring-offset-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 md:flex"
-      href="#"
+      href="https://github.com/Uaghazade1/kanba"
     >
       <span className="absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 bg-white opacity-10 transition-all duration-1000 ease-out group-hover:-translate-x-40"></span>
       <div className="flex items-center">
@@ -28,9 +28,9 @@ export function GitStarButton() {
             clipRule="evenodd"
           ></path>
         </svg>
-        <span className="font-display inline-block font-medium tabular-nums tracking-wider text-white">
+        {/* <span className="font-display inline-block font-medium tabular-nums tracking-wider text-white">
           1.6k
-        </span>
+        </span> */}
       </div>
     </a>
   );

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Image from 'next/image';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,19 +45,23 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
         <div className="flex justify-between items-center h-14 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-x-6">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="p-1 border rounded-lg mr-1">
-                <KanbanIcon className="h-5 w-5 text-[#0A0A0A] dark:text-white" />
+              <div className="">
+                <Image 
+                  src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+                  width={40} 
+                  height={40} 
+                  alt="Kanba Logo" 
+                />
               </div>
-              <span className="text-lg">Kanba</span>
             </Link>
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <div className="hidden md:flex items-center  space-x-6">
+              <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 Privacy
               </Link>
-              <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 Terms
               </Link>
-              <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/pricing" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 Pricing
               </Link>
             </div>
@@ -124,11 +129,9 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
               </>
             ) : (
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" asChild>
-                  <Link href="/login">Sign In</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/signup">Sign Up</Link>
+                
+                <Button asChild size="xs">
+                  <Link href="/signup">Get Started</Link>
                 </Button>
               </div>
             )}
