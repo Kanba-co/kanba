@@ -39,11 +39,11 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
   const { theme, setTheme } = useTheme();
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <div className="sticky top-4 z-50 px-4">
+      <nav className="max-w-5xl mx-auto rounded-full border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex justify-between items-center h-14 px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center space-x-2">
-          <div className=" p-1 border rounded-lg  mr-1">
+            <div className="p-1 border rounded-lg mr-1">
               <KanbanIcon className="h-5 w-5 text-[#0A0A0A] dark:text-white" />
             </div>
             <span className="text-lg">Kanba</span>
@@ -121,7 +121,7 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
             )}
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }
