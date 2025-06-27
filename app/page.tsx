@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/navbar';
 import { GitStarButton } from '@/src/components/eldoraui/gitstarbutton';
 import { useTheme } from 'next-themes';
-
+import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useUser } from '@/components/user-provider';
 import { 
@@ -347,14 +347,44 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="">
+      <div className="relative flex h-[30rem] w-full flex-col items-center justify-center bg-[#f7f8f9] dark:bg-[#1d1d1f]">
+      <div
+        className={cn(
+          "absolute inset-0",
+          "[background-size:20px_20px]",
+          "[background-image:linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]",
+          "dark:[background-image:linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]",
+        )}
+      />
+      {/* Radial gradient for the container to give a faded look */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#f7f8f9] [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-[#1d1d1f]"></div>
+      <p className="relative z-20 text-center bg-gradient-to-b from-neutral-200 to-neutral-500 bg-clip-text py-8 text-4xl font-bold text-transparent sm:text-7xl">
+      Ready to organize your work better?
+      </p>
+      <div className="mt-6 z-[50] relative">
+  <Button size="lg" className="px-6 py-3 text-base" asChild>
+    <Link href="/signup">Get Started</Link>
+  </Button>
+</div>
+
+    </div>
+      </section>
+
+
       {/* Footer */}
-      <footer className="border-t py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="border-t py-12 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Kanban className="h-6 w-6 text-primary" />
-                <span className="font-bold">Kanba</span>
+              <Image 
+                  src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+                  width={40} 
+                  height={40} 
+                  alt="Kanba Logo" 
+                />
+                <span className="">Kanba</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 The modern way to manage your projects with beautiful Kanban boards.
