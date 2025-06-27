@@ -22,7 +22,8 @@ import {
   Check,
   Star,
   Crown,
-  TabletSmartphone
+  TabletSmartphone,
+  GithubIcon
 } from 'lucide-react';
 import { ShineBorder } from '@/src/components/magicui/shine-border';
 import { TextReveal } from '@/src/components/magicui/text-reveal';
@@ -207,23 +208,23 @@ export default function Home() {
 
 
       {/* Pricing Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-            <h2 className="text-5xl text-primary">Simple, transparent pricing</h2>
+            <h2 className="text-5xl text-primary">Simple, Transparent Pricing</h2>
             <p className="text-5xl text-gray-500">
             Choose the plan that's right for you
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="relative">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <Card className="relative flex flex-col">
               <CardHeader>
                 <CardTitle className="text-2xl">Free</CardTitle>
-                <CardDescription>Perfect for trying out Kanba</CardDescription>
+                <CardDescription>Perfect for personal use</CardDescription>
                 <div className="text-xl font-semibold">$0<span className="text-sm font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-grow">
                 <ul className="space-y-2 mb-6">
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-green-500 mr-2" />
@@ -235,31 +236,29 @@ export default function Home() {
                   </li>
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-green-500 mr-2" />
-                    Basic Features
+                    All Core Features
                   </li>
-                  <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
-                    Community Support
-                  </li>
+                  
                 </ul>
+              </CardContent>
+              <div className="p-6 pt-0 mt-auto">
                 <Button className="w-full" variant="outline" asChild>
                   <Link href={user ? "/dashboard" : "/signup"}>
                     {user ? "Go to Dashboard" : "Get Started"}
                   </Link>
                 </Button>
-              </CardContent>
+              </div>
             </Card>
             
-            <Card className="relative border-primary">
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
-              </div>
+            <Card className="relative border-primary border-2 flex flex-col ">
+            <div className="absolute inset-0 dark:bg-[url('/topography.svg')] bg-[url('/topography-white.svg')]  opacity-10 dark:opacity-50 mix-blend-overlay pointer-events-none z-0" />
+
               <CardHeader>
                 <CardTitle className="text-2xl">Pro</CardTitle>
                 <CardDescription>For teams and power users</CardDescription>
                 <div className="text-xl font-semibold">$9<span className="text-sm font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-grow">
                 <ul className="space-y-2 mb-6">
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-green-500 mr-2" />
@@ -267,23 +266,82 @@ export default function Home() {
                   </li>
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Unlimited Tasks
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    All Core Features           
+                    </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
                     Advanced Features
                   </li>
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-green-500 mr-2" />
-                    Priority Support
+                    Team Management
                   </li>
                   <li className="flex items-center">
-                    <Check className="h-4 w-4 text-green-500 mr-2" />
-                    Custom Integrations
+                    <Check className="h-4 w-4 text-gray-500 mr-2" />
+                    Custom Integrations (soon)
                   </li>
                 </ul>
+              </CardContent>
+              <div className="p-6 pt-0 mt-auto">
                 <Button className="w-full" asChild>
                   <Link href={user ? "/dashboard/billing" : "/signup"}>
                     {user ? "Upgrade to Pro" : "Upgrade to Pro"}
                   </Link>
                 </Button>
+              </div>
+            </Card>
+            <Card className="relative flex flex-col">
+              <CardHeader>
+                <CardTitle className="text-2xl">Self-Host</CardTitle>
+                <CardDescription>Run Kanba on your own server</CardDescription>
+                <div className="text-xl font-semibold">Free</div>
+
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Full control
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    All Features Included
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Full Access to the Source Code
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Complete Customization
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Your Data Stays with You
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    White-label Branding
+                  </li>
+                  
+                </ul>
               </CardContent>
+              <div className="p-6 pt-0 mt-auto">
+                <Button className="w-full" variant="outline" asChild>
+                  <a
+                    href="https://github.com/Uaghazade1/kanba"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <GithubIcon className="h-5 w-5" />
+                    View on GitHub
+                  </a>
+                </Button>
+              </div>
             </Card>
           </div>
         </div>

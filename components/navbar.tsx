@@ -61,7 +61,7 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
               <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 Terms
               </Link>
-              <Link href="/pricing" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="#pricing" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                 Pricing
               </Link>
             </div>
