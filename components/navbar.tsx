@@ -40,14 +40,27 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
 
   return (
     <div className="sticky top-4 z-50 px-4">
-      <nav className="max-w-5xl mx-auto rounded-full border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="max-w-3xl mx-auto rounded-2xl border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex justify-between items-center h-14 px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="p-1 border rounded-lg mr-1">
-              <KanbanIcon className="h-5 w-5 text-[#0A0A0A] dark:text-white" />
+          <div className="flex items-center gap-x-6">
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="p-1 border rounded-lg mr-1">
+                <KanbanIcon className="h-5 w-5 text-[#0A0A0A] dark:text-white" />
+              </div>
+              <span className="text-lg">Kanba</span>
+            </Link>
+            <div className="hidden md:flex items-center space-x-6">
+              <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Privacy
+              </Link>
+              <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Terms
+              </Link>
+              <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Pricing
+              </Link>
             </div>
-            <span className="text-lg">Kanba</span>
-          </Link>
+          </div>
 
           <div className="flex items-center space-x-4">
             <Button

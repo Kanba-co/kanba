@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/navbar';
+import { GitStarButton } from '@/src/components/eldoraui/gitstarbutton';
 import { useUser } from '@/components/user-provider';
 import { 
   Kanban, 
@@ -45,13 +46,12 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
-          <Badge variant="secondary" className="mb-4">
-            <Star className="h-3 w-3 mr-1" />
-            New: Dark mode by default
-          </Badge>
-          <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6">
-            Organize Your Projects with
-            <span className="text-primary block">Beautiful Kanban Boards</span>
+          <div className="flex items-center justify-center mb-4">
+        <GitStarButton />
+        </div>
+          <h1 className="text-4xl sm:text-6xl tracking-tight mb-6">
+          Project management
+            <span className="text-primary block">Reimagined for builders.</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
             Kanba is a modern project management tool that helps teams visualize work, 
@@ -73,9 +73,7 @@ export default function Home() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="/login">Sign In</Link>
-                </Button>
+                
               </>
             )}
           </div>
