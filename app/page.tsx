@@ -64,7 +64,7 @@ export default function Home() {
             <span className="bg-gradient-to-r from-pink-600 via-blue-500 to-yellow-400 text-transparent bg-clip-text block p-2">Reimagined for Builders.</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-          The project management tool indie hackers deserve. Simple, powerful, and proudly open-source.
+          A calm space to move fast and build what matters. Simple, powerful, and proudly open-source.
           </p>
           <div className="flex sm:flex-row gap-4 justify-center">
             {user ? (
