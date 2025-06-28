@@ -196,6 +196,8 @@ export function AppSidebar({ onSignOut, onProjectUpdate }: AppSidebarProps) {
                 />
                 <span className="text-lg">Kanba</span>
                 </Link>
+                <Badge variant="outline" className="text-xs text-gray-500 border border-gray-200 dark:border-gray-700 dark:text-gray-400 rounded-full">Beta</Badge>
+
                 </div>
       </SidebarHeader>
       {/* Menü */}

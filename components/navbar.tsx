@@ -24,6 +24,7 @@ import {
   CreditCard,
   KanbanIcon
 } from 'lucide-react';
+import { Badge } from './ui/badge';
 
 interface NavbarProps {
   user?: {
@@ -45,13 +46,14 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
         <div className="flex justify-between items-center h-14 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-x-6">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="">
+              <div className=" flex items-center gap-x-2">
                 <Image 
                   src={theme === 'light' ? '/logo-light.png' : '/logo-dark.png'} 
                   width={40} 
                   height={40} 
                   alt="Kanba Logo" 
                 />
+                <Badge variant="outline" className="text-xs text-gray-500 border border-gray-200 dark:border-gray-700 dark:text-gray-400 rounded-full">Beta</Badge>
               </div>
             </Link>
             <div className="hidden md:flex items-center  space-x-6">
