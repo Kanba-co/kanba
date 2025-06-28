@@ -212,12 +212,12 @@ export default function BillingPage() {
 
   return (
     <>
-    <div className="">
+    <div className="sm:mx-60">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-xl font-semibold">Billing & Subscription</h1>
         <p className="text-muted-foreground">
-          Manage your subscription and billing information
+          Manage your subscription and billing information 
         </p>
       </div>
       {/* Environment Check Warning */}
@@ -327,23 +327,31 @@ export default function BillingPage() {
                     </div>
                   </div>
                   <ul className="space-y-2 mb-6">
-                    <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      Unlimited Projects
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Unlimited Projects
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Unlimited Tasks
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    All Core Features           
                     </li>
-                    <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      Advanced Features
-                    </li>
-                    <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      Priority Support
-                    </li>
-                    <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-2" />
-                      Custom Integrations
-                    </li>
-                  </ul>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Advanced Features
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Team Management
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-gray-500 mr-2" />
+                    Custom Integrations (soon)
+                  </li>
+                </ul>
                   <Button 
                     className="w-full" 
                     onClick={() => handleCheckout(product.priceId, product.mode)}

@@ -141,7 +141,7 @@ export default function NewProjectPage() {
     <div className="sm:mx-60">
       {/* Header */}
       <div className="mb-8 ">
-        
+         
         <h1 className="text-xl font-semibold">Create New Project</h1>
         <p className="text-muted-foreground">
           Set up a new Kanban project to organize your work

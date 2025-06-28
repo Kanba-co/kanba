@@ -21,6 +21,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   FolderOpenIcon,
+  NotepadTextIcon,
 } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "sonner"
@@ -80,9 +81,10 @@ interface AppSidebarProps {
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "Projects", url: "/dashboard/projects", icon: FolderIcon },
-  { title: "Team", url: "/dashboard/team", icon: UsersIcon },
+  { title: "Notes", url: "/dashboard/notes", icon: NotepadTextIcon },
   { title: "Analytics", url: "/dashboard/analytics", icon: BarChartIcon },
   { title: "Settings", url: "/dashboard/settings", icon: SettingsIcon },
+  { title: "Billing", url: "/dashboard/billing", icon: CreditCardIcon },
 ]
 
 export function AppSidebar({ onSignOut }: AppSidebarProps) {

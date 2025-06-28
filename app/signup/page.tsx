@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { Kanban, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('');
@@ -18,6 +20,7 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     // Check if user is already logged in
@@ -78,12 +81,17 @@ export default function SignUpPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/20 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <Kanban className="h-12 w-12 text-primary" />
-          </div>
-          <CardTitle className="text-2xl">Create your account</CardTitle>
+        <div className="flex justify-center mb-4">
+                <Image 
+                  src={theme === 'light' ? '/logo-light.png' : '/logo-dark.png'} 
+                  width={50} 
+                  height={50} 
+                  alt="Kanba Logo" 
+                />
+              </div>
+          <CardTitle className="text-2xl">Welcome to Kanba</CardTitle>
           <CardDescription>
-            Get started with Kanba today
+            Create your account and get started with Kanba today
           </CardDescription>
         </CardHeader>
         <CardContent>

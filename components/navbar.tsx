@@ -47,7 +47,7 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
             <Link href="/" className="flex items-center space-x-2">
               <div className="">
                 <Image 
-                  src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+                  src={theme === 'light' ? '/logo-light.png' : '/logo-dark.png'} 
                   width={40} 
                   height={40} 
                   alt="Kanba Logo" 
