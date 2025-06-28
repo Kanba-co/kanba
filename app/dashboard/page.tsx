@@ -16,6 +16,7 @@ interface Project {
   id: string;
   name: string;
   description: string | null;
+  slug: string;
   created_at: string;
   user_id: string;
   // For shared projects
@@ -39,6 +40,7 @@ interface TaskAssignment {
   due_date: string | null;
   project_name: string;
   project_id: string;
+  project_slug: string;
   column_name: string;
 }
 
@@ -115,7 +117,7 @@ export default function DashboardPage() {
             // Get project info
             const { data: project } = await supabase
               .from('projects')
-              .select('id, name')
+              .select('id, name, slug')
               .eq('id', column?.project_id)
               .single();
 
@@ -126,6 +128,7 @@ export default function DashboardPage() {
               due_date: task.due_date,
               project_name: project?.name || 'Unknown Project',
               project_id: project?.id || '',
+              project_slug: project?.slug || '',
               column_name: column?.name || 'Unknown Column',
             };
           })
@@ -286,7 +289,7 @@ export default function DashboardPage() {
                 const isOwner = project.user_id === user?.id;
                 
                 return (
-                  <Card key={project.id} onClick={() => router.push(`/dashboard/projects/${project.id}`)} className="hover:shadow-md transition-shadow cursor-pointer border-gradient">
+                  <Card key={project.id} onClick={() => router.push(`/dashboard/projects/${project.slug}`)} className="hover:shadow-md transition-shadow cursor-pointer border-gradient">
 
                     <CardHeader>
 
@@ -364,7 +367,7 @@ export default function DashboardPage() {
                         variant="outline" 
                         size="sm" 
                         className="w-full mt-3"
-                        onClick={() => router.push(`/dashboard/projects/${task.project_id}`)}
+                        onClick={() => router.push(`/dashboard/projects/${task.project_slug}`)}
                       >
                         View Project
                       </Button>
