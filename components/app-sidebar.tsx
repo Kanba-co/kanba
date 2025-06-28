@@ -77,6 +77,7 @@ interface Project {
 
 interface AppSidebarProps {
   onSignOut: () => void;
+  onProjectUpdate?: (action: 'rename' | 'delete', projectId?: string) => void;
 }
 
 // Menü öğeleri
@@ -90,7 +91,7 @@ const menuItems = [
   { title: "Billing", url: "/dashboard/billing", icon: CreditCardIcon },
 ]
 
-export function AppSidebar({ onSignOut }: AppSidebarProps) {
+export function AppSidebar({ onSignOut, onProjectUpdate }: AppSidebarProps) {
   const { user } = useUser();
   const router = useRouter();
   const pathname = usePathname();
@@ -112,6 +113,34 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
       loadProjects();
     }
   }, [user]);
+
+  // Listen for project updates
+  React.useEffect(() => {
+    if (onProjectUpdate) {
+      // This will be called from parent component when project is updated
+      const handleProjectUpdate = (action: 'rename' | 'delete', projectId?: string) => {
+        if (action === 'delete') {
+          // Remove project from list immediately
+          setProjects(prev => prev.filter(p => p.id !== projectId));
+        } else if (action === 'rename') {
+          // Reload projects to get updated names
+          loadProjects();
+        }
+      };
+      
+      // Store the handler for external use
+      (window as any).handleProjectUpdate = handleProjectUpdate;
+    }
+  }, [onProjectUpdate]);
+
+  // Cleanup global handler on unmount
+  React.useEffect(() => {
+    return () => {
+      if ((window as any).handleProjectUpdate) {
+        delete (window as any).handleProjectUpdate;
+      }
+    };
+  }, []);
 
   const loadProjects = async () => {
     if (!user) return;

@@ -23,6 +23,13 @@ export default function DashboardLayout({
     signOut();
   };
 
+  const handleProjectUpdate = (action: 'rename' | 'delete', projectId?: string) => {
+    // Call the global handler if it exists
+    if ((window as any).handleProjectUpdate) {
+      (window as any).handleProjectUpdate(action, projectId);
+    }
+  };
+
   if (!mounted) return null; // SSR ile uyuşmazlık olmasın diye
 
   if (!user) {
@@ -36,7 +43,7 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <div className="flex w-full min-h-screen">
-        <AppSidebar onSignOut={handleSignOut} />
+        <AppSidebar onSignOut={handleSignOut} onProjectUpdate={handleProjectUpdate} />
         <main className="flex-1 p-2 flex justify-center items-start overflow-auto">
           <div className="w-full border border-border shadow-sm dark:shadow:sm rounded-xl h-full px-4 py-4 bg-white dark:bg-[#0A0A0A]">
             <SidebarTrigger />

@@ -750,6 +750,9 @@ export default function ProjectPage() {
       toast.success('Project updated successfully!');
       setProjectRenameDialogOpen(false);
       await loadProject();
+      
+      // Call callback to update sidebar
+      handleProjectUpdate('rename', project.id);
     } catch (error: any) {
       console.error('Error updating project:', error);
       toast.error(error.message || 'Failed to update project');
@@ -803,6 +806,9 @@ export default function ProjectPage() {
       setColumns([]);
       setProjectMembers([]);
       setProjectDeleteDialogOpen(false);
+      
+      // Call callback to update sidebar
+      handleProjectUpdate('delete', project.id);
       
       // Navigate to dashboard
       router.push('/dashboard');
@@ -1048,6 +1054,13 @@ export default function ProjectPage() {
   };
 
   const isProjectOwner = project?.user_id === user?.id;
+
+  // Project update handler
+  const handleProjectUpdate = (action: 'rename' | 'delete', projectId?: string) => {
+    if ((window as any).handleProjectUpdate) {
+      (window as any).handleProjectUpdate(action, projectId);
+    }
+  };
 
   if (loading) {
     return (
