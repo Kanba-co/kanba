@@ -230,7 +230,7 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
                     </SidebarMenuItem>
                   );
                 }
-                
+                 
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
