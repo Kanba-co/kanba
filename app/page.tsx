@@ -338,7 +338,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                   >
                     <GithubIcon className="h-5 w-5" />
-                    View on GitHuba
+                    View on GitHubas
                   </a>
                 </Button>
               </div>
