@@ -52,6 +52,14 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       <Navbar user={user} onSignOut={handleSignOut} loading={loading} />
+      <div className="absolute top-4 right-4">
+        <Image 
+          src={theme === 'light' ? '/bolt-light.png' : '/bolt-dark.png'} 
+          width={60} 
+          height={60} 
+          alt="Kanba Logo" 
+        />
+      </div>
       
       {/* Hero Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
