@@ -175,7 +175,13 @@ export default function BillingPage() {
       } else if (error.message.includes('HTTP 401')) {
         userMessage = 'Authentication failed. Please sign out and sign in again.';
       } else if (error.message.includes('HTTP 500')) {
-        userMessage = 'Server error. Please try again in a few moments.';
+        if (error.message.includes('Customer not found in Stripe')) {
+          userMessage = 'Payment system error. Please try again in a moment.';
+        } else {
+          userMessage = 'Server error. Please try again in a few moments.';
+        }
+      } else if (error.message.includes('No such customer')) {
+        userMessage = 'Payment system error. Please try again.';
       } else if (error.message) {
         userMessage = error.message;
       }
