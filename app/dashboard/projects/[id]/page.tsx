@@ -82,6 +82,7 @@ interface Project {
   id: string;
   name: string;
   description: string | null;
+  slug: string;
   created_at: string;
   user_id: string;
 }
@@ -434,11 +435,11 @@ export default function ProjectPage() {
 
   const loadProject = async () => {
     try {
-      // Get project
+      // Get project by slug
       const { data: project, error: projectError } = await supabase
         .from('projects')
         .select('*')
-        .eq('id', projectId)
+        .eq('slug', projectId)
         .single();
 
       if (projectError) throw projectError;
@@ -451,7 +452,7 @@ export default function ProjectPage() {
       const { data: columns, error: columnsError } = await supabase
         .from('columns')
         .select('*')
-        .eq('project_id', projectId)
+        .eq('project_id', project?.id)
         .order('position');
 
       if (columnsError) throw columnsError;
@@ -503,7 +504,7 @@ export default function ProjectPage() {
             avatar_url
           )
         `)
-        .eq('project_id', projectId);
+        .eq('project_id', project?.id);
 
       if (error) throw error;
       setProjectMembers(members || []);
@@ -647,7 +648,7 @@ export default function ProjectPage() {
         .from('columns')
         .insert({
           name: columnName.trim(),
-          project_id: projectId,
+          project_id: project?.id,
           position: nextPosition,
           created_by: user!.id,
           updated_by: user!.id,
@@ -737,11 +738,14 @@ export default function ProjectPage() {
     }
 
     try {
+      const newSlug = generateSlug(projectName);
+      
       const { error } = await supabase
         .from('projects')
         .update({
           name: projectName.trim(),
           description: projectDescription.trim() || null,
+          slug: newSlug,
         })
         .eq('id', project.id);
 
@@ -753,6 +757,11 @@ export default function ProjectPage() {
       
       // Call callback to update sidebar
       handleProjectUpdate('rename', project.id);
+      
+      // Navigate to new slug if it changed
+      if (newSlug !== project.slug) {
+        router.push(`/dashboard/projects/${newSlug}`);
+      }
     } catch (error: any) {
       console.error('Error updating project:', error);
       toast.error(error.message || 'Failed to update project');
@@ -1062,6 +1071,17 @@ export default function ProjectPage() {
     }
   };
 
+  // Generate slug from project name
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full w-full">
@@ -1349,14 +1369,14 @@ export default function ProjectPage() {
 
         <TabsContent value="team">
           <TeamManagement 
-            projectId={projectId}
+            projectId={project?.id}
             userSubscriptionStatus={profile?.subscription_status || 'free'}
             isProjectOwner={isProjectOwner}
           />
         </TabsContent>
 
         <TabsContent value="activity">
-          <ActivityFeed projectId={projectId} />
+          <ActivityFeed projectId={project?.id} />
         </TabsContent>
       </Tabs>
 

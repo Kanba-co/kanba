@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,11 +24,16 @@ export default function NewProjectPage() {
   const { user, signOut } = useUser();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [projectCount, setProjectCount] = useState(0);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [projectName, setProjectName] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
+  const [projectSlug, setProjectSlug] = useState('');
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
+  const [checkingSlug, setCheckingSlug] = useState(false);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const router = useRouter();
+  const params = useParams();
+  const projectId = params?.id as string;
 
   useEffect(() => {
     if (!user) {
@@ -76,11 +81,92 @@ export default function NewProjectPage() {
     return profile.subscription_status === 'pro' || projectCount < 1;
   };
 
+  // Generate slug from project name
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+  };
+
+  // Check if slug is available
+  const checkSlugAvailability = async (slug: string) => {
+    if (!slug.trim()) {
+      setSlugAvailable(null);
+      return;
+    }
+
+    setCheckingSlug(true);
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('slug', slug.trim())
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        // No rows returned - slug is available
+        setSlugAvailable(true);
+      } else if (data) {
+        // Slug exists
+        setSlugAvailable(false);
+      } else {
+        setSlugAvailable(false);
+      }
+    } catch (error) {
+      console.error('Error checking slug:', error);
+      setSlugAvailable(false);
+    } finally {
+      setCheckingSlug(false);
+    }
+  };
+
+  // Auto-generate slug when project name changes
+  useEffect(() => {
+    if (projectName) {
+      const generatedSlug = generateSlug(projectName);
+      setProjectSlug(generatedSlug);
+      checkSlugAvailability(generatedSlug);
+    } else {
+      setProjectSlug('');
+      setSlugAvailable(null);
+    }
+  }, [projectName]);
+
+  // Check slug availability when slug changes manually
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (projectSlug && projectSlug !== generateSlug(projectName)) {
+        checkSlugAvailability(projectSlug);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [projectSlug, projectName]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!canCreateProject()) {
       toast.error('You have reached the free plan limit. Upgrade to Pro for unlimited projects.');
+      return;
+    }
+
+    if (!projectSlug.trim()) {
+      toast.error('Please enter a project slug');
+      return;
+    }
+
+    if (slugAvailable === false) {
+      toast.error('Please choose a different slug. This one is already taken.');
+      return;
+    }
+
+    if (slugAvailable === null || checkingSlug) {
+      toast.error('Please wait while we check slug availability');
       return;
     }
 
@@ -91,8 +177,9 @@ export default function NewProjectPage() {
       const { data: project, error: projectError } = await supabase
         .from('projects')
         .insert({
-          name,
-          description: description || null,
+          name: projectName,
+          description: projectDescription || null,
+          slug: projectSlug.trim(),
           user_id: user!.id,
         })
         .select()
@@ -118,8 +205,13 @@ export default function NewProjectPage() {
 
       if (columnsError) throw columnsError;
 
+      // Notify sidebar to update
+      if ((window as any).handleProjectUpdate) {
+        (window as any).handleProjectUpdate('create', project.id);
+      }
+
       toast.success('Project created successfully!');
-      router.push(`/dashboard/projects/${project.id}`);
+      router.push(`/dashboard/projects/${project.slug}`);
     } catch (error: any) {
       console.error('Error creating project:', error);
       toast.error(error.message || 'Failed to create project');
@@ -179,23 +271,61 @@ export default function NewProjectPage() {
                 id="name"
                 type="text"
                 placeholder="Enter project name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="slug">Project Slug *</Label>
+              <div className="relative">
+                <Input
+                  id="slug"
+                  type="text"
+                  placeholder="project-slug"
+                  value={projectSlug}
+                  onChange={(e) => setProjectSlug(e.target.value)}
+                  className={`pr-10 ${
+                    slugAvailable === true ? 'border-green-500' : 
+                    slugAvailable === false ? 'border-red-500' : ''
+                  }`}
+                  required
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  {checkingSlug ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                  ) : slugAvailable === true ? (
+                    <div className="text-green-500">✓</div>
+                  ) : slugAvailable === false ? (
+                    <div className="text-red-500">✗</div>
+                  ) : null}
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                This will be used in the URL. Only lowercase letters, numbers, and hyphens are allowed.
+              </p>
+              {slugAvailable === false && (
+                <p className="text-xs text-red-500">
+                  This slug is already taken. Please choose a different one.
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
                 placeholder="Enter project description (optional)"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={projectDescription}
+                onChange={(e) => setProjectDescription(e.target.value)}
                 rows={4}
               />
             </div>
             <div className="flex gap-3 pt-4">
-              <Button type="submit" disabled={creating || !canCreateProject()} className="flex-1">
+              <Button 
+                type="submit" 
+                disabled={creating || !canCreateProject() || slugAvailable !== true || checkingSlug} 
+                className="flex-1"
+              >
                 {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create Project
               </Button>

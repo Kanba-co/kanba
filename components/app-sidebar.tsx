@@ -72,6 +72,7 @@ import { useUser } from '@/components/user-provider'
 interface Project {
   id: string;
   name: string;
+  slug: string;
   user_id: string;
 }
 
@@ -118,12 +119,12 @@ export function AppSidebar({ onSignOut, onProjectUpdate }: AppSidebarProps) {
   React.useEffect(() => {
     if (onProjectUpdate) {
       // This will be called from parent component when project is updated
-      const handleProjectUpdate = (action: 'rename' | 'delete', projectId?: string) => {
+      const handleProjectUpdate = (action: 'create' | 'rename' | 'delete', projectId?: string) => {
         if (action === 'delete') {
           // Remove project from list immediately
           setProjects(prev => prev.filter(p => p.id !== projectId));
-        } else if (action === 'rename') {
-          // Reload projects to get updated names
+        } else if (action === 'rename' || action === 'create') {
+          // Reload projects to get updated names or new projects
           loadProjects();
         }
       };
@@ -151,7 +152,7 @@ export function AppSidebar({ onSignOut, onProjectUpdate }: AppSidebarProps) {
       // Get projects owned by user
       const { data: projects, error } = await supabase
         .from('projects')
-        .select('id, name, user_id')
+        .select('id, name, slug, user_id')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(10);
@@ -232,9 +233,9 @@ export function AppSidebar({ onSignOut, onProjectUpdate }: AppSidebarProps) {
                             <SidebarMenuSubItem key={project.id}>
                               <SidebarMenuSubButton
                                 asChild
-                                isActive={pathname === `/dashboard/projects/${project.id}`}
+                                isActive={pathname === `/dashboard/projects/${project.slug}`}
                               >
-                                <Link href={`/dashboard/projects/${project.id}`} title={project.name}>
+                                <Link href={`/dashboard/projects/${project.slug}`} title={project.name}>
                                 <FolderOpenIcon className="w-4 h-4" />
                                   <span className="truncate">{project.name}</span>
                                 </Link>
