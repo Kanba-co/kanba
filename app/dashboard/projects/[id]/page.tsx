@@ -816,9 +816,14 @@ export default function ProjectPage() {
 
   const openRenameProjectDialog = () => {
     if (project) {
+      // First update form states
       setProjectName(project.name);
       setProjectDescription(project.description || '');
-      setProjectRenameDialogOpen(true);
+      
+      // Then delay dialog opening to prevent UI freezing
+      setTimeout(() => {
+        setProjectRenameDialogOpen(true);
+      }, 50);
     }
   };
 
@@ -844,14 +849,24 @@ export default function ProjectPage() {
   };
 
   const openEditColumnDialog = (column: Column) => {
+    // First update form state
     setEditingColumn(column);
     setColumnName(column.name);
-    setEditColumnDialogOpen(true);
+    
+    // Then delay dialog opening to prevent UI freezing
+    setTimeout(() => {
+      setEditColumnDialogOpen(true);
+    }, 50);
   };
 
   const openCommentsDialog = (task: Task) => {
+    // First update state
     setSelectedTask(task);
-    setCommentsDialogOpen(true);
+    
+    // Then delay dialog opening to prevent UI freezing
+    setTimeout(() => {
+      setCommentsDialogOpen(true);
+    }, 50);
   };
 
   const resetTaskForm = () => {
