@@ -5,6 +5,7 @@ export interface StripeProduct {
   description: string;
   mode: 'payment' | 'subscription';
   price: number;
+  allow_promotion_codes: boolean;
   currency: string;
   interval?: 'month' | 'year';
 }
@@ -16,6 +17,7 @@ export const stripeProducts: StripeProduct[] = [
     name: 'Kanba Monthly',
     description: 'Monthly subscription to Kanba with unlimited projects and advanced features',
     mode: 'subscription',
+    allow_promotion_codes: true,
     price: 9.00,
     currency: 'usd',
     interval: 'month',
