@@ -22,6 +22,8 @@ import {
   ChevronUpIcon,
   FolderOpenIcon,
   NotepadTextIcon,
+  Cable,
+  PlugZap,
 } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "sonner"
@@ -81,8 +83,9 @@ interface AppSidebarProps {
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "Projects", url: "/dashboard/projects", icon: FolderIcon },
-  { title: "Notes", url: "/dashboard/notes", icon: NotepadTextIcon },
-  { title: "Analytics", url: "/dashboard/analytics", icon: BarChartIcon },
+  { title: "Notes (soon)", url: "/dashboard/notes", icon: NotepadTextIcon, disabled: true },
+  { title: "Analytics (soon)", url: "/dashboard/analytics", icon: BarChartIcon, disabled: true },
+  { title: "Integrations (soon)", url: "/dashboard/integrations", icon: PlugZap, disabled: true },
   { title: "Settings", url: "/dashboard/settings", icon: SettingsIcon },
   { title: "Billing", url: "/dashboard/billing", icon: CreditCardIcon },
 ]
@@ -211,6 +214,19 @@ export function AppSidebar({ onSignOut }: AppSidebarProps) {
                           ))
                         )}
                       </SidebarMenuSub>
+                    </SidebarMenuItem>
+                  );
+                }
+
+                if (item.disabled) {
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        disabled
+                      >
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
                 }
