@@ -869,6 +869,13 @@ export default function ProjectPage() {
     }, 50);
   };
 
+  const openDeleteProjectDialog = () => {
+    // Delay dialog opening to prevent UI freezing
+    setTimeout(() => {
+      setProjectDeleteDialogOpen(true);
+    }, 50);
+  };
+
   const resetTaskForm = () => {
     setTaskTitle('');
     setTaskDescription('');
@@ -1097,7 +1104,7 @@ export default function ProjectPage() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  onClick={() => setProjectDeleteDialogOpen(true)}
+                  onClick={openDeleteProjectDialog}
                   className="text-destructive"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
