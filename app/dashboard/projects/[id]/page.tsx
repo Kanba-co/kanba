@@ -828,14 +828,19 @@ export default function ProjectPage() {
   };
 
   const openEditTaskDialog = (task: Task) => {
+    // First update all form states
     setEditingTask(task);
     setTaskTitle(task.title);
     setTaskDescription(task.description || '');
     setTaskPriority(task.priority);
     setTaskDueDate(task.due_date ? task.due_date.split('T')[0] : '');
-    setTaskAssignedTo(task.assigned_to || undefined); // FIXED: Use undefined instead of empty string
+    setTaskAssignedTo(task.assigned_to || undefined);
     setSelectedColumnId(task.column_id);
-    setEditTaskDialogOpen(true);
+    
+    // Then delay dialog opening to prevent UI freezing
+    setTimeout(() => {
+      setEditTaskDialogOpen(true);
+    }, 50);
   };
 
   const openEditColumnDialog = (column: Column) => {
@@ -1321,7 +1326,7 @@ export default function ProjectPage() {
       </Tabs>
 
       {/* Edit Task Dialog */}
-      <Dialog open={editTaskDialogOpen} onOpenChange={setEditTaskDialogOpen}>
+      <Dialog key={editingTask?.id || 'edit-dialog'} open={editTaskDialogOpen} onOpenChange={setEditTaskDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
