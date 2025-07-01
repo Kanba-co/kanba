@@ -68,6 +68,7 @@ export default function BillingPage() {
       const { data: subscriptionData } = await supabase
         .from('stripe_user_subscriptions')
         .select('*')
+        .eq('user_id', user.id)
         .maybeSingle();
       
       setSubscription(subscriptionData);

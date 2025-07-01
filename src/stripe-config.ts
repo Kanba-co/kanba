@@ -14,11 +14,11 @@ export const stripeProducts: StripeProduct[] = [
   {
     id: 'prod_SbILf3iwsQAf82',
     priceId: 'price_1Rg5lGJoSiKWb2Md0QhFhin7', 
-    name: 'Kanba Monthly',
+    name: 'Kanba Pro',
     description: 'Monthly subscription to Kanba with unlimited projects and advanced features',
     mode: 'subscription',
     allow_promotion_codes: true,
-    price: 9.00,
+    price: 4.90,
     currency: 'usd',
     interval: 'month',
   },
