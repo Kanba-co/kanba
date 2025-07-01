@@ -107,7 +107,7 @@ export default function Home() {
       </div>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-5xl text-primary">Everything You Need to</h2>
@@ -422,27 +422,27 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/features" className="text-muted-foreground hover:text-primary">Features</Link></li>
-                <li><Link href="/pricing" className="text-muted-foreground hover:text-primary">Pricing</Link></li>
-                <li><Link href="/changelog" className="text-muted-foreground hover:text-primary">Changelog</Link></li>
+                <li><Link href="#features" className="text-muted-foreground hover:text-primary">Features</Link></li>
+                <li><Link href="#pricing" className="text-muted-foreground hover:text-primary">Pricing</Link></li>
+                <li><Link href="https://github.com/Uaghazade1/kanba/" target="_blank" className="text-muted-foreground hover:text-primary">Changelog</Link></li>
               </ul>
             </div>
             
-            <div>
+            {/* <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/about" className="text-muted-foreground hover:text-primary">About</Link></li>
                 <li><Link href="/blog" className="text-muted-foreground hover:text-primary">Blog</Link></li>
                 <li><Link href="/careers" className="text-muted-foreground hover:text-primary">Careers</Link></li>
               </ul>
-            </div>
+            </div> */}
             
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/privacy" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="text-muted-foreground hover:text-primary">Terms of Service</Link></li>
-                <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
+                <li><Link href="mailto:info@kanba.co" className="text-muted-foreground hover:text-primary">Contact</Link></li>
               </ul>
             </div>
           </div>
