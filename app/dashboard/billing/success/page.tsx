@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUser } from '@/components/user-provider';
-import { CheckCircle, ArrowRight, Crown } from 'lucide-react';
+import { CheckCircle, ArrowRight, Crown, Check } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SuccessPage() {
@@ -84,9 +84,29 @@ export default function SuccessPage() {
                 Get priority customer support
               </li>
               <li className="flex items-center">
-                <ArrowRight className="h-4 w-4 mr-2" />
-                Enjoy custom integrations
-              </li>
+                    <ArrowRight className="h-4 w-4 text-gray-500 mr-2" />
+                    Integrations (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <ArrowRight className="h-4 w-4 text-gray-500 mr-2" />
+                    Notes (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <ArrowRight className="h-4 w-4 text-gray-500 mr-2" />
+                    Analytics (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <ArrowRight className="h-4 w-4 text-gray-500 mr-2" />
+                    Lists (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <ArrowRight className="h-4 w-4 text-gray-500 mr-2" />
+                    AI Planner (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <ArrowRight className="h-4 w-4 text-gray-500 mr-2" />
+                    Meetings (soon)
+                  </li>
             </ul>
           </div>
 

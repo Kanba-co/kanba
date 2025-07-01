@@ -55,7 +55,9 @@ import {
   Trash2,
   MessageSquare,
   Users,
-  Activity
+  Activity,
+  Code,
+  Share2
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -162,7 +164,7 @@ function DroppableColumn({ column, children, onEdit, onDelete, onAddTask }: Drop
   });
 
   return (
-    <div ref={setNodeRef} className="flex-shrink-0 w-80">
+    <div ref={setNodeRef} className="flex-shrink-0 w-80 mt-4">
       <Card className={`transition-colors ${isOver ? 'ring-2 ring-primary' : ''}`}>
         <CardHeader className="pb-3">
           <div className="flex justify-between items-center">
@@ -1135,6 +1137,14 @@ export default function ProjectPage() {
                   <Edit className="h-4 w-4 mr-2" />
                   Rename Project
                 </DropdownMenuItem>
+                <DropdownMenuItem disabled>
+                  <Code className="h-4 w-4 mr-2" />
+                  Embed (soon)
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled>
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share (soon)
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onClick={openDeleteProjectDialog}
@@ -1304,7 +1314,7 @@ export default function ProjectPage() {
               </SortableContext>
               
               {/* Add Column */}
-              <div className="flex-shrink-0 w-80">
+              <div className="flex-shrink-0 w-80 mt-4">
                 <Dialog open={columnDialogOpen} onOpenChange={setColumnDialogOpen}>
                   <DialogTrigger asChild>
                     <Card className="border-dashed cursor-pointer hover:border-primary/50 transition-colors">

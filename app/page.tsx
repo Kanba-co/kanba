@@ -264,7 +264,7 @@ export default function Home() {
               <CardHeader>
                 <CardTitle className="text-2xl">Pro</CardTitle>
                 <CardDescription>For teams and power users</CardDescription>
-                <div className="text-xl font-semibold">$9<span className="text-sm font-normal text-muted-foreground">/month</span></div>
+                <div className="text-xl font-semibold">$4.90<span className="text-sm font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
               <CardContent className="flex-grow">
                 <ul className="space-y-2 mb-6">
@@ -290,8 +290,28 @@ export default function Home() {
                   </li>
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-gray-500 mr-2" />
-                    Custom Integrations (soon)
+                    Integrations (soon)
                   </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-gray-500 mr-2" />
+                    Notes (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-gray-500 mr-2" />
+                     Analytics (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-gray-500 mr-2" />
+                    Lists (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-gray-500 mr-2" />
+                    AI Planner (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-gray-500 mr-2" />
+                    Meetings (soon)
+                  </li> 
                 </ul>
               </CardContent>
               <div className="p-6 pt-0 mt-auto">

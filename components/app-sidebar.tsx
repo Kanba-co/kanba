@@ -24,6 +24,9 @@ import {
   NotepadTextIcon,
   Cable,
   PlugZap,
+  List,
+  Brain,
+  Calendar,
 } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "sonner"
@@ -88,6 +91,9 @@ const menuItems = [
   { title: "Notes (soon)", url: "/dashboard/notes", icon: NotepadTextIcon, disabled: true },
   { title: "Analytics (soon)", url: "/dashboard/analytics", icon: BarChartIcon, disabled: true },
   { title: "Integrations (soon)", url: "/dashboard/integrations", icon: PlugZap, disabled: true },
+  { title: "Lists (soon)", url: "/dashboard/listd", icon: List, disabled: true },
+  { title: "AI Planner (soon)", url: "/dashboard/integrations", icon: Brain, disabled: true },
+  { title: "Meetings (soon)", url: "/dashboard/integrations", icon: Calendar, disabled: true },
   { title: "Settings", url: "/dashboard/settings", icon: SettingsIcon },
   { title: "Billing", url: "/dashboard/billing", icon: CreditCardIcon },
 ]

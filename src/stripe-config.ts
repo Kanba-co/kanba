@@ -12,8 +12,8 @@ export interface StripeProduct {
 
 export const stripeProducts: StripeProduct[] = [
   {
-    id: 'prod_SaCs4NEjB7rqbz',
-    priceId: 'price_1Rf2SWJoSiKWb2MdjwYURJeV',
+    id: 'prod_SbILf3iwsQAf82',
+    priceId: 'price_1Rg5lGJoSiKWb2Md0QhFhin7', 
     name: 'Kanba Monthly',
     description: 'Monthly subscription to Kanba with unlimited projects and advanced features',
     mode: 'subscription',
