@@ -28,7 +28,7 @@ cp .env.example .env.local
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous key
 - `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key (server-side only)
 
-#### Stripe Configuration
+#### Stripe Configuration (optional)
 - `STRIPE_SECRET_KEY` - Your Stripe secret key (server-side only)
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` - Your Stripe publishable key
 - `STRIPE_WEBHOOK_SECRET` - Your Stripe webhook secret
