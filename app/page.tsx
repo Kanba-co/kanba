@@ -442,7 +442,7 @@ export default function Home() {
               <ul className="space-y-2 text-sm">
                 <li><Link href="/privacy" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="text-muted-foreground hover:text-primary">Terms of Service</Link></li>
-                <li><Link href="mailto:info@kanba.co" className="text-muted-foreground hover:text-primary">Contact</Link></li>
+                <li><Link href="mailto:ua@kanba.co" className="text-muted-foreground hover:text-primary">Contact</Link></li>
               </ul>
             </div>
           </div>

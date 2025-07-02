@@ -73,7 +73,7 @@ export default function TermsPage() {
                 <h2 className="text-2xl font-semibold mb-4">7. Contact Information</h2>
                 <p className="text-muted-foreground">
                   If you have any questions about these Terms of Service, please contact us at 
-                  legal@Kanba.com.
+                  ua@kanba.co.
                 </p>
               </section>
             </div>
