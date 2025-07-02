@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { ShineBorder } from '@/src/components/magicui/shine-border';
 import { TextReveal } from '@/src/components/magicui/text-reveal';
+import LovedBy from '@/components/customized/avatar/avatar-12';
 
 export default function Home() {
   const { user, loading, signOut } = useUser();
@@ -93,6 +94,10 @@ export default function Home() {
                 
               </>
             )}
+          </div>
+          <div className="flex flex-col items-center justify-center mt-10 gap-2">
+            <LovedBy />
+            <span className="text-sm text-muted-foreground mt-2">Already loved by <span className="font-semibold text-primary">+100 people</span></span>
           </div>
         </div>
       </section>

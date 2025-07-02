@@ -28,9 +28,9 @@ export function GitStarButton() {
             clipRule="evenodd"
           ></path>
         </svg>
-        {/* <span className="font-display inline-block font-medium tabular-nums tracking-wider text-white">
-          1.6k
-        </span> */}
+        <span className="font-display inline-block font-medium tabular-nums tracking-wider text-white">
+          75+
+        </span>
       </div>
     </a>
   );
