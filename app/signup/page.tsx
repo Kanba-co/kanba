@@ -69,6 +69,25 @@ export default function SignUpPage() {
     }
   };
 
+  const handleOAuthSignIn = async (provider: 'google' | 'github') => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+      if (error) {
+        toast.error(error.message);
+      }
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (checkingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/20 p-4">
@@ -95,6 +114,28 @@ export default function SignUpPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="flex flex-col gap-2 mb-4">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2"
+              onClick={() => handleOAuthSignIn('google')}
+              disabled={loading}
+            >
+              <Image src="/google.svg" alt="Google" width={20} height={20} />
+              Sign up with Google
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2"
+              onClick={() => handleOAuthSignIn('github')}
+              disabled={loading}
+            >
+              <Image src="/github.svg" alt="GitHub" width={20} height={20} className="dark: invert"/>
+              Sign up with GitHub
+            </Button>
+          </div>
           <form onSubmit={handleSignUp} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>
