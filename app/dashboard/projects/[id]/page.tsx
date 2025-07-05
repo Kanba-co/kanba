@@ -1117,7 +1117,7 @@ export default function ProjectPage() {
        
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-xl font-semibold">{project.name}</h1>
+            <h1 className="text-xl font-semibold">{project.name}-a</h1>
             {project.description && (
               <p className="text-muted-foreground mt-1">{project.description}</p>
             )}
