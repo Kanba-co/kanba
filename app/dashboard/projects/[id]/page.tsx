@@ -1157,7 +1157,7 @@ export default function ProjectPage() {
             </DropdownMenu>
                 <Dialog open={columnDialogOpen} onOpenChange={setColumnDialogOpen}>
                   <DialogTrigger asChild>
-                        <Button size="sm" className="bg-primary-foreground border border-input text-primary hover:bg-primary-foreground/50">
+                        <Button size="sm" variant="default" className="">
                           <Plus className="h-4 w-4 mr-2" />
                           Add Column
                         </Button>
