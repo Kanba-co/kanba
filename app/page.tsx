@@ -12,6 +12,15 @@ import { GitStarButton } from '@/src/components/eldoraui/gitstarbutton';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { Status, StatusIndicator, StatusLabel } from '@/src/components/ui/kibo-ui/status';
+
+import {
+  Announcement,
+  AnnouncementTag,
+  AnnouncementTitle,
+} from '@/src/components/ui/kibo-ui/announcement';
+
+import { ArrowUpRightIcon } from 'lucide-react';
 import { useUser } from '@/components/user-provider';
 import { 
   Kanban, 
@@ -64,7 +73,17 @@ export default function Home() {
       
       {/* Hero Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
+
         <div className="max-w-7xl mx-auto text-center">
+          {/* <Link href="https://github.com/Uaghazade1/kanba/releases" target='blank'>
+        <Announcement>
+    <AnnouncementTag>Latest update</AnnouncementTag>
+    <AnnouncementTitle>
+      New Release v1.0.1
+      <ArrowUpRightIcon className="shrink-0 text-green-900 dark:text-green-500" size={16} />
+    </AnnouncementTitle>
+  </Announcement>
+  </Link> */}
           <div className="flex items-center justify-center mb-4">
         <GitStarButton />
         </div>
@@ -421,7 +440,12 @@ export default function Home() {
               </div>
               <p className="text-sm text-muted-foreground">
                 The modern way to manage your projects with beautiful Kanban boards.
+
               </p>
+              <Status status="online" className="inline-flex items-center">
+                <StatusIndicator />
+                <StatusLabel />
+              </Status>
             </div>
             
             <div>
