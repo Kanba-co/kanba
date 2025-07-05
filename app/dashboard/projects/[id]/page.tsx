@@ -278,7 +278,7 @@ function SortableTask({ task, onEdit, onDelete, onViewComments, projectMembers }
       <CardContent className="p-4">
         <div className="space-y-3">
           <div className="flex justify-between items-start">
-            <h4 className="font-medium text-sm leading-tight flex-1">
+            <h4 className="font-medium text-sm leading-tight flex-1 line-clamp-2">
               {task.title}
             </h4>
             <div className="flex items-center gap-2">
@@ -1155,114 +1155,44 @@ export default function ProjectPage() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Dialog open={taskDialogOpen} onOpenChange={setTaskDialogOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" disabled={columns.length === 0}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Task
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create New Task</DialogTitle>
-                  <DialogDescription>
-                    Add a new task to your project board.
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleCreateTask} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="column">Column *</Label>
-                    <Select value={selectedColumnId} onValueChange={setSelectedColumnId} required>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a column" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {columns.map((column) => (
-                          <SelectItem key={column.id} value={column.id}>
-                            {column.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Task Title *</Label>
-                    <Input
-                      id="title"
-                      value={taskTitle}
-                      onChange={(e) => setTaskTitle(e.target.value)}
-                      placeholder="Enter task title"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      value={taskDescription}
-                      onChange={(e) => setTaskDescription(e.target.value)}
-                      placeholder="Enter task description (optional)"
-                      rows={3}
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="priority">Priority</Label>
-                      <Select value={taskPriority} onValueChange={(value: 'low' | 'medium' | 'high') => setTaskPriority(value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="low">Low</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="dueDate">Due Date</Label>
-                      <Input
-                        id="dueDate"
-                        type="date"
-                        value={taskDueDate}
-                        onChange={(e) => setTaskDueDate(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="assignedTo">Assign To</Label>
-                    <Select value={taskAssignedTo || ''} onValueChange={(value) => setTaskAssignedTo(value || undefined)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select team member (optional)" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="unassigned">Unassigned</SelectItem>
-                        {projectMembers.map((member) => (
-                          <SelectItem key={member.user_id} value={member.user_id}>
-                            {member.profiles.full_name || member.profiles.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="flex gap-3 pt-4">
-                    <Button type="submit" disabled={creating} className="flex-1">
-                      {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Create Task
-                    </Button>
-                    <Button type="button" variant="outline" onClick={() => setTaskDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
+                <Dialog open={columnDialogOpen} onOpenChange={setColumnDialogOpen}>
+                  <DialogTrigger asChild>
+                        <Button size="sm" className="bg-primary-foreground border border-input text-primary hover:bg-primary-foreground/50">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Column
+                        </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Create New Column</DialogTitle>
+                      <DialogDescription>
+                        Add a new column to organize your tasks.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleCreateColumn} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="columnName">Column Name *</Label>
+                        <Input
+                          id="columnName"
+                          value={columnName}
+                          onChange={(e) => setColumnName(e.target.value)}
+                          placeholder="Enter column name"
+                          required
+                        />
+                      </div>
+                      
+                      <div className="flex gap-3 pt-4">
+                        <Button type="submit" disabled={creating} className="flex-1">
+                          {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                          Create Column
+                        </Button>
+                        <Button type="button" variant="outline" onClick={() => setColumnDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </form>
+                  </DialogContent>
+                </Dialog>
           </div>
         </div>
       </div>
@@ -1314,50 +1244,7 @@ export default function ProjectPage() {
               </SortableContext>
               
               {/* Add Column */}
-              <div className="flex-shrink-0 w-80 mt-4">
-                <Dialog open={columnDialogOpen} onOpenChange={setColumnDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Card className="border-dashed cursor-pointer hover:border-primary/50 transition-colors">
-                      <CardContent className="flex items-center justify-center h-32">
-                        <Button variant="ghost" className="text-muted-foreground">
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add Column
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create New Column</DialogTitle>
-                      <DialogDescription>
-                        Add a new column to organize your tasks.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleCreateColumn} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="columnName">Column Name *</Label>
-                        <Input
-                          id="columnName"
-                          value={columnName}
-                          onChange={(e) => setColumnName(e.target.value)}
-                          placeholder="Enter column name"
-                          required
-                        />
-                      </div>
-                      
-                      <div className="flex gap-3 pt-4">
-                        <Button type="submit" disabled={creating} className="flex-1">
-                          {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                          Create Column
-                        </Button>
-                        <Button type="button" variant="outline" onClick={() => setColumnDialogOpen(false)}>
-                          Cancel
-                        </Button>
-                      </div>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              </div>
+             
             </div>
 
             {/* Drag Overlay */}
@@ -1622,6 +1509,110 @@ export default function ProjectPage() {
               Cancel
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Task Dialog */}
+      <Dialog open={taskDialogOpen} onOpenChange={setTaskDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Task</DialogTitle>
+            <DialogDescription>
+              Add a new task to your project board.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleCreateTask} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="column">Column *</Label>
+              <Select value={selectedColumnId} onValueChange={setSelectedColumnId} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a column" />
+                </SelectTrigger>
+                <SelectContent>
+                  {columns.map((column) => (
+                    <SelectItem key={column.id} value={column.id}>
+                      {column.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="title">Task Title *</Label>
+              <Input
+                id="title"
+                value={taskTitle}
+                onChange={(e) => setTaskTitle(e.target.value)}
+                placeholder="Enter task title"
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={taskDescription}
+                onChange={(e) => setTaskDescription(e.target.value)}
+                placeholder="Enter task description (optional)"
+                rows={3}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="priority">Priority</Label>
+                <Select value={taskPriority} onValueChange={(value: 'low' | 'medium' | 'high') => setTaskPriority(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="dueDate">Due Date</Label>
+                <Input
+                  id="dueDate"
+                  type="date"
+                  value={taskDueDate}
+                  onChange={(e) => setTaskDueDate(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="assignedTo">Assign To</Label>
+              <Select value={taskAssignedTo || ''} onValueChange={(value) => setTaskAssignedTo(value || undefined)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select team member (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unassigned">Unassigned</SelectItem>
+                  {projectMembers.map((member) => (
+                    <SelectItem key={member.user_id} value={member.user_id}>
+                      {member.profiles.full_name || member.profiles.email}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <Button type="submit" disabled={creating} className="flex-1">
+                {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create Task
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setTaskDialogOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
