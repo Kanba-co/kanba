@@ -1154,7 +1154,7 @@ export default function ProjectPage() {
                   Delete Project
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> 
                 <Dialog open={columnDialogOpen} onOpenChange={setColumnDialogOpen}>
                   <DialogTrigger asChild>
                         <Button size="sm" variant="default" className="">
