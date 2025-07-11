@@ -11,55 +11,6 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Kanba - Open-source Project Management Tool',
   description: 'Project Management Reimagined for Builders',
-  viewport: 'width=device-width, initial-scale=1',
-  icons: {
-    icon: [
-      { url: '/icon-black.png', media: '(prefers-color-scheme: light)' },
-      { url: '/icon-white.png', media: '(prefers-color-scheme: dark)' }
-    ],
-    apple: '/apple-icon.png',
-    shortcut: '/favicon.ico'
-  },
-  manifest: '/web-app-manifest-512x512.png',
-  openGraph: {
-    title: 'Kanba - Open-source Project Management Tool',
-    description: 'Project Management Reimagined for Builders',
-    url: 'https://kanba.co',
-    siteName: 'Kanba',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Kanba - Open-source Project Management Tool'
-      }
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Kanba - Open-source Project Management Tool',
-    description: 'Project Management Reimagined for Builders',
-    images: ['/og-image.png'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: 'your-google-verification-code',
-  },
-  authors: [{ name: 'Kanba Team' }],
-  keywords: ['kanban', 'project management', 'task management', 'productivity', 'open source', 'builders', 'developers'],
-  category: 'Productivity',
 };
 
 export default function RootLayout({
@@ -69,6 +20,48 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Project Management Reimagined for Builders" />
+        
+        {/* Icons */}
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/icon-black.png" media="(prefers-color-scheme: light)" />
+        <link rel="icon" href="/icon-white.png" media="(prefers-color-scheme: dark)" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="Kanba - Open-source Project Management Tool" />
+        <meta property="og:description" content="Project Management Reimagined for Builders" />
+        <meta property="og:url" content="https://kanba.co" />
+        <meta property="og:site_name" content="Kanba" />
+        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Kanba - Open-source Project Management Tool" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:type" content="website" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Kanba - Open-source Project Management Tool" />
+        <meta name="twitter:description" content="Project Management Reimagined for Builders" />
+        <meta name="twitter:image" content="/og-image.png" />
+        
+        {/* SEO */}
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1" />
+        <meta name="keywords" content="kanban, project management, task management, productivity, open source, builders, developers" />
+        <meta name="author" content="Kanba Team" />
+        <meta name="category" content="Productivity" />
+        
+        {/* Google Verification */}
+        <meta name="google-site-verification" content="your-google-verification-code" />
+        
+        {/* Web App Manifest */}
+        <link rel="manifest" href="/web-app-manifest-512x512.png" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
         
