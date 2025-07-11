@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   viewport: 'width=device-width, initial-scale=1',
   icons: {
     icon: [
-      { url: '/logo-white.png', media: '(prefers-color-scheme: light)' },
-      { url: '/logo-dark.png', media: '(prefers-color-scheme: dark)' }
+      { url: '/icon-black.png', media: '(prefers-color-scheme: light)' },
+      { url: '/icon-white.png', media: '(prefers-color-scheme: dark)' }
     ],
     apple: '/apple-icon.png',
     shortcut: '/favicon.ico'
