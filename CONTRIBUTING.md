@@ -47,5 +47,8 @@ To ensure a clean separation between the hosted production environment and commu
 
 Open an issue or start a GitHub discussion — we’re happy to help or guide your contribution.
 
+Please read our [Code of Conduct](./CODE_OF_CONDUCT.md) before contributing.
+
+
 Thanks for helping make Kanba better!  
 — The Kanba Team
