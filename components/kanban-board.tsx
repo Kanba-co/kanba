@@ -62,7 +62,7 @@ function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMember
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`mb-3 cursor-grab hover:shadow-md transition-shadow ${snapshot.isDragging ? 'ring-2 ring-primary' : ''}`}
+          className={`cursor-grab hover:shadow-md transition-shadow ${snapshot.isDragging ? 'ring-2 ring-primary' : ''}`}
         >
           <CardContent className="p-4">
             <div className="space-y-3">
@@ -149,7 +149,7 @@ export function KanbanBoard({
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-1">
+                  <CardContent className="space-y-3">
                     {column.tasks.map((task, index) => (
                       <TaskCard
                         key={task.id}
