@@ -85,9 +85,11 @@ function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMember
               <div className="flex justify-between items-center text-xs text-muted-foreground">
                 <div className="flex items-center space-x-4">
                     <Badge variant="secondary" className={`text-xs ${getPriorityColor(task.priority)}`}><Flag className="h-3 w-3 mr-1" />{task.priority}</Badge>
-                    {task.due_date && <div className="flex items-center"><Calendar className="h-3 w-3 mr-1" />{formatDate(task.due_date)}</div>}
                 </div>
                 <div className="flex items-center"><User className="h-3 w-3 mr-1" />{assignedUser ? (assignedUser.profiles.full_name || assignedUser.profiles.email) : 'Unassigned'}</div>
+              </div>
+              <div className="flex justify-end">
+              {task.due_date && <div className="flex text-xs items-center"><Calendar className="h-3 w-3 mr-1" />{formatDate(task.due_date)}</div>}
               </div>
             </div>
           </CardContent>
