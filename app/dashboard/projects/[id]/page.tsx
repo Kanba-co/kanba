@@ -60,295 +60,16 @@ import {
   Share2
 } from 'lucide-react';
 import Link from 'next/link';
-import {
-  DndContext,
-  DragEndEvent,
-  DragOverEvent,
-  DragOverlay,
-  DragStartEvent,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  closestCenter,
-  UniqueIdentifier,
-} from '@dnd-kit/core';
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  useSortable,
-  arrayMove,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import dynamic from 'next/dynamic';
+import type { DropResult } from '@hello-pangea/dnd';
 
-interface Project {
-  id: string;
-  name: string;
-  description: string | null;
-  slug: string;
-  created_at: string;
-  user_id: string;
-}
+const KanbanBoard = dynamic(() => import('@/components/kanban-board').then(mod => mod.KanbanBoard), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
+});
 
-interface Profile {
-  id: string;
-  email: string;
-  full_name: string | null;
-  subscription_status: 'free' | 'pro' | null;
-}
+import type { Project, Profile, Column, Task, ProjectMember } from '@/lib/types';
 
-interface Column {
-  id: string;
-  name: string;
-  position: number;
-  tasks: Task[];
-}
-
-interface Task {
-  id: string;
-  title: string;
-  description: string | null;
-  position: number;
-  priority: 'low' | 'medium' | 'high';
-  due_date: string | null;
-  created_at: string;
-  column_id: string;
-  created_by: string | null;
-  updated_by: string | null;
-  assigned_to: string | null;
-  profiles?: {
-    id: string;
-    email: string;
-    full_name: string | null;
-    avatar_url: string | null;
-  };
-}
-
-interface ProjectMember {
-  id: string;
-  user_id: string;
-  role: 'owner' | 'admin' | 'member';
-  profiles: {
-    id: string;
-    email: string;
-    full_name: string | null;
-    avatar_url: string | null;
-  };
-}
-
-interface SortableTaskProps {
-  task: Task;
-  onEdit: (task: Task) => void;
-  onDelete: (taskId: string) => void;
-  onViewComments: (task: Task) => void;
-  projectMembers: ProjectMember[];
-}
-
-interface DroppableColumnProps {
-  column: Column;
-  children: React.ReactNode;
-  onEdit: (column: Column) => void;
-  onDelete: (columnId: string) => void;
-  onAddTask: (columnId: string) => void;
-}
-
-function DroppableColumn({ column, children, onEdit, onDelete, onAddTask }: DroppableColumnProps) {
-  const {
-    setNodeRef,
-    isOver,
-  } = useSortable({
-    id: column.id,
-    data: {
-      type: 'column',
-      column,
-    },
-  });
-
-  return (
-    <div ref={setNodeRef} className="flex-shrink-0 w-80 mt-4">
-      <Card className={`transition-colors ${isOver ? 'ring-2 ring-primary' : ''}`}>
-        <CardHeader className="pb-3">
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-sm font-medium">
-              {column.name}
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="text-xs">
-                {column.tasks.length}
-              </Badge>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                    <MoreHorizontal className="h-3 w-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onEdit(column)}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Rename
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => onDelete(column.id)}
-                    className="text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <SortableContext 
-            items={column.tasks.map(task => task.id)} 
-            strategy={verticalListSortingStrategy}
-          >
-            {children}
-          </SortableContext>
-          
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start text-muted-foreground hover:text-foreground"
-            size="sm"
-            onClick={() => onAddTask(column.id)}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add a task
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-function SortableTask({ task, onEdit, onDelete, onViewComments, projectMembers }: SortableTaskProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ 
-    id: task.id,
-    data: {
-      type: 'task',
-      task,
-    },
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300';
-      case 'low':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300';
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
-  };
-
-  const getAssignedUser = () => {
-    if (!task.assigned_to) return null;
-    return projectMembers.find(member => member.user_id === task.assigned_to);
-  };
-
-  const assignedUser = getAssignedUser();
-
-  return (
-    <Card 
-      ref={setNodeRef} 
-      style={style} 
-      {...attributes} 
-      {...listeners}
-      className="cursor-grab hover:shadow-md transition-shadow active:cursor-grabbing"
-    >
-      <CardContent className="p-4">
-        <div className="space-y-3">
-          <div className="flex justify-between items-start">
-            <h4 className="font-medium text-sm leading-tight flex-1 line-clamp-2">
-              {task.title}
-            </h4>
-            <div className="flex items-center gap-2">
-              <Badge 
-                variant="secondary" 
-                className={`text-xs ${getPriorityColor(task.priority)}`}
-              >
-                <Flag className="h-3 w-3 mr-1" />
-                {task.priority}
-              </Badge>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-6 w-6 p-0"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MoreHorizontal className="h-3 w-3" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onEdit(task)}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onViewComments(task)}>
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Comments
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => onDelete(task.id)}
-                    className="text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-          
-          {task.description && (
-            <p className="text-xs text-muted-foreground line-clamp-2">
-              {task.description}
-            </p>
-          )}
-          
-          <div className="flex justify-between items-center text-xs text-muted-foreground">
-            <div className="flex items-center space-x-2">
-              {task.due_date && (
-                <div className="flex items-center">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  {formatDate(task.due_date)}
-                </div>
-              )}
-            </div>
-            <div className="flex items-center">
-              <User className="h-3 w-3 mr-1" />
-              {assignedUser 
-                ? (assignedUser.profiles.full_name || assignedUser.profiles.email)
-                : 'Unassigned'
-              }
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 export default function ProjectPage() {
   const { user, signOut } = useUser();
@@ -370,7 +91,6 @@ export default function ProjectPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [creating, setCreating] = useState(false);
   const [deletingProject, setDeletingProject] = useState(false);
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   
   // Task form state - FIXED: Use undefined instead of empty string for assigned_to
   const [taskTitle, setTaskTitle] = useState('');
@@ -390,13 +110,6 @@ export default function ProjectPage() {
   const params = useParams();
   const projectId = params?.id as string;
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    })
-  );
 
   useEffect(() => {
     if (!user) {
@@ -902,167 +615,114 @@ export default function ProjectPage() {
     setSelectedColumnId('');
   };
 
-  const findContainer = (id: UniqueIdentifier) => {
-    if (columns.some(col => col.id === id)) {
-      return id;
+  const handleDragEnd = async (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) {
+      return;
     }
 
-    return columns.find(col => 
-      col.tasks.some(task => task.id === id)
-    )?.id;
-  };
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id);
-  };
+    const startColumn = columns.find(col => col.id === source.droppableId);
+    const finishColumn = columns.find(col => col.id === destination.droppableId);
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-    setActiveId(null);
+    if (!startColumn || !finishColumn) return;
 
-    if (!over) return;
+    const startTasks = Array.from(startColumn.tasks);
+    const [movedTask] = startTasks.splice(source.index, 1);
 
-    const activeId = active.id;
-    const overId = over.id;
+    // Optimistic UI Update
+    if (startColumn === finishColumn) {
+      // Moving within the same column
+      const newTasks = Array.from(startTasks);
+      newTasks.splice(destination.index, 0, movedTask);
 
-    const activeContainer = findContainer(activeId);
-    const overContainer = findContainer(overId);
+      const newColumn = {
+        ...startColumn,
+        tasks: newTasks,
+      };
 
-    if (!activeContainer || !overContainer) return;
+      setColumns(prev =>
+        prev.map(col => (col.id === newColumn.id ? newColumn : col))
+      );
 
-    // Find the active task
-    const activeTask = columns
-      .flatMap(col => col.tasks)
-      .find(task => task.id === activeId);
-
-    if (!activeTask) return;
-
-    try {
-      // If moving within the same container
-      if (activeContainer === overContainer) {
-        const container = columns.find(col => col.id === activeContainer);
-        if (!container) return;
-
-        const oldIndex = container.tasks.findIndex(task => task.id === activeId);
-        let newIndex: number;
-
-        if (overId === activeContainer) {
-          // Dropped on the container itself (at the end)
-          newIndex = container.tasks.length - 1;
-        } else {
-          // Dropped on a specific task
-          newIndex = container.tasks.findIndex(task => task.id === overId);
-        }
-
-        if (oldIndex !== newIndex && newIndex >= 0) {
-          const newTasks = arrayMove(container.tasks, oldIndex, newIndex);
-          
-          // Update local state immediately for better UX
-          setColumns(prev => prev.map(col => {
-            if (col.id === activeContainer) {
-              return {
-                ...col,
-                tasks: newTasks
-              };
-            }
-            return col;
-          }));
-
-          // Update positions in database
-          const updatePromises = newTasks.map((task, index) => 
-            supabase
-              .from('tasks')
-              .update({ 
-                position: index,
-                updated_by: user!.id
-              })
-              .eq('id', task.id)
-          );
-
-          await Promise.all(updatePromises);
-          toast.success('Task moved successfully!');
-        }
-      } else {
-        // Moving between containers - don't update UI immediately, wait for database update
-        const sourceColumn = columns.find(col => col.id === activeContainer);
-        const targetColumn = columns.find(col => col.id === overContainer);
-        
-        if (!sourceColumn || !targetColumn) return;
-
-        let newPosition: number;
-        if (overId === overContainer) {
-          // Dropped on the container itself (at the end)
-          newPosition = targetColumn.tasks.length;
-        } else {
-          // Dropped on a specific task
-          const targetTaskIndex = targetColumn.tasks.findIndex(task => task.id === overId);
-          newPosition = targetTaskIndex >= 0 ? targetTaskIndex : targetColumn.tasks.length;
-        }
-
-        // Update the moved task's column_id and position in database
-        const { error: moveError } = await supabase
+      // Update database
+      const updatePromises = newTasks.map((task, index) =>
+        supabase
           .from('tasks')
-          .update({ 
-            column_id: overContainer,
-            position: newPosition,
+          .update({ position: index, updated_by: user!.id })
+          .eq('id', task.id)
+      );
+      await Promise.all(updatePromises);
+      toast.success('Task reordered!');
+
+    } else {
+      // Moving to a different column
+      const finishTasks = Array.from(finishColumn.tasks);
+      finishTasks.splice(destination.index, 0, movedTask);
+
+      const newStartColumn = {
+        ...startColumn,
+        tasks: startTasks,
+      };
+      const newFinishColumn = {
+        ...finishColumn,
+        tasks: finishTasks,
+      };
+
+      setColumns(prev =>
+        prev.map(col => {
+          if (col.id === newStartColumn.id) return newStartColumn;
+          if (col.id === newFinishColumn.id) return newFinishColumn;
+          return col;
+        })
+      );
+      
+      // Update database
+      try {
+        // 1. Update moved task's column and position
+        await supabase
+          .from('tasks')
+          .update({
+            column_id: destination.droppableId,
+            position: destination.index,
             updated_by: user!.id
           })
-          .eq('id', activeId);
+          .eq('id', draggableId);
 
-        if (moveError) {
-          console.error('Failed to update task column_id:', moveError);
-          throw moveError;
-        }
-
-        // Update positions of other tasks in target column (shift them down)
-        const targetTasks = targetColumn.tasks.slice();
-        const positionUpdatePromises = targetTasks
-          .filter((_, index) => index >= newPosition)
-          .map((task, index) => {
-            const newPos = newPosition + index + 1;
-            return supabase
-              .from('tasks')
-              .update({ 
-                position: newPos,
-                updated_by: user!.id
-              })
-              .eq('id', task.id);
-          });
-
-        await Promise.all(positionUpdatePromises);
-
-        // Update positions in source column (compact the gaps)
-        const sourceTasks = sourceColumn.tasks.filter(task => task.id !== activeId);
-        const sourceUpdatePromises = sourceTasks.map((task, index) => {
-          return supabase
+        // 2. Update positions in the source column
+        const sourceUpdatePromises = startTasks.map((task, index) =>
+          supabase
             .from('tasks')
-            .update({ 
-              position: index,
-              updated_by: user!.id
-            })
-            .eq('id', task.id);
-        });
+            .update({ position: index, updated_by: user!.id })
+            .eq('id', task.id)
+        );
 
-        await Promise.all(sourceUpdatePromises);
+        // 3. Update positions in the destination column
+        const finishUpdatePromises = finishTasks.map((task, index) =>
+          supabase
+            .from('tasks')
+            .update({ position: index, updated_by: user!.id })
+            .eq('id', task.id)
+        );
 
-        // Reload data to ensure UI matches database
+        await Promise.all([...sourceUpdatePromises, ...finishUpdatePromises]);
+        toast.success('Task moved to new column!');
+      } catch (error) {
+        console.error("Error moving task:", error);
+        toast.error("Failed to move task. Reverting changes.");
+        // Revert UI on error
         await loadProject();
-        toast.success('Task moved to new column successfully!');
       }
-    } catch (error: any) {
-      console.error('Error moving task:', error);
-      toast.error('Failed to move task. Refreshing data...');
-      // Reload to get correct state from database
-      await loadProject();
     }
   };
 
-  const getActiveTask = () => {
-    if (!activeId) return null;
-    return columns
-      .flatMap(col => col.tasks)
-      .find(task => task.id === activeId);
-  };
 
   const isProjectOwner = project?.user_id === user?.id;
 
@@ -1212,56 +872,17 @@ export default function ProjectPage() {
         </TabsList>
 
         <TabsContent value="board" className="space-y-6">
-          {/* Kanban Board with Drag and Drop */}
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <div className="flex gap-6 overflow-x-auto pb-4">
-              <SortableContext items={columns.map(col => col.id)}>
-                {columns.map((column) => (
-                  <DroppableColumn
-                    key={column.id}
-                    column={column}
-                    onEdit={openEditColumnDialog}
-                    onDelete={handleDeleteColumn}
-                    onAddTask={openTaskDialog}
-                  >
-                    {column.tasks.map((task) => (
-                      <SortableTask
-                        key={task.id}
-                        task={task}
-                        onEdit={openEditTaskDialog}
-                        onDelete={handleDeleteTask}
-                        onViewComments={openCommentsDialog}
-                        projectMembers={projectMembers}
-                      />
-                    ))}
-                  </DroppableColumn>
-                ))}
-              </SortableContext>
-              
-              {/* Add Column */}
-             
-            </div>
-
-            {/* Drag Overlay */}
-            <DragOverlay>
-              {activeId ? (
-                <div className="opacity-90 rotate-3 scale-105">
-                  <SortableTask
-                    task={getActiveTask()!}
-                    onEdit={() => {}}
-                    onDelete={() => {}}
-                    onViewComments={() => {}}
-                    projectMembers={projectMembers}
-                  />
-                </div>
-              ) : null}
-            </DragOverlay>
-          </DndContext>
+          <KanbanBoard
+            columns={columns}
+            projectMembers={projectMembers}
+            handleDragEnd={handleDragEnd}
+            onEditColumn={openEditColumnDialog}
+            onDeleteColumn={handleDeleteColumn}
+            onAddTask={openTaskDialog}
+            onEditTask={openEditTaskDialog}
+            onDeleteTask={handleDeleteTask}
+            onViewComments={openCommentsDialog}
+          />
         </TabsContent>
 
         <TabsContent value="team">
