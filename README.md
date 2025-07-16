@@ -59,25 +59,6 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 
 ## Production Deployment
 
-### Netlify Deployment
-
-1. **Build Settings:**
-   - Build command: `npm run build`
-   - Publish directory: `.next`
-
-2. **Environment Variables:**
-   Add all the environment variables from your `.env.local` file to Netlify's environment variables section.
-
-3. **Stripe Webhook Setup:**
-   - Create a webhook endpoint in your Stripe dashboard
-   - Point it to: `https://your-domain.netlify.app/api/stripe/webhook`
-   - Select the following events:
-     - `checkout.session.completed`
-     - `customer.subscription.created`
-     - `customer.subscription.updated`
-     - `customer.subscription.deleted`
-     - `invoice.payment_succeeded`
-     - `invoice.payment_failed`
 
 ### Vercel Deployment
 
