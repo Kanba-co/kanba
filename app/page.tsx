@@ -35,7 +35,7 @@ import {
   GithubIcon
 } from 'lucide-react';
 import { ShineBorder } from '@/src/components/magicui/shine-border';
-import { TextReveal } from '@/src/components/magicui/text-reveal';
+import  TextReveal  from '@/src/components/magicui/text-reveal';
 import LovedBy from '@/components/customized/avatar/avatar-12';
 
 export default function Home() {
