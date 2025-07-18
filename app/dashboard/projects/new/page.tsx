@@ -255,8 +255,7 @@ export default function NewProjectPage() {
       {/* Form */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <Plus className="h-5 w-5 mr-2" />
+          <CardTitle className="flex items-center text-lg">
             Project Details
           </CardTitle>
           <CardDescription>

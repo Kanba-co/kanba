@@ -200,7 +200,7 @@ export default function DashboardPage() {
             )}
           </Badge>
           {profile?.subscription_status !== 'pro' && (
-            <Button asChild>
+            <Button size='xs' asChild className='text-xs'>
               <Link href="/dashboard/billing">Upgrade to Pro</Link>
             </Button>
           )}
@@ -248,9 +248,10 @@ export default function DashboardPage() {
             <Button 
               onClick={() => router.push('/dashboard/projects/new')}
               disabled={!canCreateProject()}
-              size="sm"
+              size="xs"
+              className='text-xs'
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 " />
               New Project
             </Button>
           </div>

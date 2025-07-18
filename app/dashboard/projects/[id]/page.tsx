@@ -817,8 +817,8 @@ export default function ProjectPage() {
             </DropdownMenu> 
                 <Dialog open={columnDialogOpen} onOpenChange={setColumnDialogOpen}>
                   <DialogTrigger asChild>
-                        <Button size="sm" variant="default" className="">
-                          <Plus className="h-4 w-4 mr-2" />
+                        <Button size="xs" variant="default" className="text-xs">
+                          <Plus className="h-4 w-4" />
                           Add Column
                         </Button>
                   </DialogTrigger>
@@ -831,7 +831,6 @@ export default function ProjectPage() {
                     </DialogHeader>
                     <form onSubmit={handleCreateColumn} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="columnName">Column Name *</Label>
                         <Input
                           id="columnName"
                           value={columnName}
@@ -842,11 +841,11 @@ export default function ProjectPage() {
                       </div>
                       
                       <div className="flex gap-3 pt-4">
-                        <Button type="submit" disabled={creating} className="flex-1">
+                        <Button type="submit" size="xs" disabled={creating} className="flex-1">
                           {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                           Create Column
                         </Button>
-                        <Button type="button" variant="outline" onClick={() => setColumnDialogOpen(false)}>
+                        <Button type="button" variant="outline" size="xs" onClick={() => setColumnDialogOpen(false)}>
                           Cancel
                         </Button>
                       </div>
@@ -990,11 +989,11 @@ export default function ProjectPage() {
             </div>
             
             <div className="flex gap-3 pt-4">
-              <Button type="submit" disabled={creating} className="flex-1">
+              <Button type="submit" size="xs" disabled={creating} className="flex-1">
                 {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Update Task
               </Button>
-              <Button type="button" variant="outline" onClick={() => setEditTaskDialogOpen(false)}>
+              <Button type="button" size="xs" variant="outline" onClick={() => setEditTaskDialogOpen(false)}>
                 Cancel
               </Button>
             </div>
@@ -1090,11 +1089,11 @@ export default function ProjectPage() {
             </div>
             
             <div className="flex gap-3 pt-4">
-              <Button type="submit" disabled={creating} className="flex-1">
+              <Button type="submit" size="xs" disabled={creating} className="flex-1">
                 {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Update Project
               </Button>
-              <Button type="button" variant="outline" onClick={() => setProjectRenameDialogOpen(false)}>
+              <Button type="button" size="xs" variant="outline" onClick={() => setProjectRenameDialogOpen(false)}>
                 Cancel
               </Button>
             </div>
@@ -1225,11 +1224,11 @@ export default function ProjectPage() {
             </div>
             
             <div className="flex gap-3 pt-4">
-              <Button type="submit" disabled={creating} className="flex-1">
+              <Button type="submit" size="xs" disabled={creating} className="flex-1">
                 {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create Task
               </Button>
-              <Button type="button" variant="outline" onClick={() => setTaskDialogOpen(false)}>
+              <Button type="button" variant="outline" size="xs" onClick={() => setTaskDialogOpen(false)}>
                 Cancel
               </Button>
             </div>
