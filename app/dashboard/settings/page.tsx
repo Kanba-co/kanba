@@ -11,12 +11,16 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const { user, loading } = useUser();
   const [saving, setSaving] = useState(false);
   const [localName, setLocalName] = useState(user?.full_name || "");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -58,6 +62,41 @@ export default function SettingsPage() {
       setLocalName(values.full_name);
       toast.success("Name updated successfully!");
     }
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true);
+    try {
+      const userId = user?.id;
+      if (!userId) throw new Error("Kullanıcı bulunamadı");
+      // 1. İlişkili tablolardaki user_id, created_by, updated_by, assigned_to, invited_by alanlarını null yap
+      await supabase.from("projects").update({ user_id: null, created_by: null, updated_by: null }).eq("user_id", userId);
+      await supabase.from("columns").update({ created_by: null, updated_by: null }).in("created_by", [userId]);
+      await supabase.from("columns").update({ created_by: null, updated_by: null }).in("updated_by", [userId]);
+      await supabase.from("tasks").update({ created_by: null, updated_by: null, assigned_to: null }).or(`created_by.eq.${userId},updated_by.eq.${userId},assigned_to.eq.${userId}`);
+      await supabase.from("project_members").update({ user_id: null, invited_by: null }).or(`user_id.eq.${userId},invited_by.eq.${userId}`);
+      await supabase.from("task_comments").update({ user_id: null }).eq("user_id", userId);
+      await supabase.from("activity_logs").update({ user_id: null }).eq("user_id", userId);
+      await supabase.from("notifications").update({ user_id: null }).eq("user_id", userId);
+      await supabase.from("stripe_customers").update({ user_id: null }).eq("user_id", userId);
+      await supabase.from("profiles").delete().eq("id", userId);
+      // 2. Supabase Auth'dan kullanıcıyı silmek için API route'a istek at
+      const res = await fetch("/api/delete-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Kullanıcı silinemedi");
+      toast.success("Hesabınız silindi. Giriş ekranına yönlendiriliyorsunuz.");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2000);
+    } catch (err: any) {
+      toast.error("Hesap silme başarısız: " + err.message);
+    }
+    setDeleting(false);
+    setDeleteDialogOpen(false);
   }
 
   return (
@@ -113,6 +152,41 @@ export default function SettingsPage() {
             </Button>
           </form>
         </Form>
+      </div>
+
+      {/* Hesap Silme */}
+      <div className="p-4 border rounded-xl bg-red-50 dark:bg-red-900/20 mt-8">
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="destructive" className="w-full" onClick={() => setDeleteDialogOpen(true)}>
+              Hesabımı Sil
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Hesabını silmek istediğine emin misin?</DialogTitle>
+              <DialogDescription>
+                Bu işlem geri alınamaz. Hesabını silmek için <b>confirm</b> yaz ve onayla.
+              </DialogDescription>
+            </DialogHeader>
+            <Input
+              value={deleteConfirm}
+              onChange={e => setDeleteConfirm(e.target.value)}
+              placeholder="confirm"
+              disabled={deleting}
+              className="mt-4"
+            />
+            <DialogFooter>
+              <Button
+                variant="destructive"
+                disabled={deleteConfirm !== "confirm" || deleting}
+                onClick={handleDeleteAccount}
+              >
+                {deleting ? "Siliniyor..." : "Hesabımı Kalıcı Olarak Sil"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
