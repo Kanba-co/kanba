@@ -62,7 +62,7 @@ function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMember
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`cursor-grab hover:shadow-md transition-shadow ${snapshot.isDragging ? 'ring-2 ring-primary' : ''}`}
+          className="bg-muted/60 {`cursor-grab hover:shadow-md transition-shadow ${snapshot.isDragging ? 'ring-2 ring-primary' : ''}`}"
         >
           <CardContent className="p-4">
             <div className="space-y-3">
@@ -133,7 +133,7 @@ export function KanbanBoard({
                 {...provided.droppableProps}
                 className="flex-shrink-0 w-80"
               >
-                <Card className={`transition-colors ${snapshot.isDraggingOver ? 'bg-muted/50' : ''}`}>
+                <Card className="bg-muted/20 {`transition-colors ${snapshot.isDraggingOver ? 'bg-muted/50' : ''}`}">
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-center">
                       <CardTitle className="text-sm font-medium">{column.name}</CardTitle>
