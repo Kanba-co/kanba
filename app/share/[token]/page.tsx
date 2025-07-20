@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from '@/lib/supabase';
 import { KanbanBoard } from '@/components/kanban-board';
 import { useTheme } from 'next-themes';
+import Image from "next/image";
+import Link from 'next/link';
 import { 
    
     Moon, 
@@ -63,19 +65,18 @@ export default function SharePage({ params }: { params: { token: string } }) {
   if (!project) return <div className="p-10 text-center">Project not found or not shared.</div>;
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background transition-colors duration-300">
+    <div className="min-h-screen w-screen flex items-center justify-center bg-background transition-colors duration-300">
       <div
         className="
           relative
-          w-full
-          h-full
+          h-[calc(100vh-2rem)]
+          w-[calc(100vw-2rem)]
           m-4
           border border-border
           shadow-sm dark:shadow:sm
           rounded-xl
           bg-white dark:bg-[#0A0A0A]
           flex flex-col
-          max-h-[calc(100vh-2rem)]
           overflow-hidden
         "
       >
@@ -93,7 +94,7 @@ export default function SharePage({ params }: { params: { token: string } }) {
         <div className="flex-1 flex flex-col overflow-hidden">
           <h1 className="text-3xl font-bold mb-2 px-4 pt-4">{project.name}</h1>
           <p className="mb-6 text-muted-foreground px-4">{project.description}</p>
-          <div className="flex-1 overflow-auto px-2 pb-4">
+          <div className="flex-1 overflow-auto px-2 pb-4  border-b">
             <KanbanBoard
               columns={columns}
               projectMembers={[]}
@@ -106,8 +107,17 @@ export default function SharePage({ params }: { params: { token: string } }) {
               onViewComments={noop}
             />
           </div>
-          <div className="mt-4 text-center text-muted-foreground text-xs px-4 pb-4">
-            This board is view only. You cannot make changes.
+          <div className="mt-4 text-center flex justify-center text-muted-foreground items-center text-xs px-4 pb-4">
+            This board is view only. Built with <Link href="/" className="flex items-center">
+              <div className=" flex items-center">
+                <Image 
+                  src={theme === 'light' ? '/logo-light.png' : '/logo-dark.png'} 
+                  width={30} 
+                  height={30} 
+                  alt="Kanba Logo" 
+                />
+              </div>
+             <span className="font-semibold">Kanba.</span></Link>
           </div>
         </div>
       </div>
