@@ -62,13 +62,16 @@ import {
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import type { DropResult } from '@hello-pangea/dnd';
+import { nanoid } from 'nanoid';
 
 const KanbanBoard = dynamic(() => import('@/components/kanban-board').then(mod => mod.KanbanBoard), {
   ssr: false,
   loading: () => <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
 });
 
-import type { Project, Profile, Column, Task, ProjectMember } from '@/lib/types';
+import type { Project as ProjectBase, Profile, Column, Task, ProjectMember } from '@/lib/types';
+
+type Project = ProjectBase & { public_share_token?: string };
 
 
 export default function ProjectPage() {
@@ -91,6 +94,8 @@ export default function ProjectPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [creating, setCreating] = useState(false);
   const [deletingProject, setDeletingProject] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
   
   // Task form state - FIXED: Use undefined instead of empty string for assigned_to
   const [taskTitle, setTaskTitle] = useState('');
@@ -606,6 +611,25 @@ export default function ProjectPage() {
     }, 50);
   };
 
+  const handleShareProject = async () => {
+    if (!project) return;
+    let token = project.public_share_token;
+    if (!token) {
+      token = nanoid(16);
+      const { error } = await supabase
+        .from('projects')
+        .update({ public_share_token: token })
+        .eq('id', project.id);
+      if (error) {
+        toast.error('Error creating share link.');
+        return;
+      }
+      setProject({ ...project, public_share_token: token });
+    }
+    setShareUrl(`${window.location.origin}/share/${token}`);
+    setShareDialogOpen(true);
+  };
+
   const resetTaskForm = () => {
     setTaskTitle('');
     setTaskDescription('');
@@ -797,13 +821,13 @@ export default function ProjectPage() {
                   <Edit className="h-4 w-4 mr-2" />
                   Rename Project
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleShareProject}>
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share
+                </DropdownMenuItem>
                 <DropdownMenuItem disabled>
                   <Code className="h-4 w-4 mr-2" />
                   Embed (soon)
-                </DropdownMenuItem>
-                <DropdownMenuItem disabled>
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share (soon)
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
@@ -1233,6 +1257,24 @@ export default function ProjectPage() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Modal */}
+      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Project Share</DialogTitle>
+            <DialogDescription>
+You can share this link with everyone to see your board.
+           </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-2 mt-4">
+            <Input value={shareUrl} readOnly className="flex-1" />
+            <Button type="button" onClick={() => {navigator.clipboard.writeText(shareUrl); toast.success('Link copied!')}}>
+              Copy
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
