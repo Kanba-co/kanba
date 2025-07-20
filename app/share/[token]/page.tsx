@@ -2,11 +2,21 @@
 import { useEffect, useState } from "react";
 import { supabase } from '@/lib/supabase';
 import { KanbanBoard } from '@/components/kanban-board';
+import { useTheme } from 'next-themes';
+import { 
+   
+    Moon, 
+    Sun, 
+    
+  } from 'lucide-react';
+  import { Button } from "@/components/ui/button";
+
 
 export default function SharePage({ params }: { params: { token: string } }) {
   const [project, setProject] = useState<any>(null);
   const [columns, setColumns] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     async function fetchData() {
@@ -53,21 +63,54 @@ export default function SharePage({ params }: { params: { token: string } }) {
   if (!project) return <div className="p-10 text-center">Project not found or not shared.</div>;
 
   return (
-    <div className="max-w-7xl mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-2">{project.name}</h1>
-      <p className="text-muted-foreground mb-6">{project.description}</p>
-      <KanbanBoard
-        columns={columns}
-        projectMembers={[]}
-        handleDragEnd={noop}
-        onEditColumn={noop}
-        onDeleteColumn={noop}
-        onAddTask={noop}
-        onEditTask={noop}
-        onDeleteTask={noop}
-        onViewComments={noop}
-      />
-      <div className="mt-8 text-center text-muted-foreground text-xs">This board is view only. You cannot make changes.</div>
+    <div className="min-h-screen w-full flex items-center justify-center bg-background transition-colors duration-300">
+      <div
+        className="
+          relative
+          w-full
+          h-full
+          m-4
+          border border-border
+          shadow-sm dark:shadow:sm
+          rounded-xl
+          bg-white dark:bg-[#0A0A0A]
+          flex flex-col
+          max-h-[calc(100vh-2rem)]
+          overflow-hidden
+        "
+      >
+        <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          >
+            <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        </div>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <h1 className="text-3xl font-bold mb-2 px-4 pt-4">{project.name}</h1>
+          <p className="mb-6 text-muted-foreground px-4">{project.description}</p>
+          <div className="flex-1 overflow-auto px-2 pb-4">
+            <KanbanBoard
+              columns={columns}
+              projectMembers={[]}
+              handleDragEnd={noop}
+              onEditColumn={noop}
+              onDeleteColumn={noop}
+              onAddTask={noop}
+              onEditTask={noop}
+              onDeleteTask={noop}
+              onViewComments={noop}
+            />
+          </div>
+          <div className="mt-4 text-center text-muted-foreground text-xs px-4 pb-4">
+            This board is view only. You cannot make changes.
+          </div>
+        </div>
+      </div>
     </div>
   );
 } 
