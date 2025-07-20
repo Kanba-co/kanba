@@ -61,7 +61,9 @@ export default function SharePage({ params }: { params: { token: string } }) {
 
   const noop = () => {};
 
-  if (loading) return <div className="p-10 text-center">Loading...</div>;
+  if (loading) return  <div className="flex items-center justify-center min-h-screen w-full">
+  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+</div>;
   if (!project) return <div className="p-10 text-center">Project not found or not shared.</div>;
 
   return (
