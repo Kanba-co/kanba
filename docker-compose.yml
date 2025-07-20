@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    container_name: kanban-app
+    ports:
+      - '3000:3000'
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      # - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY} # (opsiyonel, gerekirse ekle)
+    restart: unless-stopped
+    env_file:
+      - .env.local 
