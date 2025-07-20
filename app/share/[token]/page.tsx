@@ -107,6 +107,7 @@ export default function SharePage({ params }: { params: { token: string } }) {
               onEditTask={noop}
               onDeleteTask={noop}
               onViewComments={noop}
+              readOnly={true}
             />
           </div>
           <div className="mt-4 text-center flex justify-center text-muted-foreground items-center text-xs px-4 pb-4">

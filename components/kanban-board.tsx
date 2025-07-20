@@ -42,7 +42,7 @@ interface SortableTaskProps {
   projectMembers: ProjectMember[];
 }
 
-function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMembers }: SortableTaskProps) {
+function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMembers, readOnly }: SortableTaskProps & { readOnly?: boolean }) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
@@ -68,18 +68,25 @@ function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMember
             <div className="space-y-3">
               <div className="flex justify-between items-start">
                 <h4 className="font-medium text-sm leading-tight flex-1 line-clamp-2">{task.title}</h4>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={(e) => e.stopPropagation()}>
-                      <MoreHorizontal className="h-3 w-3" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onEdit(task)}><Edit className="h-4 w-4 mr-2" />Edit</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onViewComments(task)}><MessageSquare className="h-4 w-4 mr-2" />Comments</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onDelete(task.id)} className="text-destructive"><Trash2 className="h-4 w-4 mr-2" />Delete</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {!readOnly && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={(e) => e.stopPropagation()}>
+                        <MoreHorizontal className="h-3 w-3" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => onEdit(task)}><Edit className="h-4 w-4 mr-2" />Edit</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onViewComments(task)}><MessageSquare className="h-4 w-4 mr-2" />Comments</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onDelete(task.id)} className="text-destructive"><Trash2 className="h-4 w-4 mr-2" />Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+                {readOnly && (
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => onViewComments(task)}>
+                    <MessageSquare className="h-3 w-3" />
+                  </Button>
+                )}
               </div>
               {task.description && <p className="text-xs text-muted-foreground line-clamp-2">{task.description}</p>}
               <div className="flex justify-between items-center text-xs text-muted-foreground">
@@ -109,6 +116,7 @@ interface KanbanBoardProps {
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
   onViewComments: (task: Task) => void;
+  readOnly?: boolean;
 }
 
 export function KanbanBoard({
@@ -121,6 +129,7 @@ export function KanbanBoard({
   onEditTask,
   onDeleteTask,
   onViewComments,
+  readOnly = false,
 }: KanbanBoardProps) {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
@@ -137,18 +146,23 @@ export function KanbanBoard({
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-center">
                       <CardTitle className="text-sm font-medium">{column.name}</CardTitle>
-                      <div className="flex items-center gap-2">
+                      {!readOnly && (
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">{column.tasks.length}</Badge>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><MoreHorizontal className="h-3 w-3" /></Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => onEditColumn(column)}><Edit className="h-4 w-4 mr-2" />Rename</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => onDeleteColumn(column.id)} className="text-destructive"><Trash2 className="h-4 w-4 mr-2" />Delete</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      )}
+                      {readOnly && (
                         <Badge variant="secondary" className="text-xs">{column.tasks.length}</Badge>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><MoreHorizontal className="h-3 w-3" /></Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => onEditColumn(column)}><Edit className="h-4 w-4 mr-2" />Rename</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => onDeleteColumn(column.id)} className="text-destructive"><Trash2 className="h-4 w-4 mr-2" />Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -161,12 +175,15 @@ export function KanbanBoard({
                         onDelete={onDeleteTask}
                         onViewComments={onViewComments}
                         projectMembers={projectMembers}
+                        readOnly={readOnly}
                       />
                     ))}
                     {provided.placeholder}
-                    <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground" size="sm" onClick={() => onAddTask(column.id)}>
-                      <Plus className="h-4 w-4 mr-2" />Add a task
-                    </Button>
+                    {!readOnly && (
+                      <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground" size="sm" onClick={() => onAddTask(column.id)}>
+                        <Plus className="h-4 w-4 mr-2" />Add a task
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               </div>
