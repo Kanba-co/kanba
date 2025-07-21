@@ -65,7 +65,7 @@ function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMember
           className="bg-muted/60 {`cursor-grab hover:shadow-md transition-shadow ${snapshot.isDragging ? 'ring-2 ring-primary' : ''}`}"
         >
           <CardContent className="p-4">
-            <div className="space-y-3"> 
+            <div className="space-y-3">
               <div className="flex justify-between items-start">
                 <h4 className="font-medium text-sm leading-tight flex-1 line-clamp-2">{task.title}</h4>
                 {!readOnly && (
