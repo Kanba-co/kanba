@@ -36,7 +36,7 @@ export default function RootLayout({
         <meta property="og:description" content="Project Management Reimagined for Builders" />
         <meta property="og:url" content="https://kanba.co" />
         <meta property="og:site_name" content="Kanba" />
-        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image" content="https://kanba.co/og-image.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content="Kanba - Open-source Project Management Tool" />
@@ -47,7 +47,7 @@ export default function RootLayout({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Kanba - Open-source Project Management Tool" />
         <meta name="twitter:description" content="Project Management Reimagined for Builders" />
-        <meta name="twitter:image" content="/og-image.png" />
+        <meta name="twitter:image" content="https://kanba.co/og-image.png" />
         
         {/* SEO */}
         <meta name="robots" content="index, follow" />
