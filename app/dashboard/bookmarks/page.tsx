@@ -20,6 +20,7 @@ async function fetchMeta(url: string) {
   }
 }
 
+
 export default function BookmarksPage() {
   const { user, loading } = useUser();
   const [bookmarks, setBookmarks] = useState<any[]>([]);
