@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const LINKPREVIEW_API_KEY = 'f1d1a164d43d02d2c9664f68043d0eaa';
+const LINKPREVIEW_API_KEY = process.env.LINKPREVIEW_API_KEY;
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const url = searchParams.get('url');
   if (!url) return NextResponse.json({ error: 'No url' }, { status: 400 });
+  if (!LINKPREVIEW_API_KEY) return NextResponse.json({ error: 'API key missing' }, { status: 500 });
 
   try {
     const res = await fetch(`https://api.linkpreview.net/?key=${LINKPREVIEW_API_KEY}&q=${encodeURIComponent(url)}`);
