@@ -28,6 +28,7 @@ import {
   Brain,
   Calendar,
   Bookmark,
+  CrownIcon,
 } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "sonner"
@@ -72,6 +73,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Home } from "lucide-react"
 import { useUser } from '@/components/user-provider'
+import { useEffect, useState } from "react";
 
 interface Project {
   id: string;
@@ -108,12 +110,27 @@ export function AppSidebar({ onSignOut, onProjectUpdate }: AppSidebarProps) {
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = React.useState(false);
   const { theme, setTheme } = useTheme();
+  const [subscription, setSubscription] = useState<'free' | 'pro'>('free');
+
+  useEffect(() => {
+    if (user?.id) {
+      supabase
+        .from('profiles')
+        .select('subscription_status')
+        .eq('id', user.id)
+        .single()
+        .then(({ data }) => {
+          if (data?.subscription_status) setSubscription(data.subscription_status);
+        });
+    }
+  }, [user?.id]);
 
   // Kullanıcı bilgisi
   const userData = {
     name: user?.full_name || user?.email || 'User',
     email: user?.email || '',
     avatar: user?.avatar_url || '',
+    subscription,
   };
 
   // Load projects
@@ -221,6 +238,34 @@ export function AppSidebar({ onSignOut, onProjectUpdate }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {
+                if (item.title === "Bookmarks") {
+                  const isPro = userData.subscription === 'pro';
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      {isPro ? (
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname?.startsWith("/dashboard/bookmarks") || false}
+                        >
+                          <Link href={item.url}>
+                            <item.icon className="w-4 h-4" />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      ) : (
+                        <SidebarMenuButton
+                          onClick={() => router.push('/dashboard/billing')}
+                          className="relative opacity-60 cursor-pointer"
+                        >
+                          <item.icon className="w-4 h-4" />
+                          <span>{item.title}</span>
+                          <span className="ml-2 px-2 py-0.5 text-xs bg-yellow-400 text-black rounded-full absolute right-2 top-1/2 -translate-y-1/2"><CrownIcon size="12px"/></span>
+                        </SidebarMenuButton>
+                      )}
+                    </SidebarMenuItem>
+                  );
+                }
+
                 if (item.title === "Projects") {
                   return (
                     <SidebarMenuItem key={item.title}>
