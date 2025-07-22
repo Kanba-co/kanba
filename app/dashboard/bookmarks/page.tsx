@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
+
 
 async function fetchMeta(url: string) {
   // Basit bir metadata fetcher (OpenGraph)
