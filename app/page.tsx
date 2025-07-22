@@ -54,6 +54,8 @@ export default function Home() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
 
+  // Variable declaration for features and pricing plans to prevent manual repetition
+  // This allows for easier updates and management of features and pricing plans
   const [features] = React.useState([
     {
       icon: <Kanban className="h-5 w-5 text-gray-400 dark:text-gray-300 " />,
@@ -188,6 +190,7 @@ export default function Home() {
     );
   }
 
+  // Each section has a unique background color controlled by the theme to provide a consistent/contrast look and feel
   return (
     <div
       className={`min-h-screen ${
@@ -397,7 +400,7 @@ export default function Home() {
         id="pricing"
         className={cn(
           "py-20 px-4 sm:px-6 lg:px-8",
-          theme === "dark" ? "bg-[#1b1b1d]" : "bg-[#f3f3f6]" // lighter shade for light mode
+          theme === "dark" ? "bg-[#1b1b1d]" : "bg-[#f3f3f6]" // more lighter shade for light mode
         )}
       >
         <div className="max-w-7xl mx-auto">
