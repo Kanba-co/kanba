@@ -355,16 +355,16 @@ export default function BillingPage() {
                     Team Management
                   </li>
                   <li className="flex items-center">
+                    <Check className="h-4 w-4 text-green-500 mr-2" />
+                    Bookmarks
+                  </li>
+                  <li className="flex items-center">
                     <Check className="h-4 w-4 text-gray-500 mr-2" />
                     Integrations (soon)
                   </li>
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-gray-500 mr-2" />
                     Notes (soon)
-                  </li>
-                  <li className="flex items-center">
-                    <Check className="h-4 w-4 text-gray-500 mr-2" />
-                    Bookmarks (soon)
                   </li>
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-gray-500 mr-2" />
