@@ -75,15 +75,15 @@ export default function Home() {
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
 
         <div className="max-w-7xl mx-auto text-center">
-          {/* <Link href="https://github.com/Uaghazade1/kanba/releases" target='blank'>
+          <Link href="https://www.producthunt.com/products/kanba" target='blank'>
         <Announcement>
-    <AnnouncementTag>Latest update</AnnouncementTag>
+    <AnnouncementTag>🎉 We're live on Product Hunt</AnnouncementTag>
     <AnnouncementTitle>
-      New Release v1.0.1
+      Check it out and upvote Kanba
       <ArrowUpRightIcon className="shrink-0 text-green-900 dark:text-green-500" size={16} />
     </AnnouncementTitle>
   </Announcement>
-  </Link> */}
+  </Link>
           <div className="flex items-center justify-center mb-4">
         <GitStarButton />
         </div>
@@ -116,7 +116,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center justify-center mt-10 gap-2">
             <LovedBy />
-            <span className="text-sm text-muted-foreground mt-2">Already loved by <span className="font-semibold text-primary">+100 people</span></span>
+            <span className="text-sm text-muted-foreground mt-2">Already loved by <span className="font-semibold text-primary">+150 people</span></span>
           </div>
         </div>
       </section>

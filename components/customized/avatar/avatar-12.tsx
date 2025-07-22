@@ -45,9 +45,9 @@ export default function LovedBy() {
       ))}
       <AvatarGroupItem>
         <Avatar className="w-10 h-10 rounded-full overflow-hidden border-4 border-background bg-muted flex items-center justify-center">
-          <AvatarFallback className="text-xs text-primary">+100</AvatarFallback>
+          <AvatarFallback className="text-xs text-primary">+150</AvatarFallback>
         </Avatar>
-        <AvatarGroupTooltip className="text-center text-xs">100+ more</AvatarGroupTooltip>
+        <AvatarGroupTooltip className="text-center text-xs">150+ more</AvatarGroupTooltip>
       </AvatarGroupItem>
     </AvatarGroup>
   );
