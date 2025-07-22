@@ -111,18 +111,18 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
     try {
       console.log('🔍 Starting debug search...');
       
-      // Check profiles table with different queries
+      // Check user_search view with different queries (secure)
       const { data: allProfiles, error: allProfilesError } = await supabase
-        .from('profiles')
-        .select('id, email, full_name, subscription_status')
+        .from('user_search')
+        .select('id, email, full_name')
         .limit(10);
       
       console.log('📊 All profiles query:', { allProfiles, error: allProfilesError });
       
-      // Try a specific search
+      // Try a specific search using secure view
       const { data: searchProfiles, error: searchError } = await supabase
-        .from('profiles')
-        .select('id, email, full_name, subscription_status')
+        .from('user_search')
+        .select('id, email, full_name')
         .ilike('email', '%@%')
         .limit(10);
       
@@ -166,10 +166,10 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
     try {
       console.log('🔍 Searching for users with email:', email);
       
-      // Search for users by email (case insensitive, more flexible)
+      // Search for users by email using secure view (case insensitive, more flexible)
       const { data: users, error } = await supabase
-        .from('profiles')
-        .select('id, email, full_name, avatar_url, subscription_status')
+        .from('user_search')
+        .select('id, email, full_name, avatar_url')
         .or(`email.ilike.%${email.trim()}%,full_name.ilike.%${email.trim()}%`)
         .neq('id', (await supabase.auth.getUser()).data.user?.id) // Exclude current user
         .limit(10);
@@ -226,10 +226,10 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
     try {
       console.log('🚀 Attempting to invite user:', inviteEmail);
       
-      // Search for user by exact email match (case insensitive)
+      // Search for user by exact email match using secure view (case insensitive)
       const { data: existingUser, error: userError } = await supabase
-        .from('profiles')
-        .select('id, email, full_name, subscription_status')
+        .from('user_search')
+        .select('id, email, full_name')
         .ilike('email', inviteEmail.trim())
         .single();
 
