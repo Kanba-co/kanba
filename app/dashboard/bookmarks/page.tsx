@@ -135,7 +135,7 @@ export default function BookmarksPage() {
                     <div className="flex flex-col items-center mr-2">
                       {b.icon_url && (
                         <a href={b.url} target="_blank" rel="noopener noreferrer">
-                          <Image src={b.icon_url} alt="icon" width={32} height={32} className="rounded" />
+                          <Image src={b.icon_url} alt="icon" width={42} height={42} className="rounded-md border p-1" />
                         </a>
                       )}
                     </div>
