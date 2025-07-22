@@ -27,6 +27,7 @@ import {
   List,
   Brain,
   Calendar,
+  Bookmark,
 } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "sonner"
@@ -88,6 +89,7 @@ interface AppSidebarProps {
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "Projects", url: "/dashboard/projects", icon: FolderIcon },
+  { title: "Bookmarks", url: "/dashboard/bookmarks", icon: Bookmark },
   { title: "Notes (soon)", url: "/dashboard/notes", icon: NotepadTextIcon, disabled: true },
   { title: "Analytics (soon)", url: "/dashboard/analytics", icon: BarChartIcon, disabled: true },
   { title: "Integrations (soon)", url: "/dashboard/integrations", icon: PlugZap, disabled: true },

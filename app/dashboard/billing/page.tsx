@@ -364,6 +364,10 @@ export default function BillingPage() {
                   </li>
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-gray-500 mr-2" />
+                    Bookmarks (soon)
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-4 w-4 text-gray-500 mr-2" />
                     Analytics (soon)
                   </li>
                   <li className="flex items-center">
