@@ -75,15 +75,15 @@ export default function Home() {
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
 
         <div className="max-w-7xl mx-auto text-center">
-          <Link href="https://www.producthunt.com/products/kanba" target='blank'>
-        <Announcement>
-    <AnnouncementTag>🎉 We're live on Product Hunt</AnnouncementTag>
-    <AnnouncementTitle>
-      Check it out and upvote Kanba
-      <ArrowUpRightIcon className="shrink-0 text-green-900 dark:text-green-500" size={16} />
-    </AnnouncementTitle>
-  </Announcement>
-  </Link>
+          <div align="center">
+  <br />
+<br />
+<a href="https://vercel.com/oss">
+  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
+</a>
+    <br />
+<br />
+</div>
           <div className="flex items-center justify-center mb-4">
         <GitStarButton />
         </div>
