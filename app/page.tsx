@@ -75,7 +75,9 @@ export default function Home() {
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
 
         <div className="max-w-7xl mx-auto text-center">
-         <div className="flex justify-center items-center">
+         
+          <div className="flex items-center justify-center mb-4">
+        <div className="flex justify-center items-center">
   <br />
 <br />
 <a href="https://vercel.com/oss">
@@ -84,8 +86,6 @@ export default function Home() {
     <br />
 <br />
 </div>
-          <div className="flex items-center justify-center mb-4">
-        <GitStarButton />
         </div>
           <h1 className="text-4xl sm:text-6xl tracking-tight mb-6">
           Project Management
