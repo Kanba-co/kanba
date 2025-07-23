@@ -29,6 +29,15 @@
   </details>
 </div>
 
+<div align="center">
+  <br />
+<br />
+<a href="https://vercel.com/oss">
+  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
+</a>
+    <br />
+<br />
+</div>
 # Open-source, lightweight Trello alternative designed for makers and indie hackers.
 
 Focus on simplicity, speed, and scalability.
