@@ -220,24 +220,18 @@ export default function Home() {
         )}
       >
         <div className="max-w-7xl mx-auto text-center">
-          <Link
-            href="https://www.producthunt.com/products/kanba"
-            target="blank"
-          >
-            <Announcement>
-              <AnnouncementTag>🎉 We're live on Product Hunt</AnnouncementTag>
-              <AnnouncementTitle>
-                Check it out and upvote Kanba
-                <ArrowUpRightIcon
-                  className="shrink-0 text-green-900 dark:text-green-500 transition-transform duration-300 group-hover:translate-x-[2px] group-hover:-translate-y-[2px]"
-                  size={16}
-                />
-              </AnnouncementTitle>
-            </Announcement>
-          </Link>
+         
           <div className="flex items-center justify-center mb-4">
-            <GitStarButton />
-          </div>
+        <div className="flex justify-center items-center">
+  <br />
+<br />
+<a href="https://vercel.com/oss">
+  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
+</a>
+    <br />
+<br />
+</div>
+        </div>
           <h1 className="text-4xl sm:text-6xl tracking-tight mb-6">
             Project Management
             <span className="bg-gradient-to-r from-pink-600 via-blue-500 to-yellow-400 text-transparent bg-clip-text block p-2">
