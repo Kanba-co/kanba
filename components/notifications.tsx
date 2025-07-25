@@ -1,34 +1,40 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { supabase } from '@/lib/supabase';
-import { toast } from 'sonner';
-import { 
-  Bell, 
-  BellRing, 
-  Check, 
-  CheckCheck, 
-  User, 
+} from "@/components/ui/dropdown-menu";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
+import {
+  Bell,
+  BellRing,
+  Check,
+  CheckCheck,
+  User,
   FolderOpen,
   MessageSquare,
   Calendar,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 
 interface Notification {
   id: string;
-  type: 'task_assigned' | 'task_updated' | 'project_invited' | 'comment_added';
+  type: "task_assigned" | "task_updated" | "project_invited" | "comment_added";
   title: string;
   message: string;
   data: any;
@@ -47,16 +53,16 @@ export function Notifications({ userId }: NotificationsProps) {
 
   useEffect(() => {
     loadNotifications();
-    
+
     // Set up real-time subscription for new notifications
     const subscription = supabase
-      .channel('notifications')
+      .channel("notifications")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'notifications',
+          event: "*",
+          schema: "public",
+          table: "notifications",
           filter: `user_id=eq.${userId}`,
         },
         () => {
@@ -73,18 +79,18 @@ export function Notifications({ userId }: NotificationsProps) {
   const loadNotifications = async () => {
     try {
       const { data: notifications, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
         .limit(20);
 
       if (error) throw error;
 
       setNotifications(notifications || []);
-      setUnreadCount((notifications || []).filter(n => !n.read).length);
+      setUnreadCount((notifications || []).filter((n) => !n.read).length);
     } catch (error: any) {
-      console.error('Error loading notifications:', error);
+      console.error("Error loading notifications:", error);
     } finally {
       setLoading(false);
     }
@@ -93,67 +99,67 @@ export function Notifications({ userId }: NotificationsProps) {
   const markAsRead = async (notificationId: string) => {
     try {
       const { error } = await supabase
-        .from('notifications')
+        .from("notifications")
         .update({ read: true })
-        .eq('id', notificationId);
+        .eq("id", notificationId);
 
       if (error) throw error;
 
-      setNotifications(prev => 
-        prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
       );
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error: any) {
-      console.error('Error marking notification as read:', error);
+      console.error("Error marking notification as read:", error);
     }
   };
 
   const markAllAsRead = async () => {
     try {
       const { error } = await supabase
-        .from('notifications')
+        .from("notifications")
         .update({ read: true })
-        .eq('user_id', userId)
-        .eq('read', false);
+        .eq("user_id", userId)
+        .eq("read", false);
 
       if (error) throw error;
 
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
-      toast.success('All notifications marked as read');
+      toast.success("All notifications marked as read");
     } catch (error: any) {
-      console.error('Error marking all as read:', error);
-      toast.error('Failed to mark all as read');
+      console.error("Error marking all as read:", error);
+      toast.error("Failed to mark all as read");
     }
   };
 
   const deleteNotification = async (notificationId: string) => {
     try {
       const { error } = await supabase
-        .from('notifications')
+        .from("notifications")
         .delete()
-        .eq('id', notificationId);
+        .eq("id", notificationId);
 
       if (error) throw error;
 
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
-      setUnreadCount(prev => {
-        const notification = notifications.find(n => n.id === notificationId);
+      setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+      setUnreadCount((prev) => {
+        const notification = notifications.find((n) => n.id === notificationId);
         return notification && !notification.read ? prev - 1 : prev;
       });
     } catch (error: any) {
-      console.error('Error deleting notification:', error);
-      toast.error('Failed to delete notification');
+      console.error("Error deleting notification:", error);
+      toast.error("Failed to delete notification");
     }
   };
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'task_assigned':
+      case "task_assigned":
         return <User className="h-4 w-4 text-blue-500" />;
-      case 'project_invited':
+      case "project_invited":
         return <FolderOpen className="h-4 w-4 text-green-500" />;
-      case 'comment_added':
+      case "comment_added":
         return <MessageSquare className="h-4 w-4 text-purple-500" />;
       default:
         return <Bell className="h-4 w-4 text-gray-500" />;
@@ -167,10 +173,11 @@ export function Notifications({ userId }: NotificationsProps) {
 
     if (diffInHours < 1) {
       const diffInMinutes = Math.floor(diffInHours * 60);
-      return diffInMinutes <= 1 ? 'Just now' : `${diffInMinutes}m ago`;
+      return diffInMinutes <= 1 ? "Just now" : `${diffInMinutes}m ago`;
     } else if (diffInHours < 24) {
       return `${Math.floor(diffInHours)}h ago`;
-    } else if (diffInHours < 168) { // 7 days
+    } else if (diffInHours < 168) {
+      // 7 days
       return `${Math.floor(diffInHours / 24)}d ago`;
     } else {
       return date.toLocaleDateString();
@@ -180,52 +187,63 @@ export function Notifications({ userId }: NotificationsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-          <Button  size="xs" className="relative border-1 border-border bg-muted-foreground text-secondary hover:bg-primary/80">
+        <Button
+          size="xs"
+          className="relative border-1 border-border bg-muted-foreground text-secondary hover:bg-primary/80"
+        >
           {unreadCount > 0 ? (
             <BellRing className="h-4 w-4" />
           ) : (
             <Bell className="h-4 w-4" />
           )}
           {unreadCount > 0 && (
-            <Badge 
-              variant="destructive" 
+            <Badge
+              variant="destructive"
               className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-xs"
             >
-              {unreadCount > 9 ? '9+' : unreadCount}
+              {unreadCount > 9 ? "9+" : unreadCount}
             </Badge>
           )}
           <span className="sr-only">Notifications</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 ml-4">
-        <div className="flex items-center justify-between p-2">
+      <DropdownMenuContent align="end" className="w-80 ml-4 rounded-xl ">
+        <div className="flex items-center justify-between p-3">
           <h4 className="font-semibold">Notifications</h4>
-          {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={markAllAsRead}>
-              <CheckCheck className="h-4 w-4 mr-1" />
-              Mark all read
-            </Button>
-          )}
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={markAllAsRead}
+            disabled={unreadCount == 0}
+          >
+            <CheckCheck className="h-4 w-4 mr-1" />
+            Mark all read
+          </Button>
         </div>
         <DropdownMenuSeparator />
-        
+
         {loading ? (
           <div className="p-4 text-center text-sm text-muted-foreground">
             Loading notifications...
           </div>
         ) : notifications.length === 0 ? (
-          <div className="p-4 text-center text-sm text-muted-foreground">
-            <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            <p>No notifications yet</p>
-            <p className="text-xs">You&apos;ll see updates about your tasks and projects here</p>
+          <div className="p-6 text-center  text-gray-300">
+            <Bell className="h-5 w-5 mx-auto mb-2 opacity-50" />
+            <h3 className="font-semibold text-gray-200 mb-2">
+              No notifications yet
+            </h3>
+            <p className="text-xs">
+              You&apos;ll see updates about your tasks and projects here
+            </p>
           </div>
         ) : (
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-96 overflow-y-auto p-3">
             {notifications.map((notification) => (
               <div
                 key={notification.id}
                 className={`p-3 border-b last:border-b-0 hover:bg-muted/50 ${
-                  !notification.read ? 'bg-blue-50 dark:bg-blue-950/10' : ''
+                  !notification.read ? "bg-blue-50 dark:bg-blue-950/10" : ""
                 }`}
               >
                 <div className="flex items-start space-x-3">
@@ -261,7 +279,9 @@ export function Notifications({ userId }: NotificationsProps) {
                               variant="ghost"
                               size="sm"
                               className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-                              onClick={() => deleteNotification(notification.id)}
+                              onClick={() =>
+                                deleteNotification(notification.id)
+                              }
                             >
                               <X className="h-3 w-3" />
                             </Button>
