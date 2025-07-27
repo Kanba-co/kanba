@@ -15,7 +15,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "vercel-build": "prisma generate && prisma db push && next build"
+    "vercel-build": "prisma generate && next build"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
