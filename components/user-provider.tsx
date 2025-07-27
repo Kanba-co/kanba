@@ -36,6 +36,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     // Get initial user
     const getInitialUser = async () => {
       try {
+        // Check if Supabase is properly initialized
+        if (!supabase.auth) {
+          console.warn('Supabase auth not initialized');
+          setInitialized(true);
+          setLoading(false);
+          return;
+        }
+        
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           setUser({

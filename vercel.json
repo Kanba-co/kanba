@@ -15,5 +15,6 @@
       "PRISMA_GENERATE_DATAPROXY": "true"
     }
   },
-  "regions": ["iad1"]
+  "regions": ["iad1"],
+  "outputDirectory": ".next"
 } 

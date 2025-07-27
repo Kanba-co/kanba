@@ -23,7 +23,7 @@ import {
   StatusIndicator,
   StatusLabel,
 } from "@/src/components/ui/kibo-ui/status";
-import Lenis from "lenis";
+// import Lenis from "lenis";
 
 import {
   Announcement,
@@ -175,9 +175,9 @@ export default function Home() {
   };
 
   // Initialize Lenis for smooth scrolling
-  const lenis = new Lenis({
-    autoRaf: true,
-  });
+  // const lenis = new Lenis({
+  //   autoRaf: true,
+  // });
 
   if (loading) {
     return (
