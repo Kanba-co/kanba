@@ -12,7 +12,7 @@ export function GitStarButton({ mobile = false }: GitStarButtonProps) {
           ? 'h-7 max-w-32 text-xs px-2 py-1' 
           : 'h-9 max-w-52 md:flex'
       }`}
-      href="https://github.com/Uaghazade1/kanba"
+      href="https://github.com/kanba-co/kanba"
     >
       <span className="absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 bg-white opacity-10 transition-all duration-1000 ease-out group-hover:-translate-x-40"></span>
       <div className="flex items-center">
