@@ -260,17 +260,16 @@ export default function Home() {
 
       <div
         className={cn(
-          "py-10 px-4 sm:px-6 lg:px-8 flex items-center justify-center",
-          theme === "dark" ? "bg-[#19191C]" : "bg-[#f3f3f6]"
+          "py-10 px-4 sm:px-6 lg:px-8 flex items-center  justify-center ",
         )}
       >
-        <div className="">
+        <div className="border-2 border-border p-2 rounded-xl">
           <Image
             src={theme === "dark" ? "/dark-hero.png" : "/light-hero.png"}
             alt="hero"
             width={1000}
             height={500}
-            className="rounded-xl border-2 border-secondary p-2"
+            className="rounded-xl "
           />
         </div>
       </div>
