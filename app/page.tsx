@@ -198,20 +198,7 @@ export default function Home() {
       }`}
     >
       <Navbar user={user} onSignOut={handleSignOut} loading={loading} />
-      <div
-        className={`absolute top-4 right-4`}
-        style={{ zIndex: 9999 }}
-      >
-        <Image
-          src={theme === "dark" ? "/bolt-dark.png" : "/bolt-light.png"}
-          width={60}
-          height={60}
-          alt="Kanba Logo"
-          className="animate-spin-slow"
-          style={{ zIndex: "999999" }}
-        />
-      </div>
-
+     
       {/* Hero Section */}
       <section
         className={cn(
@@ -235,7 +222,7 @@ export default function Home() {
           <h1 className="text-4xl sm:text-6xl tracking-tight mb-6">
             Project Management
             <span className="bg-gradient-to-r from-pink-600 via-blue-500 to-yellow-400 text-transparent bg-clip-text block p-2">
-              Reimagined for Builders.
+              Reimagined for Builders
             </span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
@@ -265,7 +252,7 @@ export default function Home() {
             <LovedBy />
             <span className="text-sm text-muted-foreground mt-2">
               Already loved by{" "}
-              <span className="font-semibold text-primary">+150 people</span>
+              <span className="font-semibold text-primary">+400 people</span>
             </span>
           </div>
         </div>
