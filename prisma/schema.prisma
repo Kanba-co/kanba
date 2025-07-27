@@ -1,0 +1,265 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum SubscriptionStatus {
+  free
+  pro
+}
+
+enum TaskPriority {
+  low
+  medium
+  high
+}
+
+enum ProjectMemberRole {
+  owner
+  admin
+  member
+}
+
+enum StripeSubscriptionStatus {
+  not_started
+  incomplete
+  incomplete_expired
+  trialing
+  active
+  past_due
+  canceled
+  unpaid
+  paused
+}
+
+enum StripeOrderStatus {
+  pending
+  completed
+  canceled
+}
+
+// Core Models
+model Profile {
+  id                    String    @id @default(cuid())
+  email                 String    @unique
+  full_name             String?
+  avatar_url            String?
+  subscription_status   SubscriptionStatus @default(free)
+  stripe_customer_id    String?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+
+  // Relations
+  projects              Project[]
+  project_members       ProjectMember[]
+  created_tasks         Task[] @relation("TaskCreator")
+  updated_tasks         Task[] @relation("TaskUpdater")
+  assigned_tasks        Task[] @relation("TaskAssignee")
+  task_comments         TaskComment[]
+  activity_logs         ActivityLog[]
+  notifications         Notification[]
+  bookmarks             Bookmark[]
+
+  @@map("profiles")
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  slug        String    @unique
+  user_id     String
+  created_by  String?
+  updated_by  String?
+  public_share_token String? @unique
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+
+  // Relations
+  owner       Profile   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  creator     Profile?  @relation("ProjectCreator", fields: [created_by], references: [id])
+  updater     Profile?  @relation("ProjectUpdater", fields: [updated_by], references: [id])
+  columns     Column[]
+  project_members ProjectMember[]
+  activity_logs ActivityLog[]
+  bookmarks   Bookmark[]
+
+  @@map("projects")
+}
+
+model Column {
+  id          String    @id @default(cuid())
+  name        String
+  project_id  String
+  position    Int
+  created_by  String?
+  updated_by  String?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+
+  // Relations
+  project     Project   @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  creator     Profile?  @relation("ColumnCreator", fields: [created_by], references: [id])
+  updater     Profile?  @relation("ColumnUpdater", fields: [updated_by], references: [id])
+  tasks       Task[]
+
+  @@map("columns")
+}
+
+model Task {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  column_id   String
+  position    Int
+  priority    TaskPriority @default(medium)
+  due_date    DateTime?
+  created_by  String?
+  updated_by  String?
+  assigned_to String?
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+
+  // Relations
+  column      Column      @relation(fields: [column_id], references: [id], onDelete: Cascade)
+  creator     Profile?    @relation("TaskCreator", fields: [created_by], references: [id])
+  updater     Profile?    @relation("TaskUpdater", fields: [updated_by], references: [id])
+  assignee    Profile?    @relation("TaskAssignee", fields: [assigned_to], references: [id])
+  task_comments TaskComment[]
+  activity_logs ActivityLog[]
+
+  @@map("tasks")
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  task_id   String
+  user_id   String
+  content   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  task      Task     @relation(fields: [task_id], references: [id], onDelete: Cascade)
+  user      Profile  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("task_comments")
+}
+
+model ProjectMember {
+  id         String            @id @default(cuid())
+  project_id String
+  user_id    String
+  role       ProjectMemberRole @default(member)
+  created_at DateTime          @default(now())
+  updated_at DateTime          @updatedAt
+
+  // Relations
+  project    Project           @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  user       Profile           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([project_id, user_id])
+  @@map("project_members")
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  project_id  String
+  user_id     String
+  action      String
+  entity_type String
+  entity_id   String?
+  details     Json?
+  created_at  DateTime @default(now())
+
+  // Relations
+  project     Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  user        Profile  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("activity_logs")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  user_id   String
+  title     String
+  message   String
+  type      String
+  read      Boolean  @default(false)
+  data      Json?
+  created_at DateTime @default(now())
+
+  // Relations
+  user      Profile  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model Bookmark {
+  id         String   @id @default(cuid())
+  user_id    String
+  project_id String
+  created_at DateTime @default(now())
+
+  // Relations
+  user       Profile  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  project    Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, project_id])
+  @@map("bookmarks")
+}
+
+// Stripe Integration Models
+model StripeCustomer {
+  id           BigInt   @id @default(autoincrement())
+  user_id      String   @unique
+  customer_id  String   @unique
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  deleted_at   DateTime?
+
+  @@map("stripe_customers")
+}
+
+model StripeSubscription {
+  id                    BigInt                  @id @default(autoincrement())
+  customer_id           String                  @unique
+  subscription_id       String?
+  price_id              String?
+  current_period_start  BigInt?
+  current_period_end    BigInt?
+  cancel_at_period_end  Boolean                 @default(false)
+  payment_method_brand  String?
+  payment_method_last4  String?
+  status                StripeSubscriptionStatus
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+  deleted_at            DateTime?
+
+  @@map("stripe_subscriptions")
+}
+
+model StripeOrder {
+  id                    BigInt           @id @default(autoincrement())
+  checkout_session_id   String           @unique
+  payment_intent_id     String           @unique
+  customer_id           String
+  amount_subtotal       BigInt
+  amount_total          BigInt
+  currency              String
+  payment_status        String
+  status                StripeOrderStatus @default(pending)
+  created_at            DateTime         @default(now())
+  updated_at            DateTime         @updatedAt
+  deleted_at            DateTime?
+
+  @@map("stripe_orders")
+} 

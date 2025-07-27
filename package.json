@@ -6,7 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postgres:setup": "node scripts/setup-postgres.js",
+    "postgres:start": "docker-compose -f docker-compose.postgres.yml up -d",
+    "postgres:stop": "docker-compose -f docker-compose.postgres.yml down",
+    "postgres:reset": "docker-compose -f docker-compose.postgres.yml down -v && docker-compose -f docker-compose.postgres.yml up -d",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
@@ -76,6 +84,10 @@
     "typescript": "5.2.2",
     "vaul": "^0.9.9",
     "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@prisma/client": "^5.7.1",
+    "prisma": "^5.7.1"
   },
   "overrides": {
     "@types/react": "18.2.22"
