@@ -1005,7 +1005,7 @@ export default function ProjectPage() {
                   <SelectItem value="unassigned">Unassigned</SelectItem>
                   {projectMembers.map((member) => (
                     <SelectItem key={member.user_id} value={member.user_id}>
-                      {member.profiles.full_name || member.profiles.email}
+                      {member.profiles?.full_name || member.profiles?.email || 'Bilinmeyen Kullanıcı'}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1240,7 +1240,7 @@ export default function ProjectPage() {
                   <SelectItem value="unassigned">Unassigned</SelectItem>
                   {projectMembers.map((member) => (
                     <SelectItem key={member.user_id} value={member.user_id}>
-                      {member.profiles.full_name || member.profiles.email}
+                      {member.profiles?.full_name || member.profiles?.email || 'Bilinmeyen Kullanıcı'}
                     </SelectItem>
                   ))}
                 </SelectContent>

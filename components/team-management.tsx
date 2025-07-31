@@ -111,9 +111,9 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
     try {
       console.log('🔍 Starting debug search...');
       
-      // Check user_search view with different queries (secure)
+      // Check user search using secure view
       const { data: allProfiles, error: allProfilesError } = await supabase
-        .from('user_search')
+        .from('user_email_search')
         .select('id, email, full_name')
         .limit(10);
       
@@ -121,10 +121,9 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
       
       // Try a specific search using secure view
       const { data: searchProfiles, error: searchError } = await supabase
-        .from('user_search')
+        .from('user_email_search')
         .select('id, email, full_name')
-        .ilike('email', '%@%')
-        .limit(10);
+        .ilike('email', '%test%');
       
       console.log('🔍 Search profiles query:', { searchProfiles, error: searchError });
       
@@ -166,12 +165,11 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
     try {
       console.log('🔍 Searching for users with email:', email);
       
-      // Search for users by email using secure view (case insensitive, more flexible)
+      // Search for users using secure view
       const { data: users, error } = await supabase
-        .from('user_search')
-        .select('id, email, full_name, avatar_url')
+        .from('user_email_search')
+        .select('id, email, full_name')
         .or(`email.ilike.%${email.trim()}%,full_name.ilike.%${email.trim()}%`)
-        .neq('id', (await supabase.auth.getUser()).data.user?.id) // Exclude current user
         .limit(10);
 
       console.log('📊 Search results:', { users, error, searchTerm: email });
@@ -183,7 +181,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
 
       // Filter out users who are already members
       const existingMemberIds = members.map(m => m.user_id);
-      const availableUsers = (users || []).filter(user => 
+      const availableUsers = (users || []).filter((user: { id: string }) => 
         !existingMemberIds.includes(user.id)
       );
 
@@ -216,24 +214,24 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
       return;
     }
 
-    if (userSubscriptionStatus !== 'pro') {
-      toast.error('Team collaboration is only available with Pro plan');
-      return;
-    }
+    // Team collaboration artık herkese açık - güvenlik profiles RLS ile sağlanıyor
 
     setInviting(true);
 
     try {
       console.log('🚀 Attempting to invite user:', inviteEmail);
       
-      // Search for user by exact email match using secure view (case insensitive)
-      const { data: existingUser, error: userError } = await supabase
-        .from('user_search')
+      // Search for user by exact email match using secure RPC function
+      const { data: users, error: userError } = await supabase
+        .from('user_email_search')
         .select('id, email, full_name')
-        .ilike('email', inviteEmail.trim())
-        .single();
+        .ilike('email', inviteEmail.trim());
+      // Tam eşleşen email adresini sonuçlardan bul
+      const existingUser = users?.find((user: { email: string; id: string }) => 
+        user.email.toLowerCase() === inviteEmail.trim().toLowerCase()
+      ) || null;
 
-      console.log('👤 User lookup result:', { existingUser, error: userError });
+      console.log('👤 Kullanıcı arama sonucu:', { existingUser, error: userError });
 
       if (userError) {
         if (userError.code === 'PGRST116') {
@@ -256,6 +254,8 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
         toast.error('User not found. They need to create an account first.');
         return;
       }
+
+      // RPC function artık profiles'dan arama yaptığı için ek kontrol gerekmez
 
       // Check if user is already a member
       const { data: existingMember, error: memberError } = await supabase
@@ -400,7 +400,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
             {/* Debug button - remove in production */}
             
             
-            {isProjectOwner && userSubscriptionStatus === 'pro' && (
+            {isProjectOwner && (
               <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm">
@@ -451,11 +451,13 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
                               className="w-full p-3 text-left hover:bg-muted/50 flex items-center space-x-3 border-b last:border-b-0"
                             >
                               <Avatar className="h-8 w-8">
-                                <AvatarImage src={user.avatar_url || ''} alt={user.full_name || ''} />
+                                <AvatarImage src='' alt={user.full_name || user.email || ''} />
                                 <AvatarFallback className="text-xs">
                                   {user.full_name 
                                     ? user.full_name.charAt(0).toUpperCase() 
-                                    : user.email.charAt(0).toUpperCase()
+                                    : user.email 
+                                      ? user.email.charAt(0).toUpperCase()
+                                      : '?'
                                   }
                                 </AvatarFallback>
                               </Avatar>
@@ -466,11 +468,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
                                 <p className="text-xs text-muted-foreground">
                                   {user.email}
                                 </p>
-                                {user.subscription_status && (
-                                  <Badge variant="outline" className="text-xs mt-1">
-                                    {user.subscription_status}
-                                  </Badge>
-                                )}
+                                {/* subscription_status artık user_search view'inde yok */}
                               </div>
                             </button>
                           ))}
@@ -542,21 +540,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
         </div>
       </CardHeader>
       <CardContent>
-        {userSubscriptionStatus !== 'pro' && (
-          <div className="bg-amber-50 dark:bg-amber-950/10 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6">
-            <div className="flex items-center">
-              <Crown className="h-5 w-5 text-amber-600 mr-2" />
-              <div>
-                <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                  Team Collaboration is a Pro Feature
-                </p>
-                <p className="text-xs text-amber-700 dark:text-amber-300">
-                  Upgrade to Pro to invite team members and collaborate on projects.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Team collaboration artık herkese açık */}
 
         {/* Debug Info Display */}
         {debugInfo && (
@@ -594,18 +578,20 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
             <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center space-x-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={member.profiles.avatar_url || ''} alt={member.profiles.full_name || ''} />
+                  <AvatarImage src={member.profiles?.avatar_url || ''} alt={member.profiles?.full_name || member.profiles?.email || ''} />
                   <AvatarFallback>
-                    {member.profiles.full_name 
+                    {member.profiles?.full_name 
                       ? member.profiles.full_name.charAt(0).toUpperCase() 
-                      : member.profiles.email.charAt(0).toUpperCase()
+                      : member.profiles?.email 
+                        ? member.profiles.email.charAt(0).toUpperCase()
+                        : '?'
                     }
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <div className="flex items-center space-x-2">
                     <p className="font-medium">
-                      {member.profiles.full_name || member.profiles.email}
+                      {member.profiles?.full_name || member.profiles?.email || 'Bilinmeyen Kullanıcı'}
                     </p>
                     <Badge variant={getRoleBadgeVariant(member.role)} className="text-xs">
                       <span className="flex items-center">
@@ -615,7 +601,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {member.profiles.email}
+                    {member.profiles?.email || 'Email yok'}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {member.joined_at 
@@ -636,7 +622,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
                   <DropdownMenuContent align="end">
                     {member.role !== 'admin' && (
                       <DropdownMenuItem 
-                        onClick={() => handleUpdateRole(member.id, 'admin', member.profiles.full_name || member.profiles.email)}
+                        onClick={() => handleUpdateRole(member.id, 'admin', member.profiles?.full_name || member.profiles?.email || 'Bilinmeyen Kullanıcı')}
                       >
                         <Shield className="h-4 w-4 mr-2" />
                         Make Admin
@@ -644,14 +630,14 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
                     )}
                     {member.role === 'admin' && (
                       <DropdownMenuItem 
-                        onClick={() => handleUpdateRole(member.id, 'member', member.profiles.full_name || member.profiles.email)}
+                        onClick={() => handleUpdateRole(member.id, 'member', member.profiles?.full_name || member.profiles?.email || 'Bilinmeyen Kullanıcı')}
                       >
                         <User className="h-4 w-4 mr-2" />
                         Make Member
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem 
-                      onClick={() => handleRemoveMember(member.id, member.profiles.full_name || member.profiles.email)}
+                      onClick={() => handleRemoveMember(member.id, member.profiles?.full_name || member.profiles?.email || 'Bilinmeyen Kullanıcı')}
                       className="text-destructive"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
