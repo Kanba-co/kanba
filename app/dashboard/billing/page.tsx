@@ -353,7 +353,7 @@ export default function BillingPage() {
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-green-500 mr-2" />
                     Team Management
-                  </li>
+                  </li> 
                   <li className="flex items-center">
                     <Check className="h-4 w-4 text-green-500 mr-2" />
                     Bookmarks
