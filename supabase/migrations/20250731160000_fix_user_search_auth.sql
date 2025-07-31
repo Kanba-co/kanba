@@ -27,8 +27,7 @@ SELECT
   id,
   email,
   raw_user_meta_data->>'full_name' as full_name
-FROM auth.users
-WHERE auth.uid() IS NOT NULL; -- Only for authenticated users
+FROM auth.users;
 
 -- Grant access to authenticated users
 GRANT SELECT ON public.user_search TO authenticated;

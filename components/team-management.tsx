@@ -591,7 +591,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
                 <div>
                   <div className="flex items-center space-x-2">
                     <p className="font-medium">
-                      {member.profiles?.full_name || member.profiles?.email || 'Bilinmeyen Kullanıcı'}
+                      {member.profiles?.full_name || member.profiles?.email || 'Unknown User'}
                     </p>
                     <Badge variant={getRoleBadgeVariant(member.role)} className="text-xs">
                       <span className="flex items-center">
