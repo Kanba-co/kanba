@@ -84,21 +84,48 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
   const loadMembers = async () => {
     try {
       const { data: members, error } = await supabase
-        .from('project_members')
+        .from('project_members_with_profiles')
         .select(`
-          *,
-          profiles:user_id (
-            id,
-            email,
-            full_name,
-            avatar_url
-          )
+          id,
+          project_id,
+          user_id,
+          role,
+          created_at,
+          updated_at,
+          profile_id,
+          profile_email,
+          profile_full_name,
+          profile_avatar_url
         `)
         .eq('project_id', projectId)
         .order('created_at');
 
       if (error) throw error;
-      setMembers(members || []);
+      
+      // Transform data to match existing interface
+      const transformedMembers = (members || []).map(member => ({
+        id: member.id,
+        project_id: member.project_id,
+        user_id: member.user_id,
+        role: member.role,
+        created_at: member.created_at,
+        updated_at: member.updated_at,
+        profiles: {
+          id: member.profile_id,
+          email: member.profile_email,
+          full_name: member.profile_full_name,
+          avatar_url: member.profile_avatar_url
+        }
+      }));
+      
+      // Varsayılan değerlerle eksik alanları ekleyerek transformedMembers'ı düzeltiyoruz
+      const completeMembers = transformedMembers.map(member => ({
+        ...member,
+        invited_at: member.created_at, // invited_at için created_at kullanıyoruz
+        joined_at: member.created_at // joined_at için created_at kullanıyoruz
+      }));
+
+      setMembers(completeMembers);
     } catch (error: any) {
       console.error('Error loading members:', error);
       toast.error('Failed to load team members');
@@ -111,21 +138,17 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
     try {
       console.log('🔍 Starting debug search...');
       
-      // Check user search using secure view
+      // Test RPC function with generic search
       const { data: allProfiles, error: allProfilesError } = await supabase
-        .from('user_email_search')
-        .select('id, email, full_name')
-        .limit(10);
+        .rpc('search_users_for_collaboration', { search_term: 'a' }); // Search for users with 'a'
       
-      console.log('📊 All profiles query:', { allProfiles, error: allProfilesError });
+      console.log('📊 All profiles via RPC:', { allProfiles, error: allProfilesError });
       
-      // Try a specific search using secure view
+      // Test specific search
       const { data: searchProfiles, error: searchError } = await supabase
-        .from('user_email_search')
-        .select('id, email, full_name')
-        .ilike('email', '%test%');
+        .rpc('search_users_for_collaboration', { search_term: 'test' });
       
-      console.log('🔍 Search profiles query:', { searchProfiles, error: searchError });
+      console.log('🔍 Search profiles via RPC:', { searchProfiles, error: searchError });
       
       // Get current user info
       const { data: { user }, error: currentUserError } = await supabase.auth.getUser();
@@ -135,7 +158,7 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
       const { data: rlsTest, error: rlsError } = await supabase
         .rpc('get_profiles_count');
       
-      console.log('🛡️ RLS test:', { rlsTest, error: rlsError });
+      console.log('🛡️ Profiles count test:', { rlsTest, error: rlsError });
       
       setDebugInfo({
         allProfilesCount: allProfiles?.length || 0,
@@ -163,14 +186,11 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
 
     setSearching(true);
     try {
-      console.log('🔍 Searching for users with email:', email);
+      console.log('🔍 Searching for users with term:', email);
       
-      // Search for users using secure view
+      // Search for users using secure RPC function
       const { data: users, error } = await supabase
-        .from('user_email_search')
-        .select('id, email, full_name')
-        .or(`email.ilike.%${email.trim()}%,full_name.ilike.%${email.trim()}%`)
-        .limit(10);
+        .rpc('search_users_for_collaboration', { search_term: email.trim() });
 
       console.log('📊 Search results:', { users, error, searchTerm: email });
 
@@ -223,9 +243,8 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
       
       // Search for user by exact email match using secure RPC function
       const { data: users, error: userError } = await supabase
-        .from('user_email_search')
-        .select('id, email, full_name')
-        .ilike('email', inviteEmail.trim());
+        .rpc('search_users_for_collaboration', { search_term: inviteEmail.trim() });
+      
       // Tam eşleşen email adresini sonuçlardan bul
       const existingUser = users?.find((user: { email: string; id: string }) => 
         user.email.toLowerCase() === inviteEmail.trim().toLowerCase()
@@ -234,24 +253,19 @@ export function TeamManagement({ projectId, userSubscriptionStatus, isProjectOwn
       console.log('👤 Kullanıcı arama sonucu:', { existingUser, error: userError });
 
       if (userError) {
-        if (userError.code === 'PGRST116') {
-          // No user found
-          toast.error(
-            `No user found with email "${inviteEmail}". They need to create a Kanba account first.`,
-            {
-              description: 'Ask them to sign up at your app URL, then try adding them again.',
-              duration: 6000,
-            }
-          );
-        } else {
-          console.error('User lookup error:', userError);
-          throw userError;
-        }
+        console.error('User lookup error:', userError);
+        toast.error('Failed to search for user: ' + userError.message);
         return;
       }
 
       if (!existingUser) {
-        toast.error('User not found. They need to create an account first.');
+        toast.error(
+          `No user found with email "${inviteEmail}". They need to create a Kanban account first.`,
+          {
+            description: 'Ask them to sign up first, then try adding them again.',
+            duration: 6000,
+          }
+        );
         return;
       }
 
