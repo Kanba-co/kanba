@@ -37,3 +37,10 @@ next-env.d.ts
 
 # prisma
 /prisma/generated
+
+# IDE and editor files
+.cursor/
+.vscode/
+.idea/
+*.swp
+*.swo
