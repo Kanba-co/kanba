@@ -226,8 +226,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            A calm space to move fast and build what matters. Simple, powerful,
-            and proudly open-source.
+          An open-source platform to move fast and build what matters. Simple, powerful, and yes, AI-powered.
           </p>
           <div className="flex sm:flex-row gap-4 justify-center">
             {user ? (
