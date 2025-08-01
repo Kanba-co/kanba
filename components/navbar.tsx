@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
@@ -40,6 +40,15 @@ interface NavbarProps {
 
 export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null; // Prevents hydration mismatch
+  }
 
   return (
     <div className="sticky top-4 z-50 px-4">
