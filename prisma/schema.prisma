@@ -128,6 +128,7 @@ model Task {
   position    Int
   priority    TaskPriority @default(medium)
   due_date    DateTime?
+  is_done     Boolean      @default(false)
   created_by  String?
   updated_by  String?
   assigned_to String?
