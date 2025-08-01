@@ -28,6 +28,7 @@ export interface Task {
   position: number;
   priority: 'low' | 'medium' | 'high';
   due_date: string | null;
+  is_done: boolean;
   created_at: string;
   column_id: string;
   created_by: string | null;

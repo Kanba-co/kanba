@@ -107,6 +107,7 @@ export default function SharePage({ params }: { params: { token: string } }) {
               onEditTask={noop}
               onDeleteTask={noop}
               onViewComments={noop}
+              onToggleDone={noop}
               readOnly={true}
             />
           </div>

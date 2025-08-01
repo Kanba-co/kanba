@@ -29,6 +29,7 @@ import {
   Calendar,
   User,
   MessageSquare,
+  Check,
 } from 'lucide-react';
 
 import type { Task, Column, ProjectMember } from '@/lib/types';
@@ -39,10 +40,11 @@ interface SortableTaskProps {
   onEdit: (task: Task) => void;
   onDelete: (taskId: string) => void;
   onViewComments: (task: Task) => void;
+  onToggleDone: (taskId: string, isDone: boolean) => void;
   projectMembers: ProjectMember[];
 }
 
-function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMembers, readOnly }: SortableTaskProps & { readOnly?: boolean }) {
+function TaskCard({ task, index, onEdit, onDelete, onViewComments, onToggleDone, projectMembers, readOnly }: SortableTaskProps & { readOnly?: boolean }) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
@@ -55,6 +57,11 @@ function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMember
   const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString();
   const assignedUser = projectMembers.find(member => member.user_id === task.assigned_to);
 
+  const handleToggleDone = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleDone(task.id, !task.is_done);
+  };
+
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
@@ -62,12 +69,32 @@ function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMember
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="bg-muted/60 {`cursor-grab hover:shadow-md transition-shadow ${snapshot.isDragging ? 'ring-2 ring-primary' : ''}`}"
+          className={`bg-muted/60 cursor-grab hover:shadow-md transition-shadow ${snapshot.isDragging ? 'ring-2 ring-primary' : ''} ${task.is_done ? 'opacity-75' : ''}`}
         >
           <CardContent className="p-4">
             <div className="space-y-3">
               <div className="flex justify-between items-start">
-                <h4 className="font-medium text-sm leading-tight flex-1 line-clamp-2">{task.title}</h4>
+                <div className="flex items-start gap-2 flex-1">
+                  {!readOnly && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-5 w-5 p-0 mt-0.5 flex-shrink-0"
+                      onClick={handleToggleDone}
+                    >
+                      <div className={`h-4 w-4 rounded border-2 flex items-center justify-center transition-colors ${
+                        task.is_done 
+                          ? 'bg-primary border-primary text-primary-foreground' 
+                          : 'border-muted-foreground/30 hover:border-primary'
+                      }`}>
+                        {task.is_done && <Check className="h-3 w-3" />}
+                      </div>
+                    </Button>
+                  )}
+                  <h4 className={`font-medium text-sm leading-tight flex-1 line-clamp-2 ${task.is_done ? 'line-through text-muted-foreground' : ''}`}>
+                    {task.title}
+                  </h4>
+                </div>
                 {!readOnly && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -88,7 +115,11 @@ function TaskCard({ task, index, onEdit, onDelete, onViewComments, projectMember
                   </Button>
                 )}
               </div>
-              {task.description && <p className="text-xs text-muted-foreground line-clamp-2">{task.description}</p>}
+              {task.description && (
+                <p className={`text-xs text-muted-foreground line-clamp-2 ${task.is_done ? 'line-through' : ''}`}>
+                  {task.description}
+                </p>
+              )}
               <div className="flex justify-between items-center text-xs text-muted-foreground">
                 <div className="flex items-center space-x-4">
                     <Badge variant="secondary" className={`text-xs ${getPriorityColor(task.priority)}`}><Flag className="h-3 w-3 mr-1" />{task.priority}</Badge>
@@ -116,6 +147,7 @@ interface KanbanBoardProps {
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
   onViewComments: (task: Task) => void;
+  onToggleDone: (taskId: string, isDone: boolean) => void;
   readOnly?: boolean;
 }
 
@@ -129,6 +161,7 @@ export function KanbanBoard({
   onEditTask,
   onDeleteTask,
   onViewComments,
+  onToggleDone,
   readOnly = false,
 }: KanbanBoardProps) {
   return (
@@ -174,6 +207,7 @@ export function KanbanBoard({
                         onEdit={onEditTask}
                         onDelete={onDeleteTask}
                         onViewComments={onViewComments}
+                        onToggleDone={onToggleDone}
                         projectMembers={projectMembers}
                         readOnly={readOnly}
                       />

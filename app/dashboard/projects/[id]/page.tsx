@@ -351,6 +351,26 @@ export default function ProjectPage() {
     }
   };
 
+  const handleToggleDone = async (taskId: string, isDone: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update({
+          is_done: isDone,
+          updated_by: user!.id,
+        })
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      toast.success(isDone ? 'Task marked as done!' : 'Task marked as not done!');
+      await loadProject();
+    } catch (error: any) {
+      console.error('Error toggling task done status:', error);
+      toast.error(error.message || 'Failed to update task status');
+    }
+  };
+
   const handleCreateColumn = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -905,6 +925,7 @@ export default function ProjectPage() {
             onEditTask={openEditTaskDialog}
             onDeleteTask={handleDeleteTask}
             onViewComments={openCommentsDialog}
+            onToggleDone={handleToggleDone}
           />
         </TabsContent>
 
