@@ -213,7 +213,7 @@ export default function Home() {
   <br />
 <br />
 <a href="https://vercel.com/oss">
-  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
+  <Image alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" width={200} height={60} unoptimized />
 </a>
     <br />
 <br />
@@ -356,6 +356,60 @@ export default function Home() {
                 />
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+      
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl text-primary mb-12">
+            You are in good company            </h2>
+            
+            {/* Badges Container */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12">
+              
+              {/* Product Hunt Badge */}
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-sm text-muted-foreground font-medium">#4 on Product Hunt</span>
+                <a 
+                  href="https://www.producthunt.com/products/kanba?embed=true&utm_source=badge-top-post-badge&utm_medium=badge&utm_source=badge-kanba" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-transform hover:scale-105"
+                >
+                  <Image 
+                    src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=995809&theme=light&period=daily&t=1754924750233"
+                    alt="Kanba - Open-source project management tool for modern teams | Product Hunt" 
+                    className="w-[200px] sm:w-[250px] h-auto"
+                    width={250} 
+                    height={54}
+                    unoptimized
+                  />
+                </a>
+              </div>
+
+              {/* Vercel OSS Badge */}
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-sm text-muted-foreground font-medium">Supported by Vercel</span>
+                <a 
+                  href="https://vercel.com/oss" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-transform hover:scale-105"
+                >
+                  <Image 
+                    alt="Vercel OSS Program" 
+                    src="https://vercel.com/oss/program-badge.svg" 
+                    width={250} 
+                    height={54} 
+                    unoptimized 
+                    className="w-[200px] sm:w-[250px] h-[54px] border border-border rounded-xl p-2 bg-background"
+                  />
+                </a>
+              </div>
+              
+            </div>
           </div>
         </div>
       </section>
