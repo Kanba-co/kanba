@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { format } from 'date-fns';
+import { Trash2 } from 'lucide-react';
 
 
 async function fetchMeta(url: string) {
@@ -28,6 +29,7 @@ export default function BookmarksPage() {
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -69,6 +71,27 @@ export default function BookmarksPage() {
     }
     setBookmarks([data, ...bookmarks]);
     setUrl("");
+  }
+
+  async function handleDeleteBookmark(bookmarkId: string) {
+    if (!user) return;
+    setDeleting(bookmarkId);
+    
+    const { error: deleteError } = await supabase
+      .from('bookmarks')
+      .delete()
+      .eq('id', bookmarkId)
+      .eq('user_id', user.id);
+    
+    setDeleting(null);
+    
+    if (deleteError) {
+      setError(deleteError.message);
+      return;
+    }
+    
+    // Bookmark'ı listeden kaldır
+    setBookmarks(bookmarks.filter(b => b.id !== bookmarkId));
   }
 
   // Bookmarkları günlere göre gruplandır
@@ -133,6 +156,19 @@ export default function BookmarksPage() {
               <div className="space-y-2">
                 {items.map(b => (
                   <div key={b.id} className="p-4 border rounded-xl bg-muted/30 hover:bg-muted/50 transition flex items-center gap-4">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteBookmark(b.id)}
+                      disabled={deleting === b.id}
+                      className="flex-shrink-0 h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                    >
+                      {deleting === b.id ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-destructive"></div>
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
                     <div className="flex flex-col items-center mr-2">
                       {b.icon_url && (
                         <a href={b.url} target="_blank" rel="noopener noreferrer">
