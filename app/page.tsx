@@ -421,9 +421,9 @@ export default function Home() {
         )}
       >
         <TextReveal>
-          Kanba is an open-source Trello alternative for makers and teams. Cut
-          the noise, focus on what matters. Not trying to replace Trello, just
-          doing kanban simple and right.
+          Kanba is an open-source project management tool for makers and teams. Cut
+          the noise, focus on what matters. Not trying to replace Trello or Jira, just
+          doing project management simple and right.
         </TextReveal>
       </section>
 
