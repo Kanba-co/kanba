@@ -37,7 +37,7 @@ export function GitStarButton({ mobile = false }: GitStarButtonProps) {
           ></path>
         </svg>
         <span className="font-display inline-block font-medium tabular-nums tracking-wider text-white">
-          300+
+          400+
         </span>
       </div>
     </a>
