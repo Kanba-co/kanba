@@ -583,6 +583,7 @@ export default function ProjectPage() {
   };
 
   const openTaskDialog = (columnId: string) => {
+    resetTaskForm();
     setSelectedColumnId(columnId);
     setTaskDialogOpen(true);
   };
@@ -943,7 +944,7 @@ export default function ProjectPage() {
       </Tabs>
 
       {/* Edit Task Dialog */}
-      <Dialog key={editingTask?.id || 'edit-dialog'} open={editTaskDialogOpen} onOpenChange={setEditTaskDialogOpen}>
+      <Dialog key={editingTask?.id || 'edit-dialog'} open={editTaskDialogOpen} onOpenChange={(open) => { setEditTaskDialogOpen(open); if (!open) { setEditingTask(null); resetTaskForm(); } }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
@@ -1018,7 +1019,7 @@ export default function ProjectPage() {
 
             <div className="space-y-2">
               <Label htmlFor="editAssignedTo">Assign To</Label>
-              <Select value={taskAssignedTo || ''} onValueChange={(value) => setTaskAssignedTo(value || undefined)}>
+              <Select value={taskAssignedTo || 'unassigned'} onValueChange={(value) => setTaskAssignedTo(value === 'unassigned' ? undefined : value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select team member (optional)" />
                 </SelectTrigger>
@@ -1038,7 +1039,7 @@ export default function ProjectPage() {
                 {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Update Task
               </Button>
-              <Button type="button" size="xs" variant="outline" onClick={() => setEditTaskDialogOpen(false)}>
+              <Button type="button" size="xs" variant="outline" onClick={() => { setEditTaskDialogOpen(false); setEditingTask(null); resetTaskForm(); }}>
                 Cancel
               </Button>
             </div>
@@ -1178,7 +1179,7 @@ export default function ProjectPage() {
       </Dialog>
 
       {/* Create Task Dialog */}
-      <Dialog open={taskDialogOpen} onOpenChange={setTaskDialogOpen}>
+      <Dialog open={taskDialogOpen} onOpenChange={(open) => { setTaskDialogOpen(open); if (!open) { resetTaskForm(); } }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Task</DialogTitle>
@@ -1253,7 +1254,7 @@ export default function ProjectPage() {
 
             <div className="space-y-2">
               <Label htmlFor="assignedTo">Assign To</Label>
-              <Select value={taskAssignedTo || ''} onValueChange={(value) => setTaskAssignedTo(value || undefined)}>
+              <Select value={taskAssignedTo || 'unassigned'} onValueChange={(value) => setTaskAssignedTo(value === 'unassigned' ? undefined : value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select team member (optional)" />
                 </SelectTrigger>
@@ -1261,7 +1262,7 @@ export default function ProjectPage() {
                   <SelectItem value="unassigned">Unassigned</SelectItem>
                   {projectMembers.map((member) => (
                     <SelectItem key={member.user_id} value={member.user_id}>
-                      {member.profiles?.full_name || member.profiles?.email || 'Bilinmeyen Kullanıcı'}
+                      {member.profiles?.full_name || member.profiles?.email || 'Unknown User'}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1273,7 +1274,7 @@ export default function ProjectPage() {
                 {creating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create Task
               </Button>
-              <Button type="button" variant="outline" size="xs" onClick={() => setTaskDialogOpen(false)}>
+              <Button type="button" variant="outline" size="xs" onClick={() => { setTaskDialogOpen(false); resetTaskForm(); }}>
                 Cancel
               </Button>
             </div>
