@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const res = await fetch(`https://api.linkpreview.net/?key=${LINKPREVIEW_API_KEY}&q=${encodeURIComponent(url)}`);
     if (!res.ok) return NextResponse.json({ error: 'Failed to fetch meta' }, { status: 500 });
     const data = await res.json();
-
+ 
     // Favicon fallback
     let favicon = data.icon;
     if (!favicon) {
