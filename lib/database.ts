@@ -9,7 +9,7 @@ const USE_POSTGRES = DATABASE_PROVIDER === 'postgresql';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
+ 
 // PostgreSQL adapter (optional)
 let postgresAdapter: any = null;
 let postgresHelpers: any = null;
