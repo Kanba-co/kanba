@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { UserProvider } from '@/components/user-provider';
 import { Analytics } from "@vercel/analytics/next"
+import Script from 'next/script'
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,6 +22,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+<Script async src="https://getsleek.io/v1.js" data-site="xRx3jLtq81ymAbbu"/>
+        
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Project Management Reimagined for Builders" />
