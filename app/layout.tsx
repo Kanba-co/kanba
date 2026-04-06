@@ -22,6 +22,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+
+<script async src="https://plausible.io/js/pa-DjNMEj3oROaXMoY4-HGLf.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+        
 <Script async src="https://getsleek.io/v1.js" data-site="xRx3jLtq81ymAbbu"/>
         
         <meta charSet="utf-8" />
