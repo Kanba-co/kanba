@@ -15,6 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/navbar";
 import { GitStarButton } from "@/src/components/eldoraui/gitstarbutton";
+import { LiveStatsButton } from "@/src/components/ui/live-stats-button";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -251,7 +252,7 @@ export default function Home() {
             <LovedBy />
             <span className="text-sm text-muted-foreground mt-2">
               Already loved by{" "}
-              <span className="font-semibold text-primary">+400 people</span>
+              <span className="font-semibold text-primary">+1000 people</span>
             </span>
           </div>
         </div>
@@ -610,6 +611,9 @@ export default function Home() {
                 <StatusIndicator />
                 <StatusLabel />
               </Status>
+              <div className="mt-3">
+                <LiveStatsButton />
+              </div>
             </div>
 
             <div>

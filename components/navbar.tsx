@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { GitStarButton } from '@/src/components/eldoraui/gitstarbutton';
+import { LiveStatsButton } from '@/src/components/ui/live-stats-button';
 
 interface NavbarProps {
   user?: {
@@ -85,6 +86,12 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
             </div>
             <div className="sm:hidden">
               <GitStarButton mobile={true} />
+            </div>
+            <div className="hidden sm:block">
+              <LiveStatsButton mobile={false} />
+            </div>
+            <div className="sm:hidden">
+              <LiveStatsButton mobile={true} />
             </div>
             <Button
               variant="ghost"

@@ -24,10 +24,10 @@ export default function RootLayout({
       <head>
 
 <Script async src="https://plausible.io/js/pa-DjNMEj3oROaXMoY4-HGLf.js" />
-<Script>
+<Script id="plausible-init">{`
   window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
   plausible.init()
-/>
+`}</Script>
 
         
 <Script async src="https://getsleek.io/v1.js" data-site="xRx3jLtq81ymAbbu"/>
