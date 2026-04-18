@@ -53,7 +53,7 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
 
   return (
     <div className="sticky top-4 z-50 px-4">
-      <nav className="max-w-3xl mx-auto rounded-2xl border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="max-w-4xl mx-auto rounded-2xl border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex justify-between items-center h-14 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-x-6">
             <Link href="/" className="flex items-center space-x-2">
@@ -89,9 +89,6 @@ export function Navbar({ user, onSignOut, loading = false }: NavbarProps) {
             </div>
             <div className="hidden sm:block">
               <LiveStatsButton mobile={false} />
-            </div>
-            <div className="sm:hidden">
-              <LiveStatsButton mobile={true} />
             </div>
             <Button
               variant="ghost"

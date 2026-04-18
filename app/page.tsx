@@ -611,7 +611,7 @@ export default function Home() {
                 <StatusIndicator />
                 <StatusLabel />
               </Status>
-              <div className="mt-3">
+              <div className="mt-3 hidden sm:block">
                 <LiveStatsButton />
               </div>
             </div>
